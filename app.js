@@ -1,31 +1,31 @@
 const projects = [
   {
-    title: "Bi-stable auxetic vascular stents",
-    year: "2025",
+    title: "bi-stable auxetic vascular stents",
+    year: "2023 - present",
     tags: ["biomed", "research"],
-    desc: "Patient-specific conformability via auxetic geometry + bistability; modeling + prototyping pipeline.",
+    desc: "patient-specific conformability via auxetic geometries + bistability; CT segmentation + VTK prototyping pipeline.",
     links: [
-      { label: "paper", href: "#" },
-      { label: "repo", href: "#" }
+      { label: "project_board", href: "https://isef.net/project/enbm047-patient-specific-optimization-using-auxetic-stents" },
     ]
   },
   {
-    title: "Assistive navigation (OAK-D + haptics)",
-    year: "2025–2026",
+    title: "assistive navigation (camera + haptics)",
+    year: "2025 – 2026",
     tags: ["software", "hardware", "biomed"],
-    desc: "Real-time detection + zone-based feedback; haptic motors via microcontroller; TTS for alerts.",
+    desc: "Real-time detection + floor-segmentation and path-planning; haptic motors via microcontroller; tts for alerts.",
     links: [
-      { label: "demo", href: "#" },
-      { label: "repo", href: "#" }
+      { label: "path_planning_demo", href: "https://drive.google.com/file/d/1dqa5QphN3HUc9oy6NQQ5Yq59y1JCHGTj/view?usp=sharing" },
+      { label: "obj_detect_demo", href: "https://drive.google.com/file/d/1B6cWBmWnDPZSImrHdA1Kpx8dStLzJKKX/view?usp=sharing" },
     ]
   },
   {
-    title: "FRC: Divide by Zero (DIV/0)",
-    year: "2023–2025",
-    tags: ["robotics", "hardware"],
-    desc: "Mechanical/design lead work + systems build; outreach and scaling team infrastructure.",
+    title: "ftc 18305, 8468, 9791",
+    year: "2020–2025",
+    tags: ["robotics", "hardware", "software"],
+    desc: "mechanical/design lead work + systems build; 2024 world champs, 2021-22 2nd opr in the world.",
     links: [
-      { label: "highlights", href: "#" }
+      { label: "18305", href: "https://www.instagram.com/singularity_18305/?hl=en" },
+      { label: "8468", href: "https://ftcscout.org/teams/8468?season=2023" }
     ]
   }
 ];
