@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tarun Malarvasan // projects</title>
+    <meta name="description" content="ASCII personal site — projects, writing, and links." />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <div class="wrap" role="document">
+      <header class="panel" aria-label="Header">
+        <pre class="banner" aria-hidden="true">
+ _______                      __  __
+|_   __ \                    |  ]|  ]
+  | |__) | ,--.   _ .--.   __| | | |  .--.
+  |  ___/ `'_\ : [ `.-. | /  . | | | ( (`\]
+ _| |_    // | |  | | | | | (_) | | |  `'.'.
+|_____|   \'-;__][___||__] \__,_|[___][\__) )
+        </pre>
+
+        <div class="head-row">
+          <div class="id">
+            <div class="name">Tarun Malarvasan</div>
+            <div class="tagline">engineering • research • robotics • builds</div>
+          </div>
+
+          <nav class="nav" aria-label="Primary">
+            <a href="#projects">projects</a>
+            <a href="#writing">writing</a>
+            <a href="#about">about</a>
+            <a href="#contact">contact</a>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="panel" tabindex="-1">
+        <section class="section" id="projects">
+          <div class="section-title">[ projects ]</div>
+
+          <div class="toolbar" role="group" aria-label="Project controls">
+            <label class="field">
+              <span>search:</span>
+              <input id="q" type="text" placeholder="type to filter…" autocomplete="off" />
+            </label>
+
+            <label class="field">
+              <span>tag:</span>
+              <select id="tag">
+                <option value="">all</option>
+                <option value="biomed">biomed</option>
+                <option value="robotics">robotics</option>
+                <option value="software">software</option>
+                <option value="hardware">hardware</option>
+                <option value="research">research</option>
+              </select>
+            </label>
+
+            <button id="reset" type="button">reset</button>
+          </div>
+
+          <div id="list" class="list" aria-live="polite"></div>
+
+          <details class="hint">
+            <summary>keyboard shortcuts</summary>
+            <pre>
+/  focus search
+g  go to projects
+a  go to about
+c  go to contact
+?  toggle this help
+            </pre>
+          </details>
+        </section>
+
+        <section class="section" id="writing">
+          <div class="section-title">[ writing ]</div>
+          <pre class="block">
+- coming soon: short project notes + build logs
+          </pre>
+        </section>
+
+        <section class="section" id="about">
+          <div class="section-title">[ about ]</div>
+          <pre class="block">
+I build things at the intersection of hardware + software + healthcare.
+This site is intentionally lightweight: fast, readable, and keyboard-first.
+          </pre>
+        </section>
+
+        <section class="section" id="contact">
+          <div class="section-title">[ contact ]</div>
+          <pre class="block">
+email: tarunmalarvasan@gmail.com
+github: https://github.com/your-handle
+linkedin: https://linkedin.com/in/your-handle
+          </pre>
+        </section>
+      </main>
+
+      <footer class="panel foot" aria-label="Footer">
+        <div class="status">
+          <span id="clock" aria-label="Local time"></span>
+          <span class="sep">|</span>
+          <span>© <span id="year"></span> Tarun</span>
+          <span class="sep">|</span>
+          <span>built like a terminal</span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
