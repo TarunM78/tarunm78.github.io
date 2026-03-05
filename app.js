@@ -12,7 +12,7 @@ const projects = [
     title: "assistive navigation (camera + haptics)",
     year: "2025 – 2026",
     tags: ["software", "hardware", "biomed"],
-    desc: "Real-time detection + floor-segmentation and path-planning; haptic motors via microcontroller; tts for alerts.",
+    desc: "real-time detection + floor-segmentation and path-planning; haptic motors via microcontroller; tts for alerts.",
     links: [
       { label: "path_planning_demo", href: "https://drive.google.com/file/d/1dqa5QphN3HUc9oy6NQQ5Yq59y1JCHGTj/view?usp=sharing" },
       { label: "obj_detect_demo", href: "https://drive.google.com/file/d/1B6cWBmWnDPZSImrHdA1Kpx8dStLzJKKX/view?usp=sharing" },
