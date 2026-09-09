@@ -479,11 +479,11 @@ button.afig__ctl {
 }
 
 /* Non-photo media is labelled, so a computational project cannot read as
-   photographed hardware. It stays at the regular weight: the drawing's name is
-   the thing being read, and what it is drawn in is the note after it. */
+   photographed hardware. It takes the caption's weight: name and medium read
+   as one line rather than the second half trailing off lighter than the
+   first. */
 .afig__type {
   margin-top: var(--sp-2);
-  font-weight: 400;
 }
 
 /* --- Stacked layout: below 1024px --------------------------------------- */

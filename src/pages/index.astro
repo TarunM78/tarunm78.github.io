@@ -102,12 +102,13 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     <p class="role__org">{role.data.org}</p>
 
     {/* The same treatment the drawing above it gets, because it is the same
-        kind of thing: the work, shown. No caption — the role and the lab are
-        already stated a line above, and the figure would only repeat them. No
-        callouts either; the role carries none. */}
+        kind of thing: the work, shown. The caption names the machine rather
+        than repeating the role and the lab from the two lines above it. No
+        callouts; the role carries none. */}
     <AnnotatedFigure
       src={role.data.heroImage}
       alt={role.data.heroImageAlt ?? ''}
+      caption="Centipede robot"
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
