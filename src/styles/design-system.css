@@ -23,8 +23,12 @@
   --faint: #6e6e66;
   --faint-rule: #8a8a82;
 
-  --grid-minor: #dcdcd2;
-  --grid-major: #cfcfc3;
+  /* Ink at a stated percentage, so the number the spec asks for — "roughly
+     8%" — is readable here rather than buried in a hex value. It was #dcdcd2
+     and #cfcfc3, which compute to 12% and 18%: half again and twice what the
+     spec allows, and the ruling read as texture rather than as paper. */
+  --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
+  --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
 
   /* Line weights, not line colors. Drawings encode hierarchy in stroke weight. */
   --lw-thin: 0.5px;
@@ -80,8 +84,8 @@
     --reference: #7fb2f0;
     --faint: #8a9cb4;
     --faint-rule: rgb(200 216 236 / 0.35);
-    --grid-minor: rgb(200 216 236 / 0.09);
-    --grid-major: rgb(200 216 236 / 0.16);
+    --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
+    --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
   }
 }
 
@@ -92,8 +96,8 @@
   --reference: #7fb2f0;
   --faint: #8a9cb4;
   --faint-rule: rgb(200 216 236 / 0.35);
-  --grid-minor: rgb(200 216 236 / 0.09);
-  --grid-major: rgb(200 216 236 / 0.16);
+  --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
+  --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 [data-theme="light"] {
@@ -103,8 +107,8 @@
   --reference: #2a4e8c;
   --faint: #6e6e66;
   --faint-rule: #8a8a82;
-  --grid-minor: #dcdcd2;
-  --grid-major: #cfcfc3;
+  --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
+  --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 @media (min-width: 768px) {
@@ -517,6 +521,18 @@ button.afig__ctl {
      and after it, since the two carry the same weight and the later one wins. */
   .lead .afig__stage {
     width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.76), 1000px);
+  }
+
+  /* A figure with no callouts has no labels to hold, so it takes the whole
+     span the annotated one occupies — drawing plus both gutters — rather than
+     sitting at the width of a drawing that needs room either side. The two
+     still cover the same width of sheet; on the bare one all of it is drawing.
+     The figure box stays in the content column, so the caption beneath still
+     lines up with the summary and the meta above. */
+  .lead .afig:not(.afig--gutters) .afig__stage {
+    --lead-span: min(calc(100vw - 2 * var(--sheet-margin)), 1760px);
+    width: var(--lead-span);
+    margin-inline: calc((100% - var(--lead-span)) / 2);
   }
 
   .afig__leaders-wide {
@@ -1575,98 +1591,6 @@ button.afig__ctl {
    start below the fold. The subtracted height is the head band, the card and the
    body's top padding — approximate on purpose, because the only thing that has
    to hold is that the drawing does not load into view. */
-.titlepage {
-  min-height: calc(100svh - 24rem);
-  display: flex;
-  align-items: flex-end;
-}
-
-@media (max-width: 639px) {
-  .titlepage {
-    min-height: 34svh;
-  }
-}
-
-/* The scroll cue. It is a link to the first section, not a decoration: the
-   affordance is that clicking it does what it says. The rule is drawn the way a
-   leader is — a line that goes somewhere — and the arrow is the only glyph on
-   the site used as a mark rather than a word. */
-.scrollcue {
-  display: grid;
-  grid-template-columns: auto minmax(var(--sp-5), 1fr) auto;
-  grid-template-areas:
-    'head rule arrow'
-    'text text  text';
-  align-items: center;
-  gap: var(--sp-2) var(--sp-4);
-  width: 100%;
-  padding-bottom: var(--sp-3);
-  border-bottom: var(--lw-thin) solid var(--faint-rule);
-  color: var(--ink);
-  text-decoration: none;
-}
-
-/* The cue is the only instruction on the sheet, and it was set at the same
-   12px as the drawing metadata around it — an instruction that whispers is not
-   an instruction. Head, arrow and line all step up. */
-.scrollcue__head {
-  grid-area: head;
-  font-size: var(--t-h50);
-}
-
-.scrollcue__rule {
-  grid-area: rule;
-  height: 0;
-  border-top: var(--lw-med) solid var(--ink);
-}
-
-.scrollcue__text {
-  grid-area: text;
-  max-width: var(--measure-sans);
-  color: var(--faint);
-  font-size: var(--t-h50);
-}
-
-/* The one animated thing on the site. It nudges once a second toward the content
-   it points at, which is the whole job of a scroll cue; anyone who has asked not
-   to see motion gets a static arrow instead. */
-.scrollcue__arrow {
-  grid-area: arrow;
-  font-size: var(--t-h140);
-  line-height: 1;
-  color: var(--annotation);
-  animation: cue-nudge 1.8s ease-in-out infinite;
-}
-
-@keyframes cue-nudge {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(0.34em);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scrollcue__arrow {
-    animation: none;
-  }
-}
-
-.scrollcue:hover,
-.scrollcue:focus-visible {
-  border-bottom-color: var(--reference);
-}
-
-.scrollcue:hover .scrollcue__head,
-.scrollcue:focus-visible .scrollcue__head,
-.scrollcue:hover .scrollcue__text,
-.scrollcue:focus-visible .scrollcue__text {
-  color: var(--reference);
-}
-
 /* -------------------------------------------------------------------------
    12a. LEAD SECTIONS — the front of one index, on the home sheet
    ------------------------------------------------------------------------- */
@@ -1694,7 +1618,14 @@ button.afig__ctl {
   margin-top: var(--sp-5);
 }
 
+/* One button sits left; a second, when there is one, goes to the far edge —
+   the way into the drawing on one side, the way out to the set on the other. */
 .lead__more {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
   margin-top: var(--sp-5);
 }
 
@@ -1856,6 +1787,7 @@ button.afig__ctl {
 }
 
 .idblock__detail p {
+  font-size: var(--t-h35);
   line-height: var(--grid-step-minor);
   /* These are metadata lines, not prose, so the 72ch reading measure does not
      apply — it was clipping the third line into a second row and putting the

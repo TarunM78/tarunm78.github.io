@@ -2,11 +2,11 @@
 /**
  * Sheet 1 — Home.
  *
- * A title sheet that runs into the package. The first screen carries the
- * essentials only — the name at display size and the index in the head band —
- * because a full annotated drawing on load is a wall. Nothing on this sheet is
- * pinned: the name card scrolls away like everything else, and the head band is
- * what stays.
+ * A title sheet that runs into the package. The name card sits at the top and
+ * the first drawing follows it directly — the sheet used to hold a screen of
+ * empty paper below the name with a cue at the bottom telling you to scroll,
+ * which is a page asking to be read in a particular order rather than simply
+ * being read. Nothing here is pinned; the head band is what stays.
  *
  * Below the fold it is a continuous scroll through the front of each index, one
  * section per sheet it leads to: the current drawing, then the current role —
@@ -19,7 +19,7 @@ import Sheet from '../layouts/Sheet.astro';
 import AnnotatedFigure from '../components/AnnotatedFigure.astro';
 import SectionMarker from '../components/SectionMarker.astro';
 import PartNumber from '../components/PartNumber.astro';
-import { getExperience, isCurrent, period } from '../lib/sheets';
+import { getExperience, isCurrent, period, projectHref } from '../lib/sheets';
 
 // The hero is PN-001: the current work, and the only drawing on this sheet.
 const hero = await getEntry('projects', 'planetary-actuator');
@@ -44,20 +44,9 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     <div class="idblock__detail">
       <p class="meta meta--ink">Mechanical engineering, Penn State</p>
       <p class="meta meta--ink">Robotics and humanoids — actuators, mechanisms, perception</p>
-      <p class="meta meta--ink">Currently researching @ Locomotion in Biology and Robotics Lab</p>
+      <p class="meta meta--ink">Researching at the Locomotion in Biology and Robotics Lab</p>
     </div>
   </div>
-
-  <section class="titlepage">
-    <a class="scrollcue" href="#current-work">
-      <span class="scrollcue__head meta meta--ink">Scroll</span>
-      <span class="scrollcue__rule" aria-hidden="true"></span>
-      <span class="scrollcue__text">
-        Two sections follow: the drawing on the bench, then where the work is done.
-      </span>
-      <span class="scrollcue__arrow" aria-hidden="true">&darr;</span>
-    </a>
-  </section>
 
   <SectionMarker letter="A" id="current-work" label="Current work" />
 
@@ -81,7 +70,13 @@ if (!role) throw new Error('Home expects at least one experience entry.');
 
     <p class="lead__summary">{hero.data.summary}</p>
 
+    {/* Into this drawing on the left, out to the rest of the set on the right:
+        the specific thing first, since it is the thing already on screen. */}
     <p class="lead__more">
+      <a class="sheetbutton" href={projectHref(hero.id)}>
+        <span>Learn more</span>
+        <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
+      </a>
       <a class="sheetbutton" href="/projects/">
         <span>All projects</span>
         <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
