@@ -475,12 +475,15 @@ button.afig__ctl {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
+  font-weight: 600;
 }
 
 /* Non-photo media is labelled, so a computational project cannot read as
-   photographed hardware. */
+   photographed hardware. It stays at the regular weight: the drawing's name is
+   the thing being read, and what it is drawn in is the note after it. */
 .afig__type {
   margin-top: var(--sp-2);
+  font-weight: 400;
 }
 
 /* --- Stacked layout: below 1024px --------------------------------------- */
@@ -802,7 +805,12 @@ button.afig__ctl {
      --head-h is what the body clears and what the identity strip pins beneath.
      It is a fixed height rather than a measured one, so both can rely on it. */
   :root {
-    --head-h: 3.5rem;
+    /* 60px, not 56: the sheet clears the band with --head-h + --sp-5, and that
+       sum has to be a multiple of the 20px grid step or every line of type on
+       every sheet sits at a different height against the ruling. At 3.5rem it
+       came to 96px and the type drifted; at 3.75rem it is 100px, the band is
+       exactly three grid rows, and the content below starts on a rule. */
+    --head-h: 3.75rem;
   }
 
   .sheet__head {
@@ -1077,8 +1085,12 @@ button.afig__ctl {
   color: var(--reference);
 }
 
+/* The label is what the section actually is; "SECTION A-A" is only its
+   designator. Set at 600 — the heaviest weight the mono face ships, so nothing
+   here is a synthesised bold. */
 .secmark__label {
   color: var(--faint);
+  font-weight: 600;
 }
 
 /* -------------------------------------------------------------------------
@@ -1831,19 +1843,28 @@ button.afig__ctl {
   color: var(--ink);
 }
 
+/* One line per grid row.
+   The three lines ran at a 22.4px pitch — 14.4px of leading plus an 8px gap —
+   against a 20px grid, so each one landed differently against the ruling and
+   the third had a line straight through it. Set to the grid step with no gap,
+   each line occupies exactly one row of the sheet and sits clear of the rules
+   either side of it, which is how type on ruled paper is supposed to behave. */
 .idblock__detail {
   display: grid;
-  gap: var(--sp-2);
+  gap: 0;
   max-width: 62ch;
 }
 
 .idblock__detail p {
-  margin: 0;
+  line-height: var(--grid-step-minor);
+  /* These are metadata lines, not prose, so the 72ch reading measure does not
+     apply — it was clipping the third line into a second row and putting the
+     block back off the grid. The block's own 62ch is the measure here. */
+  max-width: none;
 }
 
-/* The one line here that really is status metadata. */
-.idblock__status {
-  color: var(--faint);
+.idblock__detail p {
+  margin: 0;
 }
 
 @media (min-width: 640px) {
