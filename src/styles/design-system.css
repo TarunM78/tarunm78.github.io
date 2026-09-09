@@ -1454,6 +1454,23 @@ button.afig__ctl {
   width: 100%;
 }
 
+/* On a phone four columns leave the title perhaps forty characters of room, and
+   every project title wraps to three or four lines — the index becomes taller
+   than the drawings it indexes. Two of the four columns go, and they are the
+   two already printed on the card each row links to: the sub-sheet number and
+   the rev. It is the trade the head band makes at its own squeeze, dropping the
+   quietest data first rather than letting the whole thing buckle. */
+@media (max-width: 639px) {
+  .seriesindex__no,
+  .seriesindex__rev,
+  .seriesindex th:first-child,
+  .seriesindex th:last-child,
+  .seriesindex td:first-child,
+  .seriesindex td:last-child {
+    display: none;
+  }
+}
+
 .entryindex__name {
   display: block;
 }
