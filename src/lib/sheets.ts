@@ -29,7 +29,6 @@ export interface SheetRef {
   number: number;
   title: string;
   href: string;
-  rev: string;
 }
 
 export interface SubSheetRef {
@@ -38,16 +37,15 @@ export interface SubSheetRef {
   partNumber: string;
   title: string;
   href: string;
-  rev: string;
 }
 
 /** The main index: the four sheets that get a number of their own. */
 export const SHEETS: SheetRef[] = [
-  { number: 1, title: 'Home', href: '/', rev: 'A' },
-  { number: 2, title: 'Projects', href: '/projects/', rev: 'A' },
-  { number: 3, title: 'Experience', href: '/experience/', rev: 'C' },
-  { number: 4, title: 'Notebook', href: '/notebook/', rev: 'A' },
-  { number: 5, title: 'About', href: '/about/', rev: 'A' },
+  { number: 1, title: 'Home', href: '/' },
+  { number: 2, title: 'Projects', href: '/projects/' },
+  { number: 3, title: 'Experience', href: '/experience/' },
+  { number: 4, title: 'Notebook', href: '/notebook/' },
+  { number: 5, title: 'About', href: '/about/' },
 ];
 
 /** Sheet number of the projects sheet, which the detail series hangs off. */
@@ -75,7 +73,6 @@ export async function getProjectSheets(): Promise<SubSheetRef[]> {
     partNumber: p.data.partNumber,
     title: p.data.title,
     href: projectHref(p.id),
-    rev: p.data.rev,
   }));
 }
 

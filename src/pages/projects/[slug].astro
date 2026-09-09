@@ -56,13 +56,12 @@ const next = projects[index + 1];
   sheet={label}
   sheetTitle={data.title}
   sheetNumber={2}
-  rev={data.rev}
   revDate={data.started ?? 'TODO'}
   description={data.summary}
 >
   <section class="sheets" aria-labelledby="project-heading">
     <p class="project__pn">
-      <PartNumber partNumber={data.partNumber} rev={data.rev} />
+      <PartNumber partNumber={data.partNumber} />
       <span class:list={[data.status === 'shipped' ? 'tag-state' : 'meta']}>
         {STATUS[data.status]}
       </span>
@@ -89,7 +88,6 @@ const next = projects[index + 1];
     }
     titleBlock={{
       partNumber: data.partNumber,
-      rev: data.rev,
       title: data.title,
       started: data.started,
     }}

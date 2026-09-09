@@ -7,15 +7,17 @@
  * reaching PN-005 meant scrolling past four complete drawings, their callouts
  * and their notes. That is not how a drawing package is read. You look at the
  * set, you pull the sheet you want, and the rest stays in the stack — which is
- * what this is now: an index, then the drawings as a contact sheet, each with a
- * way through to its own sheet.
+ * what this is now: the drawings as a contact sheet, each with a way through to
+ * its own sheet. There was a table of the series above them, which said the
+ * sheet number, part number, title and rev of every card printed directly
+ * beneath it — an index of a page you can already see in full.
  *
  * Callouts are deliberately absent here. A callout needs a 38% gutter either
  * side for its label, and at grid width there is no gutter — so an annotated
  * drawing at this size would either crush its labels or drop them silently.
  * The annotation is on the sheet it belongs to.
  *
- * So is the title block. Every field in it — part, rev, scale, drawn, started,
+ * So is the title block. Every field in it — part, scale, drawn, started,
  * type — is either already printed above the drawing on this card or waiting on
  * the sheet the card links to, and docking a block into the corner of a preview
  * costs a third of the width of the one thing the preview is for. The border
@@ -28,12 +30,10 @@
  */
 import Sheet from '../../layouts/Sheet.astro';
 import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
-import DataTable from '../../components/DataTable.astro';
 import PartNumber from '../../components/PartNumber.astro';
-import { getProjects, getProjectSheets, projectHref, subSheetNo } from '../../lib/sheets';
+import { getProjects, projectHref, subSheetNo } from '../../lib/sheets';
 
 const projects = await getProjects();
-const series = await getProjectSheets();
 
 /** Part numbers still in build, so the index can mark them the way sheet 03 marks a current role. */
 const activePNs = new Set(
@@ -55,31 +55,11 @@ const isTall = (p: (typeof projects)[number]) =>
   sheet="02"
   sheetTitle="Projects"
   sheetNumber={2}
-  rev="A"
   revDate="2026-09-09"
   description="Every project sheet: mechanisms, perception systems and medical devices, in part-number order."
 >
   <section class="sheets" aria-labelledby="series-heading">
     <h1 id="series-heading" class="sheettitle">Projects</h1>
-    <p class="sheetlede">
-      The detail series under sheet 02, in part-number order. PN-001 is the current work.
-      Each drawing has a sheet of its own.
-    </p>
-
-    <DataTable columns={['Sht', 'Part', 'Title', 'Rev']} class="seriesindex">
-      {
-        series.map((s) => (
-          <tr class:list={[activePNs.has(s.partNumber) && 'is-current']}>
-            <td class="meta meta--ink seriesindex__no">{s.label}</td>
-            <td class="meta meta--ink seriesindex__pn">{s.partNumber}</td>
-            <td class="seriesindex__title">
-              <a href={s.href}>{s.title}</a>
-            </td>
-            <td class="meta meta--ink seriesindex__rev">{s.rev}</td>
-          </tr>
-        ))
-      }
-    </DataTable>
   </section>
 
   <ol class="sheetset" aria-label="Project sheets">
@@ -88,7 +68,7 @@ const isTall = (p: (typeof projects)[number]) =>
         <li class:list={['sheetcard', isTall(p) && 'sheetcard--tall']}>
           <p class="sheetcard__meta">
             <span class="meta meta--ink">{subSheetNo(i)}</span>
-            <PartNumber partNumber={p.data.partNumber} rev={p.data.rev} />
+            <PartNumber partNumber={p.data.partNumber} />
             <span class:list={[p.data.status === 'shipped' ? 'tag-state' : 'meta']}>
               {STATUS[p.data.status]}
             </span>

@@ -15,8 +15,8 @@
  * A title block belongs to a drawing, not to a viewport, so it lives on the
  * drawings themselves — see AnnotatedFigure's `titleBlock` prop, where the
  * border and the block meet at a corner the way they do on a real sheet. What
- * that block used to carry at page level, the sheet's own number, rev and
- * date, is in the head strip instead: still stated, stated once.
+ * that block used to carry at page level, the sheet's own number and date, is
+ * in the head strip instead: still stated, stated once.
  */
 import { Font } from 'astro:assets';
 import SheetIndex from '../components/SheetIndex.astro';
@@ -26,14 +26,13 @@ import '../styles/global.css';
 interface Props {
   /**
    * Printed in the identity strip. Omit it for a page that is not part of the
-   * drawing package — it then states its title and rev and claims no number,
+   * drawing package — it then states its title alone and claims no number,
    * which is the honest thing for a page the index does not list.
    */
   sheet?: string;
   sheetTitle: string;
   /** Which row the index marks as current. 0 for a sheet outside the index. */
   sheetNumber?: number;
-  rev: string;
   revDate: string;
   description?: string;
   /** Blog posts drop the grid to near-invisible and go quiet. */
@@ -47,7 +46,6 @@ const {
   sheet,
   sheetTitle,
   sheetNumber = 0,
-  rev,
   revDate,
   description,
   quiet = false,
@@ -80,7 +78,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <p class="sheet__ident">
           {sheet && <span class="meta meta--ink">Sheet {sheet}</span>}
           <span class:list={['meta', !sheet && 'meta--ink']}>{sheetTitle}</span>
-          <span class="meta">Rev {rev}</span>
           <span class="meta sheet__ident-date">{revDate}</span>
         </p>
 

@@ -5,7 +5,7 @@
  * its outer edges meet the drawing border exactly, which is where a title block
  * has always gone and the only relationship that justifies drawing the border.
  *
- * It identifies the drawing, not the drafter: part number, title, rev, scale,
+ * It identifies the drawing, not the drafter: part number, title, scale,
  * medium, and initials in the DRAWN field. The full name is stated once, in
  * the sheet's identity strip; repeating it on every drawing would be five
  * copies of the same fact.
@@ -19,7 +19,6 @@ import TodoMarker from './TodoMarker.astro';
 
 interface Props {
   partNumber: string;
-  rev: string;
   title: string;
   /** Year or month the part was started. Renders a TODO field when unset. */
   started?: string;
@@ -32,7 +31,6 @@ interface Props {
 
 const {
   partNumber,
-  rev,
   title,
   started,
   drawnBy = 'TM',
@@ -50,8 +48,6 @@ const {
       <dd class="meta meta--ink">{partNumber}</dd>
     </div>
     <div class="titleblock__field">
-      <dt class="meta meta--sm">Rev</dt>
-      <dd class="meta meta--ink">{rev}</dd>
     </div>
     <div class="titleblock__field">
       <dt class="meta meta--sm">Scale</dt>

@@ -1,6 +1,6 @@
 ---
 /**
- * The navigation, rendered as a sheet index: sheet number, title, rev.
+ * The navigation, rendered as a sheet index: sheet number and title.
  *
  * One horizontal row at the right of the head strip. It was a bordered block
  * down the right-hand side, which cost a 20rem column of every sheet for four
@@ -64,7 +64,6 @@ const SERIES_PARENT = 2;
               <a href={s.href}>{s.title}</a>
             )}
           </span>
-          <span class="meta sheetindex__rev">{s.rev}</span>
 
           {s.number === SERIES_PARENT && (
             <ul class="subindex" aria-label="Detail series">

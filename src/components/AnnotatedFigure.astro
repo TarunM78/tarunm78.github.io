@@ -50,7 +50,6 @@ import { resolveCallouts, nextFigureId, type CalloutInput } from '../lib/callout
 /** Fields for the drawing's own title block. Omit it and the figure is bare. */
 interface TitleBlockData {
   partNumber: string;
-  rev: string;
   title: string;
   started?: string;
   drawnBy?: string;
@@ -67,7 +66,13 @@ interface Props {
   /** Set on the home hero only. Everything else lazy-loads. */
   eager?: boolean;
   sizes?: string;
-  /** Aspect ratio (width / height) used by the pending plate. */
+  /**
+   * Aspect ratio (width / height) of the pending plate. Passed as a custom
+   * property rather than an inline `aspect-ratio`, so a frame that sizes the
+   * plate itself — a contact-sheet card, say — can override it. An inline
+   * declaration cannot be overridden by a stylesheet, and the plate was
+   * spilling past the drawing border because of it.
+   */
   aspect?: number;
   /** What is still needed, shown on the pending plate. */
   pendingNote?: string;
@@ -159,7 +164,7 @@ const zoom =
               aria-details={hasCallouts ? listId : undefined}
             />
           ) : (
-            <div class="afig__plate" style={`aspect-ratio:${aspect}`}>
+            <div class="afig__plate" style={`--afig-aspect:${aspect}`}>
               <p class="meta meta--ink">Image pending</p>
               {pendingNote && <p class="afig__platenote meta">{pendingNote}</p>}
             </div>
@@ -241,7 +246,6 @@ const zoom =
         <div class="afig__titleblock">
           <TitleBlock
             partNumber={titleBlock.partNumber}
-            rev={titleBlock.rev}
             title={titleBlock.title}
             started={titleBlock.started}
             drawnBy={titleBlock.drawnBy}

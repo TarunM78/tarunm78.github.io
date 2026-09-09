@@ -35,7 +35,6 @@ if (!role) throw new Error('Home expects at least one experience entry.');
   sheet="01"
   sheetTitle="Home"
   sheetNumber={1}
-  rev="A"
   revDate="2026-09-09"
   description="Tarun Malarvasan — mechanical engineering at Penn State, focused on robotics and humanoids."
 >
@@ -64,7 +63,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
 
   <section class="lead">
     <p class="lead__meta">
-      <PartNumber partNumber={hero.data.partNumber} rev={hero.data.rev} />
+      <PartNumber partNumber={hero.data.partNumber} />
       <span class="meta">Sheet 02-1</span>
     </p>
 

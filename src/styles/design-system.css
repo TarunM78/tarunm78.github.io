@@ -168,7 +168,6 @@ body,
   --grid-major: color-mix(in srgb, var(--ink) 4%, transparent);
 }
 
-
 h1,
 h2,
 h3,
@@ -898,7 +897,6 @@ button.afig__ctl {
   display: none;
 }
 
-
 /* A fixed overlay rather than a modal <dialog>. See afig-viewer.ts: the top
    layer does not paint a transformed, blended drawing, and `inert` on the
    sheet behind gives the containment <dialog> would have. */
@@ -1167,12 +1165,6 @@ button.afig__ctl {
   color: var(--ink);
 }
 
-/* The rev letter is the quietest thing in the row: it is there because a sheet
-   index states it, not because anyone navigates by it. */
-.sheetindex__rev {
-  font-size: var(--t-h18);
-}
-
 /* Between 1024 and 1280 six index items and the sheet's identity do not fit one
    row. Two things give way rather than the fixed band itself: the rev letters and
    the revision date go — they are the quietest data in the band, the sheet's own
@@ -1193,11 +1185,6 @@ button.afig__ctl {
   /* Keeps the index hard right whether it shares the row or takes its own. */
   .sheetindex {
     margin-left: auto;
-  }
-
-  .sheetindex__rev,
-  .sheet__ident-date {
-    display: none;
   }
 
   .sheetindex__list {
@@ -1350,6 +1337,8 @@ button.afig__ctl {
   object-fit: contain;
 }
 
+/* Inside a card the frame sets the shape, so the plate fills it rather than
+   keeping a ratio of its own. */
 .sheetcard__fig .afig__plate {
   width: 100%;
   height: 100%;
@@ -1437,42 +1426,6 @@ button.afig__ctl {
 
 .seriesnav__up {
   align-self: center;
-}
-
-/* --- Project detail series, notebook and revision tables --- */
-
-.seriesindex__no,
-.seriesindex__pn,
-.seriesindex__rev,
-.entryindex__no {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.seriesindex__title,
-.entryindex__title {
-  width: 100%;
-}
-
-/* On a phone four columns leave the title perhaps forty characters of room, and
-   every project title wraps to three or four lines — the index becomes taller
-   than the drawings it indexes. Two of the four columns go, and they are the
-   two already printed on the card each row links to: the sub-sheet number and
-   the rev. It is the trade the head band makes at its own squeeze, dropping the
-   quietest data first rather than letting the whole thing buckle. */
-@media (max-width: 639px) {
-  .seriesindex__no,
-  .seriesindex__rev,
-  .seriesindex th:first-child,
-  .seriesindex th:last-child,
-  .seriesindex td:first-child,
-  .seriesindex td:last-child {
-    display: none;
-  }
-}
-
-.entryindex__name {
-  display: block;
 }
 
 .entryindex__summary {
@@ -1712,10 +1665,6 @@ button.afig__ctl {
   display: inline-flex;
   align-items: baseline;
   gap: var(--sp-3);
-}
-
-.pn__rev {
-  color: var(--faint);
 }
 
 .lead__summary {
@@ -2103,6 +2052,7 @@ button.afig__ctl {
    ------------------------------------------------------------------------- */
 
 .afig__plate {
+  aspect-ratio: var(--afig-aspect, 1.6);
   display: grid;
   place-content: end start;
   gap: var(--sp-2);

@@ -1,15 +1,17 @@
 ---
 /**
- * PN-0XX and its revision letter. Projects only, never anything else.
+ * PN-0XX. Projects only, never anything else.
+ *
+ * It used to print the revision letter beside the number. Every project on the
+ * site is at Rev A and has been since it was written, so the letter was the
+ * same character repeated down every sheet — a field that never varies is not
+ * carrying information, it is decoration wearing a drawing's clothes.
  */
 interface Props {
   partNumber: string;
-  rev: string;
   class?: string;
 }
-const { partNumber, rev, class: className } = Astro.props;
+const { partNumber, class: className } = Astro.props;
 ---
 
-<span class:list={['meta', 'meta--ink', 'pn', className]}>
-  {partNumber}<span class="pn__rev">Rev {rev}</span>
-</span>
+<span class:list={['meta', 'meta--ink', 'pn', className]}>{partNumber}</span>
