@@ -1,0 +1,41 @@
+---
+partNumber: PN-002
+rev: A
+title: Low-cost bimanual humanoid arm
+started: '2026'
+status: active
+attribution: solo
+summary: A torso-mounted bimanual arm for imitation-learning data collection, designed so every joint stays backdrivable and every actuator stays cheap.
+heroImageType: photo
+heroImageAlt: Orthographic side view of one assembled joint module of the humanoid arm
+placeholder: false
+callouts:
+  - x: 0.30
+    y: 0.27
+    text: GIM6010-8 · 8:1 PLANETARY · 11 N·m
+  - x: 0.67
+    y: 0.34
+    text: GIM8108-8, SHOULDER JOINT
+  - x: 0.50
+    y: 0.70
+    text: MKS XDRIVE, FOC CONTROLLER
+  - x: 0.15
+    y: 0.55
+    text: 200 mm UPPER LINK
+notes:
+  - text: Link lengths are 200mm shoulder to elbow, 100mm elbow to wrist, 200mm wrist to gripper.
+  - text: Secondary encoders give absolute position at power-up, so there is no homing routine.
+  - text: Data collection uses UMI with a T265 and an OAK-D Lite.
+  - text: 'TODO: current build status.'
+tags: [mechanisms, actuators, imitation-learning]
+---
+
+A torso-mounted bimanual arm built for imitation-learning data collection, designed around
+the constraint that every joint stays backdrivable and each actuator stays cheap. Six
+degrees of freedom per arm plus a servo gripper, roughly 600mm reach, targeting a 1 to 2 kg
+payload. Four GIM6010-8 actuators handle the distal joints and two GIM8108-8 carry the
+shoulder, with integrated 8:1 planetary reduction rather than a higher gear ratio, since
+raising the ratio is the fast way to lose backdrivability. One arm gets built and working
+before parts are ordered for the second.
+
+TODO: content

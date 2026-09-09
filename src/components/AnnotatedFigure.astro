@@ -1,0 +1,280 @@
+---
+/**
+ * An image plus its callouts, leader lines and caption.
+ *
+ * Host for the callout coordinate space. Two layouts, one markup tree, no JS:
+ *
+ *   >= 1024px  labels sit in gutters either side, each reached by a two-segment
+ *              leader line (angled shank, then horizontal shoulder).
+ *   <  1024px  labels stack below as a numbered list; the on-image leaders
+ *              shorten to stubs rather than disappearing, and balloon numbers
+ *              on the anchors carry the dot-to-text mapping.
+ *
+ * The gutter label and the list entry are the same element. See Callout.astro
+ * for why that matters: it is what lets a callout be a control at all.
+ *
+ * Two content states. With `src`, it renders the optimised image. Without one,
+ * it renders a pending plate at the same aspect ratio and keeps the identical
+ * coordinate space, so callouts that already have coordinates still show in
+ * their real positions. No stand-in image is fabricated for hardware that has
+ * not been photographed.
+ *
+ * Callouts with no coordinates appear in the list only — never given invented
+ * positions.
+ *
+ * Cross-highlighting is CSS, driven by `data-callout`: one integer shared by a
+ * leader path, its anchor dot and its label, which is the whole join. Pointing
+ * at any of the three lights all three and drops the rest of the figure back.
+ * Nothing about the highlight changes a box — only stroke, colour and opacity —
+ * so it cannot cost a reflow no matter how many figures a sheet carries.
+ *
+ * With a `titleBlock`, the figure becomes a drawing in the full sense: a border
+ * around the whole thing, and the title block docked into its lower-right
+ * corner so the two meet exactly. The block sits in a band below the image
+ * rather than over it, because the right-hand gutter is where callout labels
+ * live and a block laid over them would collide with whichever label happened
+ * to sit low. This is the only border on the site — nothing draws one around
+ * the page.
+ *
+ * Accessibility: the image carries `aria-details` pointing at the callout list,
+ * so the drawing and the notes about it are programmatically tied rather than
+ * merely adjacent. Each label states where on the drawing its anchor sits, in
+ * words. The dots and balloons stay `aria-hidden` — they are a second rendering
+ * of the label text, and the label is the copy that gets read.
+ */
+import { Image, getImage } from 'astro:assets';
+import Callout from './Callout.astro';
+import TitleBlock from './TitleBlock.astro';
+import { resolveCallouts, nextFigureId, type CalloutInput } from '../lib/callouts';
+
+/** Fields for the drawing's own title block. Omit it and the figure is bare. */
+interface TitleBlockData {
+  partNumber: string;
+  rev: string;
+  title: string;
+  started?: string;
+  drawnBy?: string;
+  scale?: string;
+}
+
+interface Props {
+  src?: ImageMetadata;
+  alt?: string;
+  callouts?: CalloutInput[];
+  caption?: string;
+  /** Non-photo media is labelled so a computational project cannot read as hardware. */
+  imageType?: 'photo' | 'render' | 'drawing';
+  /** Set on the home hero only. Everything else lazy-loads. */
+  eager?: boolean;
+  sizes?: string;
+  /** Aspect ratio (width / height) used by the pending plate. */
+  aspect?: number;
+  /** What is still needed, shown on the pending plate. */
+  pendingNote?: string;
+  /** Present: dock a title block into the drawing's lower-right corner. */
+  titleBlock?: TitleBlockData;
+  /**
+   * Draw the sheet border. Defaults to whether there is a title block, since
+   * the two normally arrive together — a block hangs off a border. A preview
+   * wants the border without the block: the fields are on the sheet the
+   * preview links to, and repeating them here only costs the drawing room.
+   */
+  framed?: boolean;
+  /** Stable id prefix. Pass a part number where there is one. */
+  figureId?: string;
+  /**
+   * Offer the detail viewer. Opt-in, because it only makes sense where the
+   * drawing is already at full sheet width — on a contact-sheet card the
+   * drawing is a thumbnail and "view full sheet" would mean the page it links
+   * to, not an overlay.
+   */
+  zoom?: boolean;
+  class?: string;
+}
+
+const {
+  src,
+  alt = '',
+  callouts = [],
+  caption,
+  imageType = 'photo',
+  eager = false,
+  sizes = '(min-width: 1024px) 56vw, 100vw',
+  aspect = 1.6,
+  pendingNote,
+  titleBlock,
+  framed = Astro.props.titleBlock !== undefined,
+  figureId,
+  zoom: zoomable = false,
+  class: className,
+} = Astro.props;
+
+const resolved = resolveCallouts(callouts);
+const placed = resolved.filter((c) => c.placed);
+const hasCallouts = resolved.length > 0;
+const hasPlaced = placed.length > 0;
+
+const idBase = (figureId ?? nextFigureId()).toLowerCase();
+const listId = `${idBase}-callouts`;
+
+/**
+ * The sheet at its own resolution, for the detail viewer.
+ *
+ * Only figures that asked for it: the home hero is an introduction and a
+ * contact-sheet card is a thumbnail, neither of which is a drawing to be
+ * examined. It is emitted as an attribute rather than a second <img>, so the
+ * bytes are not fetched until someone actually opens the drawing.
+ */
+const zoom =
+  src && zoomable
+    ? await getImage({ src, format: 'webp', quality: 82, width: src.width })
+    : undefined;
+---
+
+<figure
+  class:list={[
+    'afig',
+    !src && 'afig--pending',
+    src && `afig--${imageType}`,
+    framed && 'afig--sheet',
+    hasPlaced && 'afig--gutters',
+    className,
+  ]}
+  data-zoom-src={zoom?.src}
+>
+  <div class="afig__sheetbox">
+    <div class="afig__stage">
+      <div class="afig__imgwrap">
+        {
+          src ? (
+            <Image
+              class="afig__img"
+              src={src}
+              alt={alt}
+              widths={[480, 800, 1200, 1600]}
+              sizes={sizes}
+              loading={eager ? 'eager' : 'lazy'}
+              decoding={eager ? 'sync' : 'async'}
+              fetchpriority={eager ? 'high' : 'auto'}
+              aria-details={hasCallouts ? listId : undefined}
+            />
+          ) : (
+            <div class="afig__plate" style={`aspect-ratio:${aspect}`}>
+              <p class="meta meta--ink">Image pending</p>
+              {pendingNote && <p class="afig__platenote meta">{pendingNote}</p>}
+            </div>
+          )
+        }
+
+        {
+          hasPlaced && (
+            <svg
+              class="afig__leaders"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              {/*
+                Each leader is drawn twice: a wider stroke in the page ground
+                colour underneath, then the annotation stroke on top. Over the
+                gutters the halo is invisible, because the ground is the gutter.
+                Over the image it is what keeps a red line legible on a dark
+                photo, and a white one legible on a light photo in blueprint
+                mode. Hard-edged knockout, not a soft shadow.
+              */}
+              <g class="afig__leaders-wide">
+                <g class="afig__halo">
+                  {placed.map((c) => (
+                    <path d={c.widePath} data-callout={c.index} />
+                  ))}
+                </g>
+                <g class="afig__stroke">
+                  {placed.map((c) => (
+                    <path d={c.widePath} data-callout={c.index} />
+                  ))}
+                </g>
+              </g>
+              <g class="afig__leaders-narrow">
+                <g class="afig__halo">
+                  {placed.map((c) => (
+                    <path d={c.narrowPath} data-callout={c.index} />
+                  ))}
+                </g>
+                <g class="afig__stroke">
+                  {placed.map((c) => (
+                    <path d={c.narrowPath} data-callout={c.index} />
+                  ))}
+                </g>
+              </g>
+            </svg>
+          )
+        }
+
+        {
+          placed.map((c) => (
+            <span
+              class="afig__dot"
+              style={`--cx:${c.x}%;--cy:${c.y}%`}
+              data-callout={c.index}
+              aria-hidden="true"
+            >
+              <span class="afig__balloon">{c.index}</span>
+            </span>
+          ))
+        }
+
+        {
+          hasCallouts && (
+            <ol class="afig__list" id={listId} aria-label="Callouts">
+              {resolved.map((c) => (
+                <Callout callout={c} idBase={idBase} />
+              ))}
+            </ol>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      titleBlock && (
+        <div class="afig__titleblock">
+          <TitleBlock
+            partNumber={titleBlock.partNumber}
+            rev={titleBlock.rev}
+            title={titleBlock.title}
+            started={titleBlock.started}
+            drawnBy={titleBlock.drawnBy}
+            scale={titleBlock.scale}
+            imageType={imageType}
+          />
+        </div>
+      )
+    }
+  </div>
+
+  {/* Only a bare figure gets a caption. A framed one is a sheet: if it carries a
+      title block, the block states the medium, and if it does not it is a
+      preview whose own sheet states it. Either way a caption here repeats
+      something already printed a few inches away. */}
+  {
+    !framed &&
+      (caption || imageType !== 'photo') && (
+      <figcaption class="afig__caption">
+        {caption}
+        {imageType !== 'photo' && (
+          <span class="afig__type">
+            {caption ? ' — ' : ''}
+            {imageType}
+          </span>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+{/* Astro hoists and dedupes this into one module per page, however many
+    figures the sheet carries. */}
+<script>
+  import '../scripts/afig';
+</script>

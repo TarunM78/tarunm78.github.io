@@ -1,0 +1,85 @@
+---
+/**
+ * The navigation, rendered as a sheet index: sheet number, title, rev.
+ *
+ * One horizontal row at the right of the head strip. It was a bordered block
+ * down the right-hand side, which cost a 20rem column of every sheet for four
+ * links — the drawings are the content here, and they get that width back.
+ *
+ * Five rows. Photography is not one of them: it carries none of the drawing
+ * vocabulary and is reached from the About sheet instead.
+ *
+ * Sheet 02 carries the detail series under it, opening on hover or focus. That
+ * is what a drawing index does for a series: the main index stays one line, and
+ * the sheets under it are listed against the sheet they hang off. It is still
+ * not a nav bar and still not a hamburger; it is the sub-sheet listing that has
+ * been on the projects sheet all along, reachable from the band as well.
+ *
+ * The sub-sheet numbers are not repeated in the panel. The part number is the
+ * designator anyone actually reads, and 02-1 through 02-5 would only restate
+ * the row the panel is already hanging off.
+ *
+ * The panel is revealed by opacity rather than display, so its links stay in
+ * the tab order and focusing the first one is what opens it. Hiding it with
+ * `display: none` would make it hover-only, which is no navigation at all for
+ * a keyboard. Below 1024px it is display:none and costs nothing: the band
+ * wraps into the flow there, and the collection page lists the same sheets.
+ *
+ * Not a nav bar and not a hamburger. Titles stay in the body face: caps-mono is
+ * for metadata, never for link text.
+ */
+import { getSheets, getProjectSheets, sheetNo } from '../lib/sheets';
+
+interface Props {
+  /** Sheet number of the page this is rendered on, or 0 for none. */
+  current: number;
+}
+const { current } = Astro.props;
+const sheets = await getSheets();
+const series = await getProjectSheets();
+
+/** The sheet the detail series hangs off. */
+const SERIES_PARENT = 2;
+---
+
+<nav class="sheetindex" aria-label="Sheet index">
+  <ol class="sheetindex__list">
+    {
+      sheets.map((s) => (
+        <li
+          class:list={[
+            'sheetindex__row',
+            s.number === current && 'is-current',
+            s.number === SERIES_PARENT && 'has-series',
+          ]}
+        >
+          <span class="meta sheetindex__no">
+            {s.number === current && <span class="sheetindex__mark" aria-hidden="true" />}
+            {sheetNo(s.number)}
+          </span>
+          <span class="sheetindex__title">
+            {s.number === current ? (
+              <span aria-current="page">{s.title}</span>
+            ) : (
+              <a href={s.href}>{s.title}</a>
+            )}
+          </span>
+          <span class="meta sheetindex__rev">{s.rev}</span>
+
+          {s.number === SERIES_PARENT && (
+            <ul class="subindex" aria-label="Detail series">
+              {series.map((d) => (
+                <li class="subindex__row">
+                  <span class="meta meta--ink subindex__pn">{d.partNumber}</span>
+                  <a class="subindex__title" href={d.href}>
+                    {d.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

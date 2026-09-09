@@ -1,0 +1,15 @@
+---
+/**
+ * PN-0XX and its revision letter. Projects only, never anything else.
+ */
+interface Props {
+  partNumber: string;
+  rev: string;
+  class?: string;
+}
+const { partNumber, rev, class: className } = Astro.props;
+---
+
+<span class:list={['meta', 'meta--ink', 'pn', className]}>
+  {partNumber}<span class="pn__rev">Rev {rev}</span>
+</span>

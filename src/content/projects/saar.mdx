@@ -1,0 +1,39 @@
+---
+partNumber: PN-005
+rev: A
+title: SAAR, surgical navigation by projected augmented reality
+status: shipped
+attribution: team
+attributionNote: 'TODO: state your specific contribution in one line.'
+externalLink: https://isef.net/project/enbm051t-surgical-navigation-via-projector-based-ar-and-cv
+externalLinkLabel: ISEF ENBM051T
+summary: Surgical navigation that projects the reconstruction directly onto the surgical site, instead of putting the anatomy on a screen across the room.
+heroImage: ../../assets/saar.png
+heroImageType: drawing
+heroImageAlt: Line drawing of the projector rig, a cylindrical projector head carried on a motorised frame of linear rails and belt drives with a stepper motor at each end
+placeholder: false
+callouts:
+  - x: 0.43
+    y: 0.45
+    text: CALIBRATED PROJECTOR
+  - x: 0.75
+    y: 0.72
+    text: MOTORIZED ALIGNMENT FRAME
+  - text: REGISTRATION MARKERS
+  - text: PROJECTED SEGMENTATION OVERLAY
+notes:
+  - text: 'Team project. TODO: state your specific contribution in one line.'
+  - text: 'Validated against public CT and MRI datasets. TODO: alignment accuracy figure if you have it.'
+  - text: 'TODO: what the next revision would change.'
+tags: [perception, surgical, augmented-reality]
+---
+
+Surgical navigation systems generally put the anatomy on a screen across the room, which
+pulls the surgeon's eyes off the patient. SAAR projects the reconstruction directly onto
+the surgical site instead. Preoperative CT becomes a 3D model through a custom registration
+pipeline, a calibrated projector on a motorized frame keeps the overlay locked to the
+patient as they move, and a U-Net segments regions of interest so the projection can
+highlight them. A CNN-LSTM predicts thoracic organ movement so the overlay tracks breathing
+rather than lagging it.
+
+TODO: content

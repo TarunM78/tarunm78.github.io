@@ -1,0 +1,20 @@
+---
+/**
+ * An unfilled field.
+ *
+ * Renders in production as well as dev, in annotation red. Released drawings
+ * routinely ship with open fields, and marking them in red is what a drafter
+ * does; hiding them in production would make the deployed site quietly drop
+ * content. In dev it also gets an outline so it is impossible to miss.
+ */
+interface Props {
+  text?: string;
+  class?: string;
+}
+const { text, class: className } = Astro.props;
+const body = (text ?? 'TODO').replace(/^TODO:?\s*/i, '');
+---
+
+<span class:list={['todo', import.meta.env.DEV && 'todo--dev', className]}>
+  TODO{body ? `: ${body}` : ''}
+</span>

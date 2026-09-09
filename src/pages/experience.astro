@@ -1,0 +1,105 @@
+---
+/**
+ * Sheet 3 — Experience.
+ *
+ * A short sheet on purpose. This used to be an index of the roles followed by a
+ * full block for each one — period, location, summary and three bullets — which
+ * is a resume retyped as a web page, and read like one. What a portfolio sheet
+ * owes is the shape of the career, not its every line item: where the work was
+ * done, when, one sentence on what it was, and the drawing it produced. The
+ * bullets are gone and nothing here offers to hand over a resume.
+ *
+ * So: the roles as a contact sheet, current work first — the same grid the
+ * projects are drawn on, because both are a set of sheets.
+ *
+ * Roles carry no part numbers. A job is not a part and has no revision, so the
+ * only designators here are the dates — inventing a PN for a role would be the
+ * drawing vocabulary used as decoration, which is the one thing this site does
+ * not do. The sub-sheet labels that used to sit on the roles went with the
+ * per-role sections: a label that points at nothing is worse than no label.
+ *
+ * The awards used to close this sheet. They are gone from it: a sheet that has
+ * to say two things in two forms is two sheets, and this one is about where the
+ * work was done. src/content/awards.json is still on disk, unrendered, so
+ * nothing was thrown away.
+ */
+import Sheet from '../layouts/Sheet.astro';
+import AnnotatedFigure from '../components/AnnotatedFigure.astro';
+import {
+  getExperience,
+  getProjects,
+  isCurrent,
+  period,
+  projectHref,
+} from '../lib/sheets';
+
+const roles = await getExperience();
+
+/** A portrait drawing takes two frames of the grid, exactly as on sheet 02. */
+const isTall = (r: (typeof roles)[number]) =>
+  !!r.data.heroImage && r.data.heroImage.height > r.data.heroImage.width;
+const projects = await getProjects();
+
+/** Part number to title and anchor, so a related project reads as something. */
+const titleOf = new Map(projects.map((p) => [p.data.partNumber, p.data.title]));
+const anchorOf = new Map(projects.map((p) => [p.data.partNumber, p.id]));
+---
+
+<Sheet
+  sheet="03"
+  sheetTitle="Experience"
+  sheetNumber={3}
+  rev="C"
+  revDate="2026-09-09"
+  description="Current and past employment and the awards it collected: humanoid actuators, locomotion research, medical robotics and accessibility hardware."
+>
+  <section class="sheets" aria-labelledby="experience-heading">
+    <h1 id="experience-heading" class="sheettitle">Experience</h1>
+    <p class="sheetlede">
+      Where the work was done, current first, and what it collected. One sentence and one
+      drawing a role — the drawings carry the detail.
+    </p>
+  </section>
+
+
+  <ol class="sheetset" aria-label="Roles, current first">
+    {
+      roles.map((r) => (
+        <li class:list={['sheetcard', 'sheetcard--role', isTall(r) && 'sheetcard--tall']}>
+          <p class="sheetcard__meta">
+            <span class="meta meta--ink">{period(r.data.start, r.data.end)}</span>
+            <span class="meta">{r.data.location}</span>
+            {isCurrent(r) && <span class="tag-state">Current</span>}
+            {r.data.relatedProjects.map((pn) => (
+              <a
+                class="meta rolecell__pn"
+                href={projectHref(anchorOf.get(pn) ?? '')}
+                title={titleOf.get(pn)}
+              >
+                {pn}
+              </a>
+            ))}
+          </p>
+
+          <h2 class="sheetcard__title">{r.data.role}</h2>
+          <p class="rolecell__org">{r.data.org}</p>
+
+          {/* No callouts on a role: a leader line points at a component, and a
+              job has none. The drawing stands for the work, nothing more. */}
+          <AnnotatedFigure
+            class="sheetcard__fig"
+            src={r.data.heroImage}
+            alt={r.data.heroImageAlt ?? ''}
+            imageType={r.data.heroImageType}
+            figureId={`role-${r.id}`}
+            sizes="(min-width: 1024px) 44vw, 92vw"
+            framed
+            pendingNote={`No drawing on file for ${r.data.org} yet`}
+          />
+
+          <p class="rolecell__summary">{r.data.summary}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Sheet>

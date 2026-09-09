@@ -1,0 +1,127 @@
+---
+/**
+ * Sheet 1 — Home.
+ *
+ * A title sheet that runs into the package. The first screen carries the
+ * essentials only — the name at display size and the index in the head band —
+ * because a full annotated drawing on load is a wall. Nothing on this sheet is
+ * pinned: the name card scrolls away like everything else, and the head band is
+ * what stays.
+ *
+ * Below the fold it is a continuous scroll through the front of each index, one
+ * section per sheet it leads to: the current drawing, then the current role —
+ * each shown the same way, a figure over a sentence, because each is the work.
+ * Each section shows the first entry and links to the rest, so the home sheet is
+ * the package's cover rather than a page of its own.
+ */
+import { getEntry } from 'astro:content';
+import Sheet from '../layouts/Sheet.astro';
+import AnnotatedFigure from '../components/AnnotatedFigure.astro';
+import SectionMarker from '../components/SectionMarker.astro';
+import PartNumber from '../components/PartNumber.astro';
+import { getExperience, isCurrent, period } from '../lib/sheets';
+
+// The hero is PN-001: the current work, and the only drawing on this sheet.
+const hero = await getEntry('projects', 'planetary-actuator');
+if (!hero) throw new Error('Home hero expects the PN-001 project entry to exist.');
+
+// The front of the experience index is whatever role is being held now.
+const roles = await getExperience();
+const role = roles[0];
+if (!role) throw new Error('Home expects at least one experience entry.');
+---
+
+<Sheet
+  sheet="01"
+  sheetTitle="Home"
+  sheetNumber={1}
+  rev="A"
+  revDate="2026-09-09"
+  description="Tarun Malarvasan — mechanical engineering at Penn State, focused on robotics and humanoids."
+>
+  <div class="idblock">
+    <h1 class="idblock__name">Tarun Malarvasan</h1>
+
+    <div class="idblock__detail">
+      <p class="meta meta--ink">Mechanical engineering, Penn State</p>
+      <p class="meta meta--ink">Robotics and humanoids — actuators, mechanisms, perception</p>
+      <p class="meta idblock__status">Currently in the Locomotion in Biology and Robotics Lab</p>
+    </div>
+  </div>
+
+  <section class="titlepage">
+    <a class="scrollcue" href="#current-work">
+      <span class="scrollcue__head meta meta--ink">Scroll</span>
+      <span class="scrollcue__rule" aria-hidden="true"></span>
+      <span class="scrollcue__text">
+        Two sections follow: the drawing on the bench, then where the work is done.
+      </span>
+      <span class="scrollcue__arrow" aria-hidden="true">&darr;</span>
+    </a>
+  </section>
+
+  <SectionMarker letter="A" id="current-work" label="Current work" />
+
+  <section class="lead">
+    <p class="lead__meta">
+      <PartNumber partNumber={hero.data.partNumber} rev={hero.data.rev} />
+      <span class="meta">Sheet 02-1</span>
+    </p>
+
+    <AnnotatedFigure
+      src={hero.data.heroImage}
+      alt={hero.data.heroImageAlt ?? ''}
+      callouts={hero.data.callouts}
+      caption={hero.data.title}
+      imageType={hero.data.heroImageType}
+      figureId={hero.data.partNumber}
+      aspect={1.78}
+      sizes="(min-width: 1024px) min(46vw, 800px), 100vw"
+      eager
+    />
+
+    <p class="lead__summary">{hero.data.summary}</p>
+
+    <p class="lead__more">
+      <a class="sheetbutton" href="/projects/">
+        <span>All projects</span>
+        <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
+      </a>
+    </p>
+  </section>
+
+  <SectionMarker letter="B" id="current-role" label="Current role" />
+
+  <section class="lead">
+    <p class="lead__meta">
+      <span class="meta meta--ink">{period(role.data.start, role.data.end)}</span>
+      <span class="meta">{role.data.location}</span>
+      {isCurrent(role) && <span class="tag-state">Current</span>}
+    </p>
+
+    <h2 class="role__title">{role.data.role}</h2>
+    <p class="role__org">{role.data.org}</p>
+
+    {/* The same treatment the drawing above it gets, because it is the same
+        kind of thing: the work, shown. No caption — the role and the lab are
+        already stated a line above, and the figure would only repeat them. No
+        callouts either; the role carries none. */}
+    <AnnotatedFigure
+      src={role.data.heroImage}
+      alt={role.data.heroImageAlt ?? ''}
+      imageType={role.data.heroImageType}
+      figureId={`role-${role.id}`}
+      aspect={1.78}
+      sizes="(min-width: 1024px) min(46vw, 800px), 100vw"
+    />
+
+    <p class="lead__summary">{role.data.summary}</p>
+
+    <p class="lead__more">
+      <a class="sheetbutton" href="/experience/">
+        <span>All experience</span>
+        <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
+      </a>
+    </p>
+  </section>
+</Sheet>

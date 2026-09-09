@@ -1,0 +1,116 @@
+[
+  {
+    "id": "gt-medtech-hack",
+    "order": 1,
+    "title": "MedTech Hack, 1st place",
+    "body": "Georgia Institute of Technology",
+    "date": "2026-02",
+    "notes": [
+      "Won the Occupational Therapy category, for an assistive device for the visually impaired."
+    ]
+  },
+  {
+    "id": "openbio-research-prize",
+    "order": 2,
+    "title": "OpenBio 4th place research prize",
+    "body": "Harvard Undergraduate OpenBio Laboratory",
+    "date": "2025-09",
+    "relatedProjects": ["PN-003"],
+    "notes": [
+      "Awarded out of 120 research fellows, for Bi-Stable Auxetic Stent Design for Customized Vascular Conformability.",
+      "$400 research grant, and acceptance for publication in the STEM Fellowship Journal."
+    ]
+  },
+  {
+    "id": "isef-2025",
+    "order": 3,
+    "title": "ISEF 2025, 2nd place grand award",
+    "body": "Regeneron and Society for Science",
+    "date": "2025-05",
+    "relatedProjects": ["PN-003"],
+    "notes": [
+      "Biomedical Engineering category, $2,400.",
+      "Submitted as Bi-Stable Auxetic Stents for Customized Vascular Conformability."
+    ]
+  },
+  {
+    "id": "isef-2024",
+    "order": 4,
+    "title": "ISEF 2024, 4th place grand award",
+    "body": "Regeneron and Society for Science",
+    "date": "2024-05",
+    "relatedProjects": ["PN-005"],
+    "notes": [
+      "Biomedical Engineering category, $500.",
+      "Submitted as SAAR: Surgical Aid for Anatomical Reconstructions."
+    ]
+  },
+  {
+    "id": "columbia-research-competition",
+    "order": 5,
+    "title": "Academic Research Competition, finalist",
+    "body": "Columbia University",
+    "date": "2024-05",
+    "notes": [
+      "Selected for presenting original research evaluated by Columbia faculty and graduate researchers."
+    ]
+  },
+  {
+    "id": "first-deans-list",
+    "order": 6,
+    "title": "FIRST Dean's List, finalist",
+    "body": "FIRST",
+    "date": "2024-04",
+    "notes": [
+      "One of 250 Dean's List finalists worldwide, for leadership, technical contribution and work advancing STEM education.",
+      "Founded and mentored 18 FIRST robotics teams and secured $60,000+ in sponsorship to widen engineering access for underserved students."
+    ]
+  },
+  {
+    "id": "mit-think",
+    "order": 7,
+    "title": "THINK Scholars, semi-finalist",
+    "body": "Massachusetts Institute of Technology",
+    "date": "2024-02",
+    "relatedProjects": ["PN-003"],
+    "notes": [
+      "Top national semi-finalist, for a research plan on bi-stable auxetic vascular stents to improve patient-specific arterial conformity.",
+      "One of roughly 4,000 applicants, judged on innovation and societal impact."
+    ]
+  },
+  {
+    "id": "presidential-volunteer-gold",
+    "order": 8,
+    "title": "Gold Presidential Volunteer Service Award",
+    "body": "The White House and AmeriCorps",
+    "date": "2023-12",
+    "notes": [
+      "National recognition for sustained community leadership and volunteer service.",
+      "250+ hours of STEM outreach, robotics mentorship and technical education for youth in underserved communities."
+    ]
+  },
+  {
+    "id": "isef-2023",
+    "order": 9,
+    "title": "ISEF 2023, 2nd place grand award",
+    "body": "Regeneron and Society for Science",
+    "date": "2023-05",
+    "relatedProjects": ["PN-004"],
+    "notes": [
+      "Biomedical Engineering category, $2,000.",
+      "Submitted as DIVA: Depth Intelligence Visual Aid."
+    ]
+  },
+  {
+    "id": "sigma-xi",
+    "order": 10,
+    "title": "Sigma Xi Life Science Award, 2nd place",
+    "body": "Sigma Xi, The Scientific Research Honor Society",
+    "date": "2023-05",
+    "relatedProjects": ["PN-004"],
+    "notes": [
+      "For DIVA, a tactile navigation device to improve spatial awareness and mobility for people with visual impairments.",
+      "Recognised for innovation, usability-focused engineering and translational potential in assistive biomedical technology."
+    ]
+  }
+]

@@ -1,0 +1,153 @@
+---
+/**
+ * Sheets 02-1 and up — one detail sheet per project.
+ *
+ * The spec has carried this as "not yet built" since the beginning. It is the
+ * sheet the collection hands you: the drawing at full width with its callouts
+ * live and a zoom control, then the part number and its fields, the write-up,
+ * and the notes block.
+ *
+ * It takes a real sheet number — 02-3, not a part number — because the
+ * detail series is numbered off sheet 02 and always has been. The index still
+ * marks sheet 02 as current, since that is the sheet this belongs to.
+ *
+ * This is where the annotation lives. The collection deliberately shows bare
+ * drawings; a leader line needs the gutter it only has at this width.
+ */
+import { render } from 'astro:content';
+import Sheet from '../../layouts/Sheet.astro';
+import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
+import PartNumber from '../../components/PartNumber.astro';
+import SectionMarker from '../../components/SectionMarker.astro';
+import TodoMarker from '../../components/TodoMarker.astro';
+import { getProjects, projectHref, subSheetNo } from '../../lib/sheets';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, index: i, projects },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { project, index, projects } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const STATUS: Record<string, string> = {
+  active: 'In build',
+  shipped: 'Complete',
+  shelved: 'Shelved',
+};
+
+const label = subSheetNo(index);
+const prev = projects[index - 1];
+const next = projects[index + 1];
+---
+
+<Sheet
+  sheet={label}
+  sheetTitle={data.title}
+  sheetNumber={2}
+  rev={data.rev}
+  revDate={data.started ?? 'TODO'}
+  description={data.summary}
+>
+  <section class="sheets" aria-labelledby="project-heading">
+    <p class="project__pn">
+      <PartNumber partNumber={data.partNumber} rev={data.rev} />
+      <span class:list={[data.status === 'shipped' ? 'tag-state' : 'meta']}>
+        {STATUS[data.status]}
+      </span>
+      {data.started && <span class="meta">Started {data.started}</span>}
+      {data.status === 'active' && <span class="tag-state">Current</span>}
+    </p>
+
+    <h1 id="project-heading" class="sheettitle">{data.title}</h1>
+    <p class="sheetlede">{data.summary}</p>
+  </section>
+
+  <AnnotatedFigure
+    src={data.heroImage}
+    alt={data.heroImageAlt ?? ''}
+    callouts={data.callouts}
+    imageType={data.heroImageType}
+    figureId={data.partNumber}
+    aspect={1.6}
+    zoom
+    pendingNote={
+      data.status === 'active'
+        ? `Coming soon — ${data.partNumber} is current work`
+        : `${data.partNumber} has no drawing on file yet`
+    }
+    titleBlock={{
+      partNumber: data.partNumber,
+      rev: data.rev,
+      title: data.title,
+      started: data.started,
+    }}
+  />
+
+  <SectionMarker letter="A" id="description" label="Description" />
+
+  <section class="projectbody" aria-labelledby="description-heading">
+    <h2 id="description-heading" class="visually-hidden">Description</h2>
+    <Content />
+  </section>
+
+  {
+    data.notes.length > 0 && (
+      <>
+        <SectionMarker letter="B" id="notes" label="Notes" />
+        <section aria-labelledby="notes-heading">
+          <h2 id="notes-heading" class="sheettitle sheettitle--sm">
+            Notes
+          </h2>
+          <ul class="project__notes">
+            {data.notes.map((n) => (
+              <li>{/^TODO:?\s*/i.test(n.text) ? <TodoMarker text={n.text} /> : n.text}</li>
+            ))}
+          </ul>
+        </section>
+      </>
+    )
+  }
+
+  {
+    data.externalLink && (
+      <p class="project__link">
+        <a href={data.externalLink}>{data.externalLinkLabel}</a>
+      </p>
+    )
+  }
+
+  {/* The set this sheet came out of, and the sheets either side of it. */}
+  <nav class="seriesnav" aria-label="Detail series">
+    <span class="seriesnav__prev">
+      {prev && (
+        <a href={projectHref(prev.id)}>
+          <span class="meta meta--ink">{subSheetNo(index - 1)}</span>
+          <span>{prev.data.title}</span>
+        </a>
+      )}
+    </span>
+
+    <a class="meta seriesnav__up" href="/projects/">All sheets</a>
+
+    <span class="seriesnav__next">
+      {next && (
+        <a href={projectHref(next.id)}>
+          <span class="meta meta--ink">{subSheetNo(index + 1)}</span>
+          <span>{next.data.title}</span>
+        </a>
+      )}
+    </span>
+  </nav>
+</Sheet>

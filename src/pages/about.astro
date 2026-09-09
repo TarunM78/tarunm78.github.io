@@ -1,0 +1,103 @@
+---
+/**
+ * Sheet 5 — About.
+ *
+ * The one sheet that is about the person rather than the work. Everywhere else
+ * the site states what was built and refuses to editorialise; here it is
+ * allowed to say who built it, which is why this is the only sheet carrying
+ * prose paragraphs.
+ *
+ * It used to be the revision table and nothing else — the career read
+ * bottom-up, oldest first. That table said the same thing as the roles on
+ * sheet 03 and the awards beside them, and stating a career three times is how
+ * three accounts of it start to drift apart. It is gone, and so is
+ * revisions.json with it.
+ *
+ * Photography stays sheet 05. It is a hobby with two dozen frames on it, which
+ * is a sheet, not a paragraph — so this page says the hobby exists and hands
+ * you a button to the sheet that shows it.
+ *
+ * The links table is the only place on the site that points off it. Rows whose
+ * url is still TODO render as open fields rather than as links that go
+ * nowhere.
+ */
+import Sheet from '../layouts/Sheet.astro';
+import DataTable from '../components/DataTable.astro';
+import SectionMarker from '../components/SectionMarker.astro';
+import TodoMarker from '../components/TodoMarker.astro';
+import { getCollection } from 'astro:content';
+
+const links = (await getCollection('links')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Sheet
+  sheet="05"
+  sheetTitle="About"
+  sheetNumber={5}
+  rev="A"
+  revDate="2026-09-09"
+  description="Tarun Malarvasan — mechanical engineering at Penn State, robotics and humanoids, and where else to find him."
+>
+  <section class="sheets" aria-labelledby="about-heading">
+    <h1 id="about-heading" class="sheettitle">About</h1>
+    <p class="sheetlede">
+      The rest of the package is the work. This sheet is the person who did it.
+    </p>
+
+    <div class="bio">
+      <p><TodoMarker text="bio" /></p>
+      <p>
+        Two or three paragraphs in your own voice: what you build, why humanoids and
+        actuators rather than anything else, and what you are trying to get good at next.
+        Replace this block entirely — it is scaffolding, not copy.
+      </p>
+    </div>
+  </section>
+
+  <SectionMarker letter="A" id="elsewhere" label="Elsewhere" />
+
+  <section aria-labelledby="elsewhere-heading">
+    <h2 id="elsewhere-heading" class="sheettitle sheettitle--sm">Elsewhere</h2>
+
+    <DataTable columns={['Service', 'Handle']} class="linkindex">
+      {
+        links.map((l) => (
+          <tr>
+            <td class="meta meta--ink linkindex__service">{l.data.service}</td>
+            <td class="linkindex__handle">
+              {l.data.url === 'TODO' ? (
+                <TodoMarker text="link" />
+              ) : (
+                <a href={l.data.url} rel="me noopener">
+                  {l.data.handle}
+                </a>
+              )}
+            </td>
+          </tr>
+        ))
+      }
+    </DataTable>
+  </section>
+
+  <SectionMarker letter="B" id="outside" label="Outside the lab" />
+
+  <section aria-labelledby="outside-heading">
+    <h2 id="outside-heading" class="sheettitle sheettitle--sm">Outside the lab</h2>
+
+    <div class="bio">
+      <p><TodoMarker text="hobbies" /></p>
+      <p>
+        A short paragraph on what you do when you are not building — photography is the
+        one with a sheet of its own, so this is the place to say why you shoot and what
+        you point the camera at.
+      </p>
+    </div>
+
+    <p class="lead__more">
+      <a class="sheetbutton" href="/photography/">
+        <span>Photography</span>
+        <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
+      </a>
+    </p>
+  </section>
+</Sheet>

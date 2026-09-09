@@ -1,0 +1,2140 @@
+/* =========================================================================
+   DESIGN SYSTEM — drawing-package portfolio
+   Tokens, base type, sheet grid, focus, and the drawing vocabulary.
+   Tailwind handles layout utilities only. Everything drawing-specific is here.
+   See DESIGN.md (REV A) and DESIGN-REV-B.md for the reasoning behind values.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. TOKENS — paper (light) is the default
+   ------------------------------------------------------------------------- */
+
+:root {
+  /* Color. Red = annotation added on top of the drawing. Blue = you can click it.
+     Neither is ever used for general emphasis. */
+  --paper: #f7f5ef;
+  --ink: #1c1c1a;
+  --annotation: #b23a32;
+  --reference: #2a4e8c;
+
+  /* --faint is darkened from the spec's #8A8A82 (3.12:1, fails AA at the
+     11-12px it is used at) to #6E6E66 (4.59:1). The original value survives
+     as --faint-rule, for hairlines only, where the 3:1 non-text bar applies. */
+  --faint: #6e6e66;
+  --faint-rule: #8a8a82;
+
+  --grid-minor: #dcdcd2;
+  --grid-major: #cfcfc3;
+
+  /* Line weights, not line colors. Drawings encode hierarchy in stroke weight. */
+  --lw-thin: 0.5px;
+  --lw-med: 1px;
+  --lw-heavy: 2px;
+
+  /* Type — ISO 3098 lettering-height series (mm x 10), a root-2 progression. */
+  --t-h18: 0.6875rem; /* 11px */
+  --t-h25: 0.75rem; /* 12px */
+  --t-h35: 0.875rem; /* 14px */
+  --t-h50: 1rem; /* 16px */
+  --t-h70: 1.375rem; /* 22px */
+  --t-h100: 1.9375rem; /* 31px */
+  --t-h140: 2.75rem; /* 44px */
+  --t-h200: 3.875rem; /* 62px */
+
+  /* Spacing — multiples of the 5mm grid module (20px minor / 100px major). */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 20px;
+  --sp-5: 40px;
+  --sp-6: 60px;
+  --sp-7: 100px;
+  --sp-8: 160px;
+
+  --grid-step-minor: 20px;
+  --grid-step-major: 100px;
+
+  --sheet-margin: var(--sp-4);
+  --sheet-max: 1440px;
+  /* Width of a drawing's title block. Nothing else is sized to this now: the
+     sheet index used to be docked to the same column and is a head-band row. */
+  --titleblock-w: 20rem;
+  --measure-sans: 72ch;
+  --measure-serif: 68ch;
+
+  /* There is deliberately no shadow token in this system. */
+  --radius: 0;
+
+  color-scheme: light dark;
+}
+
+/* Blueprint. The only place blueprint blue is permitted.
+   The [data-theme] hooks let a subtree be pinned to one theme without any
+   JavaScript. Nothing in the site sets them; they exist so both themes can be
+   reviewed on one page. A pinned light subtree wins over the OS preference. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d2340;
+    --ink: #c8d8ec;
+    --annotation: #ffffff;
+    --reference: #7fb2f0;
+    --faint: #8a9cb4;
+    --faint-rule: rgb(200 216 236 / 0.35);
+    --grid-minor: rgb(200 216 236 / 0.09);
+    --grid-major: rgb(200 216 236 / 0.16);
+  }
+}
+
+[data-theme="dark"] {
+  --paper: #0d2340;
+  --ink: #c8d8ec;
+  --annotation: #ffffff;
+  --reference: #7fb2f0;
+  --faint: #8a9cb4;
+  --faint-rule: rgb(200 216 236 / 0.35);
+  --grid-minor: rgb(200 216 236 / 0.09);
+  --grid-major: rgb(200 216 236 / 0.16);
+}
+
+[data-theme="light"] {
+  --paper: #f7f5ef;
+  --ink: #1c1c1a;
+  --annotation: #b23a32;
+  --reference: #2a4e8c;
+  --faint: #6e6e66;
+  --faint-rule: #8a8a82;
+  --grid-minor: #dcdcd2;
+  --grid-major: #cfcfc3;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --sheet-margin: var(--sp-5);
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --sheet-margin: var(--sp-6);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   2. BASE
+   ------------------------------------------------------------------------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  color: var(--ink);
+  font-family: var(--font-plex-sans);
+  font-size: var(--t-h50);
+  line-height: 1.55;
+}
+
+body,
+.sheet-ground {
+  background-color: var(--paper);
+
+  /* The 5mm sheet grid. Two stacked repeating gradients, never an image.
+     Major lines are listed first so they paint over the minor ones. */
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--grid-major) 0 1px,
+      transparent 1px var(--grid-step-major)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--grid-major) 0 1px,
+      transparent 1px var(--grid-step-major)
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--grid-minor) 0 1px,
+      transparent 1px var(--grid-step-minor)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--grid-minor) 0 1px,
+      transparent 1px var(--grid-step-minor)
+    );
+}
+
+/* The blog drops the grid to near-invisible. Reading comfort beats theme. */
+.sheet--quiet {
+  --grid-minor: transparent;
+  --grid-major: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-h140);
+}
+h2 {
+  font-size: var(--t-h100);
+}
+h3 {
+  font-size: var(--t-h70);
+}
+
+p {
+  max-width: var(--measure-sans);
+}
+
+/* Blue means "you can click this", and it always carries an underline so the
+   dark theme does not lean on hue alone. No arrow is ever appended. */
+a {
+  color: var(--reference);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: from-font;
+}
+
+/* Focus is literally an annotation box drawn around the focused element. */
+:focus-visible {
+  outline: var(--lw-heavy) solid var(--annotation);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* -------------------------------------------------------------------------
+   3. METADATA TYPE — mono, caps, wide tracking. Drafting convention.
+   This is fenced to drawing metadata. It is not for headings, body copy,
+   link text, or buttons.
+   ------------------------------------------------------------------------- */
+
+.meta {
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h25);
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+
+.meta--ink {
+  color: var(--ink);
+}
+.meta--sm {
+  font-size: var(--t-h18);
+}
+.meta--lg {
+  font-size: var(--t-h35);
+}
+
+/* -------------------------------------------------------------------------
+   4. RULES
+   ------------------------------------------------------------------------- */
+
+.rule {
+  border: 0;
+  border-top: var(--lw-med) solid var(--ink);
+  margin: 0;
+}
+
+.rule--hair {
+  border-top-width: var(--lw-thin);
+  border-top-color: var(--faint-rule);
+}
+
+/* -------------------------------------------------------------------------
+   5. ANNOTATED FIGURE + CALLOUT WITH LEADER LINE
+   The centerpiece. Geometry is resolved at build time; this ships zero JS.
+
+   Coordinate system: the SVG overlay uses viewBox="0 0 100 100" with
+   preserveAspectRatio="none", so authored 0..1 coordinates map straight to
+   percentages of the image box whatever its aspect ratio. Leader lines
+   deliberately overflow that box into the gutters, so the SVG is not clipped.
+   Stroke weight is pinned with vector-effect: non-scaling-stroke, which is
+   what stops the non-uniform scale from distorting the line weights.
+
+   Anchor dots and labels are HTML, not SVG: a circle under a non-uniform
+   scale would render as an ellipse, and SVG <text> would not wrap or inherit
+   font loading. Only the leader paths live in the SVG.
+   ------------------------------------------------------------------------- */
+
+.afig {
+  position: relative;
+  margin: 0;
+  --afig-gutter: 38%; /* of image width, each side */
+  --afig-dot: 7px;
+}
+
+.afig__stage {
+  position: relative;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.afig__imgwrap {
+  position: relative;
+  line-height: 0;
+}
+
+.afig__img {
+  width: 100%;
+  height: auto;
+}
+
+/* Line drawings arrive as black-on-white, which is a white box on a paper sheet
+   and a headlight in blueprint mode. Multiply drops the white ground so the
+   drawing sits on the sheet's own paper and the printed grid reads through it.
+   In blueprint the image is inverted first — white lines on black — and screened
+   for the same reason. Photographs and renders are never touched: their ground
+   is content. */
+.afig--drawing .afig__img {
+  mix-blend-mode: multiply;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .afig--drawing .afig__img {
+    filter: invert(1);
+    mix-blend-mode: screen;
+  }
+}
+
+[data-theme='dark'] .afig--drawing .afig__img {
+  filter: invert(1);
+  mix-blend-mode: screen;
+}
+
+.afig__leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible; /* leaders must reach into the gutters */
+  pointer-events: none;
+}
+
+.afig__leaders path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Knockout halo, so annotation marks stay legible over an image of any
+   brightness. The halo is always the page ground colour, which is by
+   construction the maximum-contrast partner of the annotation colour in
+   either theme. Hard-edged: this is a knockout, not a drop shadow. */
+.afig__halo path {
+  stroke: var(--paper);
+  stroke-width: calc(var(--lw-med) + 2px + var(--afig-hot, 0) * 1px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: calc(0.72 - var(--afig-dim, 0) * 0.42);
+}
+
+.afig__stroke path {
+  /* 1px, not 0.5px: a half-pixel leader anti-aliases to grey and loses the
+     fight with its own knockout halo over a light image. Still a thin line.
+     --afig-hot and --afig-dim are the live-callout state; see section 5b. */
+  stroke: var(--annotation);
+  stroke-width: calc(var(--lw-med) + var(--afig-hot, 0) * 1px);
+  opacity: calc(1 - var(--afig-dim, 0) * 0.55);
+}
+
+.afig__dot {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  transform: translate(-50%, -50%);
+  width: var(--afig-dot);
+  height: var(--afig-dot);
+  border-radius: 50%;
+  background: var(--annotation);
+  outline: 2px solid var(--paper);
+  /* Live-callout state; see section 5b. The balloon inside inherits it. */
+  opacity: calc(1 - var(--afig-dim, 0) * 0.55);
+}
+
+/* The dot is 7px, which is the right size for a drawing and the wrong size for
+   a pointer. The pad brings the target to ~25px without changing the mark. It
+   is the anchor's hit area, not a mark of its own, so it is invisible. */
+.afig__dot::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+}
+
+/* Balloon numbers carry the dot-to-text mapping, so they exist only in the
+   stacked layout where the leader line no longer does that job. */
+.afig__balloon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--annotation);
+  color: var(--paper);
+  outline: 2px solid var(--paper);
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h18);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* The callout list. It sits inside the image wrapper rather than after it,
+   because above 1024px its items ARE the gutter labels — same element, moved,
+   not a second copy. Below 1024px it is an ordinary numbered list under the
+   drawing. */
+.afig__list {
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: callout;
+  display: grid;
+  gap: var(--sp-2);
+  line-height: 1.3; /* imgwrap zeroes it to kill the inline gap under the img */
+}
+
+.afig__item {
+  counter-increment: callout;
+  display: grid;
+  grid-template-columns: 19px 1fr;
+  gap: var(--sp-2);
+  align-items: start;
+}
+
+.afig__item::before {
+  content: counter(callout);
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--annotation);
+  color: var(--paper);
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h18);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* The control. Explicit property resets rather than `all: unset`, which would
+   land at the same specificity as the global :focus-visible rule and leave the
+   focus annotation box at the mercy of source order. `outline` is never
+   touched here. */
+.afig__ctl {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: inherit;
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h25);
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--afig-ctl, var(--ink));
+}
+
+button.afig__ctl {
+  cursor: pointer;
+}
+
+/* An unplaced callout is not a control and is not live, so it takes the muted
+   colour the list sets for it rather than the state token. */
+.afig__ctl--static {
+  color: inherit;
+}
+
+.afig__caption {
+  margin-top: var(--sp-3);
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h25);
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* Non-photo media is labelled, so a computational project cannot read as
+   photographed hardware. */
+.afig__type {
+  margin-top: var(--sp-2);
+}
+
+/* --- Stacked layout: below 1024px --------------------------------------- */
+.afig__leaders-wide {
+  display: none;
+}
+
+/* --- Gutter layout: 1024px and up --------------------------------------- */
+@media (min-width: 1024px) {
+  /* The gutters exist to hold callout labels. A figure with no placed callouts
+     has nothing to put in them, and reserving 43% of the width for labels that
+     do not exist just shrinks the drawing. */
+  .afig--gutters .afig__stage {
+    /* image + two gutters of 38% each = 176% of image width */
+    width: calc(100% / 1.76);
+  }
+
+  /* The home sheet is the cover, and its two drawings are what it is for, so
+     they are given the width the sheet's margins are not using. Only the
+     drawing grows: the figure box stays in the content column, so the caption
+     under it still lines up with the summary and the meta line above, and it
+     is the leader labels that reach out into the margin — which is what a
+     margin is for on a drawing.
+
+     Capped, because a drawing four feet wide is no more legible than one two
+     feet wide, and below --sheet-max this resolves to what it was.
+
+     Both figures take the same measure, one under the other, so they read as a
+     pair. Matching a neighbour is a different reason from reserving label
+     space, which is why it is stated separately from the gutter rule above —
+     and after it, since the two carry the same weight and the later one wins. */
+  .lead .afig__stage {
+    width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.76), 1000px);
+  }
+
+  .afig__leaders-wide {
+    display: revert;
+  }
+
+  .afig__leaders-narrow,
+  .afig__balloon {
+    display: none;
+  }
+
+  /* A placed callout leaves the flow and takes the slot its leader line was
+     drawn to. The list is no longer clipped out of sight to make room for a
+     duplicate: there is no duplicate, so the entry a screen reader reads and
+     the label on the sheet are one element in one place. */
+  .afig__item--left,
+  .afig__item--right {
+    position: absolute;
+    top: var(--sy);
+    transform: translateY(-50%);
+    display: block;
+    width: 28%;
+  }
+
+  /* No balloons in this layout, so nothing needs a number: the leader line
+     carries the label-to-anchor mapping. Numbering only the unplaced entries
+     would imply the placed ones are numbered somewhere too. */
+  .afig__item::before {
+    display: none;
+  }
+
+  .afig__item {
+    grid-template-columns: 1fr;
+  }
+
+  .afig__item--left {
+    right: 110%;
+    text-align: right;
+  }
+
+  .afig__item--right {
+    left: 110%;
+    text-align: left;
+  }
+
+  .afig__item--left .afig__ctl,
+  .afig__item--right .afig__ctl {
+    display: block;
+    width: 100%;
+    white-space: normal;
+    text-wrap: balance;
+    /* Tighter than the stacked list: a gutter label is set to a 28% measure and
+       wraps to two or three lines, where the list runs one. */
+    line-height: 1.25;
+    letter-spacing: 0.06em;
+  }
+
+  /* Every callout is in a gutter, so the list occupies no flow — unless some
+     callout has no coordinates yet, in which case it still reads below the
+     drawing and needs its space back. */
+  .afig__list {
+    margin: 0;
+  }
+
+  .afig__list:has(.is-unplaced) {
+    margin-top: var(--sp-4);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   5b. LIVE CALLOUTS — cross-highlight
+
+   A leader line's job is to tie a label to a feature. Pointing at either end
+   of one states that tie louder and drops the others back: exactly what a
+   finger on a drawing does. Nothing is added that was not already pointing at
+   something, which is the test every mark on this site has to pass.
+
+   `data-callout` is the join. One integer, carried by a leader path, its
+   anchor dot and its label. CSS cannot parameterise an attribute value, so the
+   indices are enumerated below and MAX_CALLOUTS in src/lib/callouts.ts fails
+   the build if a figure outgrows them.
+
+   The state is three custom properties set on the matched elements, so the
+   enumerated rules stay one line each and every element decides for itself
+   what "hot" means for it. Nothing here changes a box — only stroke width,
+   colour and opacity — so a highlight cannot cost a reflow.
+
+   :focus, not :focus-visible, and that is the whole of the click-to-pin
+   behaviour: clicking a label focuses it, focus outlives the pointer, and
+   clicking away releases it. Keyboard focus gets the same treatment for free.
+   ------------------------------------------------------------------------- */
+
+/* Text is dimmed by swapping the colour token, never by opacity: --faint is
+   the darkest value that still clears AA on both grounds, and fading --ink
+   toward the paper would drop it under the floor immediately. The leader and
+   its dot are marks rather than text, so they may fade — and they fade rather
+   than vanish, which keeps them over the 3:1 bar for non-text. */
+.afig:has([data-callout]:is(:hover, :focus)) [data-callout] {
+  --afig-dim: 1;
+  --afig-ctl: var(--faint);
+}
+
+.afig:has([data-callout='1']:is(:hover, :focus)) [data-callout='1'],
+.afig:has([data-callout='2']:is(:hover, :focus)) [data-callout='2'],
+.afig:has([data-callout='3']:is(:hover, :focus)) [data-callout='3'],
+.afig:has([data-callout='4']:is(:hover, :focus)) [data-callout='4'],
+.afig:has([data-callout='5']:is(:hover, :focus)) [data-callout='5'],
+.afig:has([data-callout='6']:is(:hover, :focus)) [data-callout='6'],
+.afig:has([data-callout='7']:is(:hover, :focus)) [data-callout='7'],
+.afig:has([data-callout='8']:is(:hover, :focus)) [data-callout='8'],
+.afig:has([data-callout='9']:is(:hover, :focus)) [data-callout='9'],
+.afig:has([data-callout='10']:is(:hover, :focus)) [data-callout='10'] {
+  --afig-dim: 0;
+  --afig-hot: 1;
+  --afig-ctl: var(--annotation);
+  --afig-rule: var(--annotation);
+}
+
+/* The last two pixels of the leader line, arriving at the label it points to.
+   Drawn only while that leader is live, because that is the only time it is
+   true. It reserves its space always, so lighting one cannot shift a label. */
+@media (min-width: 1024px) {
+  .afig__item--left .afig__ctl {
+    border-inline-end: var(--lw-heavy) solid var(--afig-rule, transparent);
+    padding-inline-end: var(--sp-2);
+  }
+
+  .afig__item--right .afig__ctl {
+    border-inline-start: var(--lw-heavy) solid var(--afig-rule, transparent);
+    padding-inline-start: var(--sp-2);
+  }
+}
+
+/* Someone who has asked for more contrast has not asked for two thirds of the
+   drawing to recede. Promote the live callout; leave the rest alone. */
+@media (prefers-contrast: more) {
+  .afig:has([data-callout]:is(:hover, :focus)) [data-callout] {
+    --afig-dim: 0;
+    --afig-ctl: var(--ink);
+  }
+}
+
+/* The state change is a state change, not an entrance. It is short enough to
+   read as the mark responding rather than animating, and the global
+   reduced-motion block already zeroes it. */
+.afig__ctl,
+.afig__dot,
+.afig__stroke path,
+.afig__halo path {
+  transition:
+    color 120ms ease-out,
+    opacity 120ms ease-out,
+    stroke-width 120ms ease-out,
+    border-color 120ms ease-out;
+}
+
+/* -------------------------------------------------------------------------
+   6. STATUS MARKS
+   ------------------------------------------------------------------------- */
+
+/* Unfilled field. Ships to production in red, which is what a drafter does
+   with an open item on a released sheet. */
+.todo {
+  font-family: var(--font-plex-mono);
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--annotation);
+}
+
+.todo--dev {
+  outline: var(--lw-med) solid var(--annotation);
+  outline-offset: 2px;
+}
+
+/* The state of the work, boxed.
+
+   Only two states get this mark: still running, or finished. Everything else
+   on a meta line — the part number, the rev, the period, the location, what
+   the thing is made of — is a fact that was settled the day it was written.
+   These two are the ones a reader is actually scanning for, so they are the
+   ones ruled off. Same mark on a role as on a drawing, so "current" reads the
+   same wherever it appears.
+
+   Boxed rather than merely coloured: the sheets carry a lot of red already,
+   and a box is what a drawing uses when a field has to be read before the
+   fields around it. */
+.tag-state {
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h18);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--annotation);
+  border: var(--lw-med) solid var(--annotation);
+  padding: 1px var(--sp-1);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------
+   7. MOTION
+   The site has exactly one motion moment, on the project index rows.
+   ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   8. SHEET LAYOUT
+   ------------------------------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skiplink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--paper);
+  border: var(--lw-med) solid var(--annotation);
+}
+.skiplink:focus {
+  left: var(--sheet-margin);
+  top: var(--sheet-margin);
+}
+
+.sheet {
+  max-width: var(--sheet-max);
+  margin-inline: auto;
+  padding: var(--sp-5) var(--sheet-margin) var(--sp-7);
+}
+
+.sheet__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding-bottom: var(--sp-3);
+  border-bottom: var(--lw-med) solid var(--ink);
+}
+
+.sheet__body {
+  padding-top: var(--sp-6);
+}
+
+/* No border is drawn around the page. The one that used to be here existed only
+   so the title block had a corner to dock into, and the title block has moved to
+   the drawings, where that corner relationship is real. A border with nothing
+   docked into it is the decoration this system does not allow. */
+
+/* The head strip states what the page-level title block used to: sheet title,
+   rev, date. Stated once, at the top, in the order a drawing states them. */
+.sheet__ident {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin: 0;
+  max-width: none;
+}
+
+@media (min-width: 1024px) {
+  /* The head band is fixed, so the sheet's identity and its index stay reachable
+     from anywhere on the page. It spans the full sheet and is opaque, which is
+     the whole reason this replaced a docked column: a band costs one strip of
+     height that every sheet can spare, where the column cost 20rem of width that
+     the drawings could not. Nothing is reserved horizontally any more.
+
+     --head-h is what the body clears and what the identity strip pins beneath.
+     It is a fixed height rather than a measured one, so both can rely on it. */
+  :root {
+    --head-h: 3.5rem;
+  }
+
+  .sheet__head {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 4;
+    margin-inline: auto;
+    max-width: var(--sheet-max);
+    height: var(--head-h);
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 0 var(--sheet-margin);
+    background: var(--paper);
+    border-bottom: 0;
+  }
+
+  /* The band is fixed, so the sheet's own top padding no longer clears it. */
+  .sheet {
+    padding-top: calc(var(--head-h) + var(--sp-5));
+  }
+
+  /* Full-bleed backing behind the band, and the rule that closes it. The sheet
+     is capped at --sheet-max, so without this the printed grid would scroll
+     through the gap either side of an otherwise opaque strip. It carries the
+     rule rather than the head because a negative-z-index child paints over its
+     parent's own border — and a masthead rule reads better running the full
+     width of the page than stopping at the sheet's edges. */
+  .sheet__head::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto;
+    height: var(--head-h);
+    background: var(--paper);
+    border-bottom: var(--lw-heavy) solid var(--ink);
+    z-index: -1;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   9. TITLE BLOCK — belongs to a drawing, not to a page
+
+   The block and the drawing border are one construction: the border encloses
+   the figure, the block sits inside its lower-right corner, and their outer
+   edges are the same two lines. That is the only reason either is drawn.
+   ------------------------------------------------------------------------- */
+
+/* The border. It wraps the image, both callout gutters and the block, which is
+   the whole drawing — the caption stays outside it, being a note about the
+   drawing rather than part of it. */
+.afig--sheet .afig__sheetbox {
+  position: relative; /* the zoom trigger docks to its corner */
+  border: var(--lw-heavy) solid var(--ink);
+  padding: var(--sp-4);
+}
+
+/* -------------------------------------------------------------------------
+   5c. DETAIL VIEWER
+
+   A drawing you can put under a lens and move around. The whole sheet travels
+   — image, leaders, labels, title block — because they are one drawing, and
+   panning half of it would be a lie.
+
+   The figure is moved into the dialog rather than copied, so the callouts, the
+   pins and the title block keep working with no rules of their own beyond the
+   two counter-scales below.
+   ------------------------------------------------------------------------- */
+
+/* Injected by script, so it exists only where it can do something. It takes
+   the corner opposite the title block: the one corner of a sheet left empty. */
+.afig__zoom {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: var(--sp-2) var(--sp-3);
+  border: 0;
+  border-inline-start: var(--lw-med) solid var(--faint-rule);
+  border-block-end: var(--lw-med) solid var(--faint-rule);
+  background: var(--paper);
+  color: var(--faint);
+  cursor: pointer;
+}
+
+.afig__zoom:hover,
+.afig__zoom:focus-visible {
+  color: var(--reference);
+  border-color: var(--reference);
+}
+
+/* Inside the viewer the drawing is already open, so neither the trigger nor the
+   invitation to open it means anything. */
+.afigz .afig__zoom {
+  display: none;
+}
+
+
+/* A fixed overlay rather than a modal <dialog>. See afig-viewer.ts: the top
+   layer does not paint a transformed, blended drawing, and `inert` on the
+   sheet behind gives the containment <dialog> would have. */
+.afigz {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* `display: grid` above outranks the user agent's `[hidden] { display: none }`,
+   so without this the overlay never actually closes: it stays a full-window
+   sheet of paper over the page, and every sheet behind it reads as blank. The
+   attribute is the only thing that hides it, so the attribute has to win. */
+.afigz[hidden] {
+  display: none;
+}
+
+/* Panning is scrolling. See afig-viewer.ts for why the plate is resized rather
+   than transformed: a transformed ancestor stops the drawing's blend from
+   painting at all, and resizing keeps leader weights honest into the bargain,
+   because non-scaling-stroke is then doing its ordinary job. */
+.afigz__viewport {
+  display: grid;
+  place-content: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  cursor: grab;
+}
+
+.afigz__viewport:active {
+  cursor: grabbing;
+}
+
+.afigz__plate {
+  background: var(--paper);
+}
+
+.afigz__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sheet-margin);
+  border-top: var(--lw-heavy) solid var(--ink);
+}
+
+.afigz__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.afigz__readout {
+  min-width: 5ch;
+  text-align: center;
+}
+
+.afigz__btn {
+  min-width: 2.5rem;
+  padding: var(--sp-2) var(--sp-3);
+  border: var(--lw-med) solid var(--ink);
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h25);
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.afigz__btn:hover,
+.afigz__btn:focus-visible {
+  border-color: var(--reference);
+  color: var(--reference);
+}
+
+.afigz-lock,
+.afigz-lock body {
+  overflow: hidden;
+}
+
+/* On a narrow sheet the hint is the first thing to go: the gesture is
+   discoverable by trying it, and the buttons are not. */
+@media (max-width: 640px) {
+  .afigz__hint {
+    display: none;
+  }
+}
+
+/* The block hugs the corner, so it cancels the box padding on the two sides it
+   meets and supplies no border of its own there — the drawing border already
+   draws those two lines, and doubling them would read as a seam. */
+.afig__titleblock {
+  display: flex;
+  justify-content: flex-end;
+  margin: var(--sp-4) calc(-1 * var(--sp-4)) calc(-1 * var(--sp-4));
+}
+
+.titleblock {
+  width: min(var(--titleblock-w), 100%);
+  background: var(--paper);
+  border-top: var(--lw-heavy) solid var(--ink);
+  border-left: var(--lw-heavy) solid var(--ink);
+}
+
+.titleblock__title {
+  padding: var(--sp-3);
+  border-bottom: var(--lw-med) solid var(--ink);
+}
+
+.titleblock__fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.titleblock__field {
+  padding: var(--sp-2) var(--sp-3);
+  border-right: var(--lw-thin) solid var(--faint-rule);
+}
+.titleblock__field:last-child {
+  border-right: 0;
+}
+.titleblock__field--row2 {
+  border-top: var(--lw-thin) solid var(--faint-rule);
+}
+
+.titleblock__field dt {
+  color: var(--faint);
+}
+.titleblock__field dd {
+  margin: var(--sp-1) 0 0;
+}
+
+/* -------------------------------------------------------------------------
+   10. SECTION MARKER
+   ------------------------------------------------------------------------- */
+
+.secmark {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-7) 0 var(--sp-5);
+  scroll-margin-top: var(--sp-5);
+}
+
+.secmark__rule {
+  flex: 1;
+  height: 0;
+  border-top: var(--lw-med) solid var(--ink);
+}
+
+.secmark__tag {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h25);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+.secmark__tag:hover .secmark__label,
+.secmark__tag:focus-visible .secmark__label {
+  color: var(--reference);
+}
+
+.secmark__label {
+  color: var(--faint);
+}
+
+/* -------------------------------------------------------------------------
+   11. DATA TABLE — one implementation for every table on the site
+   ------------------------------------------------------------------------- */
+
+.dtable-wrap {
+  overflow-x: auto;
+}
+
+.dtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.dtable caption {
+  text-align: left;
+  padding-bottom: var(--sp-3);
+}
+
+.dtable th,
+.dtable td {
+  text-align: left;
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) 0;
+  vertical-align: baseline;
+  border-bottom: var(--lw-thin) solid var(--faint-rule);
+}
+
+.dtable thead th {
+  color: var(--faint);
+  border-bottom: var(--lw-med) solid var(--ink);
+}
+
+.dtable tbody tr:last-child td {
+  border-bottom: var(--lw-med) solid var(--ink);
+}
+
+/* --- Sheet index ---
+   One horizontal row at the right of the head band. Number and rev in mono,
+   title in the body face, current sheet carrying the red triangle. */
+
+.sheetindex__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  /* sp-3 rather than sp-4 between rows: six titles, one of them two words long
+     since the awards joined sheet 03, no longer fit the band at sp-4. The index
+     tightens rather than the band growing a second line — an index that takes
+     two rows has stopped being one. */
+  gap: var(--sp-2) var(--sp-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sheetindex__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  white-space: nowrap;
+}
+
+.sheetindex__no {
+  position: relative;
+  padding-left: var(--sp-4);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The current sheet is marked with a red triangle, as on a drawing index. */
+.sheetindex__mark {
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  width: 0;
+  height: 0;
+  border-left: 8px solid var(--annotation);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+/* Titles keep the body face: caps-mono is for metadata, never link text. */
+.sheetindex__title {
+  font-size: var(--t-h35);
+  line-height: 1.2;
+}
+
+.sheetindex .is-current .sheetindex__no,
+.sheetindex .is-current .sheetindex__title {
+  color: var(--ink);
+}
+
+/* The rev letter is the quietest thing in the row: it is there because a sheet
+   index states it, not because anyone navigates by it. */
+.sheetindex__rev {
+  font-size: var(--t-h18);
+}
+
+/* Between 1024 and 1280 six index items and the sheet's identity do not fit one
+   row. Two things give way rather than the fixed band itself: the rev letters and
+   the revision date go — they are the quietest data in the band, the sheet's own
+   rev is still stated beside its title, and every rev is on the index sheet it
+   belongs to — and the band runs to two rows, identity above, index below.
+   Twenty-eight more pixels of chrome is a better trade than losing the nav that
+   lets you move between sheets from anywhere on the page. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  :root {
+    --head-h: 5.25rem;
+  }
+
+  .sheet__head {
+    flex-wrap: wrap;
+    align-content: center;
+  }
+
+  /* Keeps the index hard right whether it shares the row or takes its own. */
+  .sheetindex {
+    margin-left: auto;
+  }
+
+  .sheetindex__rev,
+  .sheet__ident-date {
+    display: none;
+  }
+
+  .sheetindex__list {
+    gap: var(--sp-2) var(--sp-3);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   11b. SUB-SHEET INDEX — the detail series, under sheet 02
+
+   Revealed by opacity, not display, so the links stay in the tab order and
+   focusing the first one is what opens the panel. A display:none panel is
+   hover-only, which is not navigation a keyboard can use.
+   ------------------------------------------------------------------------- */
+
+.subindex {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sheetindex__row.has-series {
+    position: relative;
+  }
+
+  .subindex {
+    position: absolute;
+    top: calc(100% + var(--sp-3));
+    /* Hung from the row's left edge, so the series reads down from the sheet it
+       belongs to rather than trailing back across the band. */
+    left: 0;
+    z-index: 5;
+    display: grid;
+    gap: var(--sp-2);
+    min-width: 24rem;
+    /* Hung from the left it grows rightward, and the band sits near the right
+       edge of the sheet, so it is capped against the viewport rather than
+       allowed to run off it. */
+    max-width: min(34rem, calc(100vw - 2 * var(--sheet-margin)));
+    margin: 0;
+    padding: var(--sp-3) var(--sp-4);
+    list-style: none;
+    background: var(--paper);
+    border: var(--lw-med) solid var(--ink);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sheetindex__row.has-series:hover .subindex,
+  .sheetindex__row.has-series:focus-within .subindex {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .subindex__row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  .subindex__pn {
+    white-space: nowrap;
+  }
+
+  /* The panel sits below the row with a gap, and a gap is dead space that ends
+     the hover the moment you set off towards the panel. This bridges it, and
+     only while the panel is actually open. */
+  .sheetindex__row.has-series:hover::after,
+  .sheetindex__row.has-series:focus-within::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: calc(var(--sp-3) + 2px);
+  }
+
+  .subindex__title {
+    font-size: var(--t-h35);
+    line-height: 1.2;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   11c. THE SHEET SET — projects as a contact sheet
+
+   Each project is a card carrying its drawing, its designators and a way
+   through to its own sheet. No callouts here: a leader label needs the gutter
+   it only has at full sheet width.
+   ------------------------------------------------------------------------- */
+
+.sheetset {
+  --card-frame: 3 / 2; /* one frame of drawing */
+  display: grid;
+  gap: var(--sp-6);
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .sheetset {
+    grid-template-columns: repeat(2, 1fr);
+    /* Dense, so a tall sheet spanning two rows does not leave the cell beside
+       it empty — the set closes up the way a stack of paper does. */
+    grid-auto-flow: dense;
+  }
+
+  /* Two frames tall, exactly: 3/2 and 3/4 against the same column width means
+     the portrait drawing is twice the height of a landscape one. */
+  .sheetcard--tall {
+    grid-row: span 2;
+  }
+}
+
+/* The card lays itself out top-down with the drawing taking the slack, so the
+   See more buttons line up across a row however long the titles run. */
+.sheetcard {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+}
+
+/* A role card has five parts to a project card's four, so that 1fr lands a row
+   early — on the organisation — and every pixel a card is taller than its
+   content opens as a gap between the org and the drawing. It was most of a
+   drawing's height on the tall card, which spans two rows and so gets the most
+   slack of all. Roles take no explicit rows: align-content already packs them
+   to the top and leaves the slack at the foot, where nothing is looking. */
+.sheetcard--role {
+  grid-template-rows: none;
+}
+
+/* Every drawing is fitted to the same frame rather than setting its own height.
+   `contain` because a drawing must not be cropped to fill a box — the whole
+   sheet is the thing being previewed. */
+.sheetcard__fig .afig__imgwrap {
+  display: grid;
+  place-items: center;
+  aspect-ratio: var(--card-frame);
+}
+
+.sheetcard--tall .sheetcard__fig .afig__imgwrap {
+  aspect-ratio: 3 / 4;
+}
+
+.sheetcard__fig .afig__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sheetcard__fig .afig__plate {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.sheetcard__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+
+.sheetcard__title {
+  font-size: var(--t-h70);
+  margin: 0 0 var(--sp-4);
+  max-width: var(--measure-sans);
+}
+
+.sheetcard__title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.sheetcard__title a:hover,
+.sheetcard__title a:focus-visible {
+  color: var(--reference);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.sheetcard__more {
+  margin-top: var(--sp-4);
+}
+
+/* The way off this sheet and onto the drawing's own. Bigger than the buttons
+   that merely continue a list, because it is the point of the card. */
+.sheetbutton--lg {
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--sp-6);
+  padding: var(--sp-4) var(--sp-5);
+  font-size: var(--t-h70);
+  border-width: var(--lw-heavy);
+}
+
+/* -------------------------------------------------------------------------
+   11d. DETAIL SHEET — the body copy and the series footer
+   ------------------------------------------------------------------------- */
+
+.projectbody > * {
+  max-width: var(--measure-sans);
+}
+
+.projectbody > * + * {
+  margin-top: var(--sp-4);
+}
+
+.seriesnav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: var(--sp-4);
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-4);
+  border-top: var(--lw-med) solid var(--ink);
+}
+
+.seriesnav a {
+  display: grid;
+  gap: var(--sp-1);
+  text-decoration: none;
+}
+
+.seriesnav a:hover span:last-child,
+.seriesnav a:focus-visible span:last-child {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.seriesnav__next {
+  text-align: right;
+}
+
+.seriesnav__up {
+  align-self: center;
+}
+
+/* --- Project detail series, notebook and revision tables --- */
+
+.seriesindex__no,
+.seriesindex__pn,
+.seriesindex__rev,
+.entryindex__no {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.seriesindex__title,
+.entryindex__title {
+  width: 100%;
+}
+
+.entryindex__name {
+  display: block;
+}
+
+.entryindex__summary {
+  display: block;
+  margin-top: var(--sp-2);
+  color: var(--faint);
+  font-size: var(--t-h35);
+  max-width: var(--measure-sans);
+}
+
+.entryindex__related a + a {
+  margin-left: var(--sp-3);
+}
+
+/* Where else to find him, on the About sheet. A table because it is rows, and
+   the same table every other index on the site uses. */
+.linkindex__service {
+  width: 12rem;
+  white-space: nowrap;
+}
+
+.linkindex__handle {
+  width: 100%;
+}
+
+/* The only prose on the site. It gets a reading measure and nothing else — no
+   drop cap, no pull quote, no lead paragraph treatment. */
+.bio p {
+  max-width: var(--measure-sans);
+  margin: 0 0 var(--sp-4);
+}
+
+.bio p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Shared sheet furniture --- */
+
+.sheettitle {
+  font-size: var(--t-h100);
+  margin: 0 0 var(--sp-4);
+}
+
+.sheetlede {
+  max-width: var(--measure-sans);
+  margin: 0 0 var(--sp-5);
+  color: var(--faint);
+}
+
+.sheetnote {
+  margin-top: var(--sp-4);
+}
+
+.sheettitle--sm {
+  font-size: var(--t-h70);
+}
+
+/* A sheet with nothing on it yet. Same dashed hatched plate as a figure with no
+   drawing on file, so "not yet" reads the same way wherever it happens rather
+   than being invented twice. */
+.emptysheet {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-6) var(--sp-4);
+  margin-top: var(--sp-6);
+  border: var(--lw-med) dashed var(--faint-rule);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 10px,
+    color-mix(in srgb, var(--faint-rule) 26%, transparent) 10px 11px
+  );
+}
+
+.emptysheet__note {
+  margin: 0;
+  max-width: var(--measure-sans);
+  color: var(--faint);
+}
+
+/* --- Awards. A table now, not ten blocks of prose.
+   Each award is one row — when it was given, what it was, who gave it, and the
+   drawing it was given for — because that is the whole of what an award is from
+   outside. The paragraph of notes each one used to carry (category, placement,
+   prize amount) is on the resume; ten of them stacked here turned the bottom
+   half of the sheet into a second copy of it. --- */
+
+.awardindex__date {
+  white-space: nowrap;
+}
+
+.awardindex__title {
+  width: 40%;
+}
+
+.awardindex__body {
+  width: 35%;
+  color: var(--faint);
+}
+
+.awardindex__ref {
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  /* Three columns is what a phone fits. The reference goes rather than the
+     organisation: the same part number is one tap away on sheet 02, and an
+     award with no body named is an award with no source. */
+  .awardindex__date {
+    white-space: normal;
+  }
+
+  .awardindex__title,
+  .awardindex__body {
+    width: auto;
+  }
+
+  .awardindex th:last-child,
+  .awardindex td:last-child {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   12. HOME SHEET
+   ------------------------------------------------------------------------- */
+
+/* The first screen carries the identity card, the index and nothing else. This
+   block is the empty sheet beneath them, sized so SECTION A-A and the drawing
+   start below the fold. The subtracted height is the head band, the card and the
+   body's top padding — approximate on purpose, because the only thing that has
+   to hold is that the drawing does not load into view. */
+.titlepage {
+  min-height: calc(100svh - 24rem);
+  display: flex;
+  align-items: flex-end;
+}
+
+@media (max-width: 639px) {
+  .titlepage {
+    min-height: 34svh;
+  }
+}
+
+/* The scroll cue. It is a link to the first section, not a decoration: the
+   affordance is that clicking it does what it says. The rule is drawn the way a
+   leader is — a line that goes somewhere — and the arrow is the only glyph on
+   the site used as a mark rather than a word. */
+.scrollcue {
+  display: grid;
+  grid-template-columns: auto minmax(var(--sp-5), 1fr) auto;
+  grid-template-areas:
+    'head rule arrow'
+    'text text  text';
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  width: 100%;
+  padding-bottom: var(--sp-3);
+  border-bottom: var(--lw-thin) solid var(--faint-rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.scrollcue__head {
+  grid-area: head;
+}
+
+.scrollcue__rule {
+  grid-area: rule;
+  height: 0;
+  border-top: var(--lw-med) solid var(--faint-rule);
+}
+
+.scrollcue__text {
+  grid-area: text;
+  max-width: var(--measure-sans);
+  color: var(--faint);
+  font-size: var(--t-h35);
+}
+
+/* The one animated thing on the site. It nudges once a second toward the content
+   it points at, which is the whole job of a scroll cue; anyone who has asked not
+   to see motion gets a static arrow instead. */
+.scrollcue__arrow {
+  grid-area: arrow;
+  font-size: var(--t-h70);
+  line-height: 1;
+  color: var(--annotation);
+  animation: cue-nudge 1.8s ease-in-out infinite;
+}
+
+@keyframes cue-nudge {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(0.2em);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollcue__arrow {
+    animation: none;
+  }
+}
+
+.scrollcue:hover,
+.scrollcue:focus-visible {
+  border-bottom-color: var(--reference);
+}
+
+.scrollcue:hover .scrollcue__head,
+.scrollcue:focus-visible .scrollcue__head,
+.scrollcue:hover .scrollcue__text,
+.scrollcue:focus-visible .scrollcue__text {
+  color: var(--reference);
+}
+
+/* -------------------------------------------------------------------------
+   12a. LEAD SECTIONS — the front of one index, on the home sheet
+   ------------------------------------------------------------------------- */
+
+.lead {
+  margin-bottom: var(--sp-7);
+}
+
+.lead__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-5);
+}
+
+.pn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+}
+
+.pn__rev {
+  color: var(--faint);
+}
+
+.lead__summary {
+  max-width: var(--measure-sans);
+  margin-top: var(--sp-5);
+}
+
+.lead__more {
+  margin-top: var(--sp-5);
+}
+
+/* A button in this system is a bordered field, like every other block on the
+   sheet. Body face for the label — caps-mono is metadata and never button text —
+   with the arrow as the one mono element, because it is a mark, not a word. */
+.sheetbutton {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-5);
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--lw-heavy) solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.sheetbutton:hover,
+.sheetbutton:focus-visible {
+  border-color: var(--reference);
+  color: var(--reference);
+}
+
+.sheetbutton__arrow {
+  color: var(--faint);
+}
+
+.sheetbutton:hover .sheetbutton__arrow,
+.sheetbutton:focus-visible .sheetbutton__arrow {
+  color: var(--reference);
+}
+
+/* -------------------------------------------------------------------------
+   12c. ROLES — the experience sheet
+   ------------------------------------------------------------------------- */
+
+/* The roles are drawn on the same contact sheet as the projects — see
+   .sheetset in section 11c. A role reuses that grid rather than owning one:
+   both are a set of sheets, and having two grids that mean the same thing is
+   how they start to drift apart. What is left here is only what a role sets
+   differently from a project. */
+
+.rolecell__org {
+  margin: 0 0 var(--sp-4);
+  color: var(--faint);
+  font-size: var(--t-h35);
+}
+
+.rolecell__summary {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--t-h35);
+  /* The card is the measure here, not 72ch. */
+  max-width: none;
+}
+
+/* Location and any drawing the role produced, on the baseline at the foot of
+   the cell. Pushed down so the rules across a row of cells stay the only thing
+   that lines up — the feet do not, and pretending otherwise would need equal
+   summaries. */
+.rolecell__foot {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin: var(--sp-3) 0 0;
+}
+
+.rolecell__pn {
+  white-space: nowrap;
+}
+
+/* Shared with the home sheet's current-role block, which states one role in
+   full and so keeps the larger setting. */
+.role__title {
+  font-size: var(--t-h70);
+  margin: 0 0 var(--sp-2);
+  max-width: var(--measure-sans);
+}
+
+.role__org {
+  margin: 0 0 var(--sp-4);
+  color: var(--faint);
+}
+
+/* -------------------------------------------------------------------------
+   12b. PROJECT BLOCKS — the detail series on sheet 02
+   ------------------------------------------------------------------------- */
+
+.project {
+  margin-bottom: var(--sp-7);
+}
+
+.project__pn {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+.project__title {
+  font-size: var(--t-h70);
+  margin: 0 0 var(--sp-3);
+  max-width: var(--measure-sans);
+}
+
+.project__summary {
+  max-width: var(--measure-sans);
+  margin: 0 0 var(--sp-5);
+}
+
+.project__notes {
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: var(--measure-sans);
+}
+
+.project__notes li {
+  padding: var(--sp-3) 0;
+  border-bottom: var(--lw-thin) solid var(--faint-rule);
+}
+
+.project__link {
+  margin-top: var(--sp-4);
+}
+
+/* The identity card. The name is the one thing on this site set at display size
+   — everything else is metadata, a drawing, or body copy — so it is an h1 in the
+   body face, not more caps-mono. The detail lines stay caps-mono beside it: a
+   part name over its fields, which is how a title block is set.
+
+   It does not pin. It is the sheet's opening statement, not chrome, and it
+   scrolls away like the rest of the sheet; the head band is what stays. */
+.idblock {
+  display: grid;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-5);
+  margin-bottom: var(--sp-5);
+  border-bottom: var(--lw-heavy) solid var(--ink);
+}
+
+.idblock__name {
+  margin: 0;
+  font-size: var(--t-h100);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.idblock__detail {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 62ch;
+}
+
+.idblock__detail p {
+  margin: 0;
+}
+
+/* The one line here that really is status metadata. */
+.idblock__status {
+  color: var(--faint);
+}
+
+@media (min-width: 640px) {
+  .idblock__name {
+    font-size: var(--t-h140);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Name and detail sit side by side, so the card is one name tall. */
+  .idblock {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    gap: var(--sp-6);
+  }
+
+  .idblock__name {
+    font-size: var(--t-h200);
+    line-height: 1;
+  }
+
+  .idblock__detail {
+    padding-bottom: 0.35em;
+  }
+}
+
+/* Keep scroll-into-view clear of the fixed head band, or an anchor jump parks
+   its target underneath it. Nothing else is pinned on any sheet. */
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: calc(var(--head-h) + var(--sp-4));
+  }
+}
+
+/* -------------------------------------------------------------------------
+   14. PHOTOGRAPHY — the hobby sheet
+
+   The one sheet with no drawing vocabulary on it: no part numbers, no callouts,
+   no title blocks, because a photograph is not a part. What carries over is the
+   plate — a bordered frame with a mono caption strip — and the contact-sheet
+   reading of the grid as a whole.
+   ------------------------------------------------------------------------- */
+
+/* The filter is a real radio group with no JavaScript behind it. The inputs are
+   visually hidden but still focusable and still announced, so the keyboard and
+   screen-reader behaviour is the browser's rather than something reimplemented. */
+.filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.filterbar__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
+  border: var(--lw-med) solid var(--faint-rule);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.filterbar__label:hover {
+  border-color: var(--ink);
+}
+
+.filterbar__count {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+#subject-all:checked ~ .filterbar [for='subject-all'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#subject-all:checked ~ .filterbar [for='subject-all'] .filterbar__count {
+  color: var(--paper);
+}
+
+#subject-all:focus-visible ~ .filterbar [for='subject-all'] {
+  outline: var(--lw-heavy) solid var(--annotation);
+  outline-offset: 2px;
+}
+
+#subject-nature:checked ~ .filterbar [for='subject-nature'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#subject-nature:checked ~ .filterbar [for='subject-nature'] .filterbar__count {
+  color: var(--paper);
+}
+
+#subject-nature:focus-visible ~ .filterbar [for='subject-nature'] {
+  outline: var(--lw-heavy) solid var(--annotation);
+  outline-offset: 2px;
+}
+
+#subject-places:checked ~ .filterbar [for='subject-places'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#subject-places:checked ~ .filterbar [for='subject-places'] .filterbar__count {
+  color: var(--paper);
+}
+
+#subject-places:focus-visible ~ .filterbar [for='subject-places'] {
+  outline: var(--lw-heavy) solid var(--annotation);
+  outline-offset: 2px;
+}
+
+#subject-cars:checked ~ .filterbar [for='subject-cars'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#subject-cars:checked ~ .filterbar [for='subject-cars'] .filterbar__count {
+  color: var(--paper);
+}
+
+#subject-cars:focus-visible ~ .filterbar [for='subject-cars'] {
+  outline: var(--lw-heavy) solid var(--annotation);
+  outline-offset: 2px;
+}
+
+/* Masonry by columns. 23 of the 24 frames are landscape and one is portrait, so
+   a fixed-ratio grid would crop that one badly; columns let every frame keep the
+   shape it was taken in. */
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 1;
+  column-gap: var(--sp-4);
+}
+
+@media (min-width: 640px) {
+  .gallery {
+    columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gallery {
+    columns: 3;
+  }
+}
+
+.gallery__item {
+  break-inside: avoid;
+  margin-bottom: var(--sp-4);
+}
+
+#subject-nature:checked ~ .gallery > .gallery__item:not(.is-nature) {
+  display: none;
+}
+
+#subject-places:checked ~ .gallery > .gallery__item:not(.is-places) {
+  display: none;
+}
+
+#subject-cars:checked ~ .gallery > .gallery__item:not(.is-cars) {
+  display: none;
+}
+
+/* The plate. Same construction as a framed drawing — heavy border, caption strip
+   ruled off inside it — which is what keeps this sheet part of the same package
+   even with none of the drawing fields on it. */
+.plate {
+  margin: 0;
+  border: var(--lw-heavy) solid var(--ink);
+  background: var(--paper);
+}
+
+.plate__link {
+  display: block;
+  text-decoration: none;
+}
+
+.plate__img {
+  width: 100%;
+  height: auto;
+}
+
+.plate__cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-top: var(--lw-med) solid var(--ink);
+}
+
+.plate__cat {
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.plate__link:hover,
+.plate__link:focus-visible {
+  outline-offset: -4px;
+}
+
+/* -------------------------------------------------------------------------
+   13. PENDING FIGURE
+   The honest state for hardware that has not been photographed yet. No
+   stand-in image is fabricated; the plate holds the same coordinate space, so
+   callouts that already have coordinates still show in their real positions.
+   ------------------------------------------------------------------------- */
+
+.afig__plate {
+  display: grid;
+  place-content: end start;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  border: var(--lw-med) dashed var(--faint-rule);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 10px,
+    color-mix(in srgb, var(--faint-rule) 26%, transparent) 10px 11px
+  );
+}
+
+.afig__platenote {
+  max-width: 34ch;
+}
+
+.afig__list .is-unplaced {
+  color: var(--faint);
+}
+
+.afig__unplaced {
+  margin-left: var(--sp-2);
+}
+
+/* -------------------------------------------------------------------------
+   14. PRELIMINARY MARKING — dev only
+   ------------------------------------------------------------------------- */
+
+.prelim {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 22px,
+    color-mix(in srgb, var(--annotation) 12%, transparent) 22px 24px
+  );
+}
+
+.prelim__stamp {
+  transform: rotate(-14deg);
+  border: 3px solid color-mix(in srgb, var(--annotation) 55%, transparent);
+  padding: var(--sp-3) var(--sp-5);
+  font-family: var(--font-plex-mono);
+  font-size: clamp(1rem, 3.4vw, 2.4rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--annotation) 55%, transparent);
+}

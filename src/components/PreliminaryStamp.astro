@@ -1,0 +1,19 @@
+---
+/**
+ * The drawing convention for an unapproved sheet, applied to placeholder
+ * content. Dev only: the content gate stops placeholder files reaching a
+ * production build at all, so this exists to make them impossible to miss
+ * while working, not to ship.
+ *
+ * Both marks are CSS. The hatch is a repeating-linear-gradient, not an image
+ * texture, which keeps it inside the "the grid is CSS" rule.
+ */
+---
+
+{
+  import.meta.env.DEV && (
+    <div class="prelim" aria-hidden="true">
+      <span class="prelim__stamp">Preliminary — not for construction</span>
+    </div>
+  )
+}

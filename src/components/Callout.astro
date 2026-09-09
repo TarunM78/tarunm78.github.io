@@ -1,0 +1,64 @@
+---
+/**
+ * One callout: the list entry, and — above 1024px — the gutter label beside the
+ * drawing. One element, both layouts.
+ *
+ * It used to be two. The visual label lived here as an aria-hidden div inside
+ * the image wrapper, and a second copy of the same text lived in the ordered
+ * list below the figure, so assistive tech would read exactly one of them. That
+ * duplication is what made the callouts inert: the thing you could see was
+ * hidden from screen readers, and the thing screen readers read was clipped out
+ * of view above 1024px, so neither could safely be made the control. Collapsed
+ * into one element, the label you point at and the entry a screen reader reads
+ * are the same node, and it can be a real button.
+ *
+ * The button's job is to select the callout, and selection is expressed as
+ * focus — which is why the highlight keys off `:focus` and not `:focus-visible`.
+ * Clicking a label pins its leader line; clicking away releases it. That is the
+ * whole interaction, and it costs no JavaScript.
+ *
+ * An unplaced callout is not a control. There is nothing on the drawing to
+ * point at, so it stays plain text and keeps its TODO marker.
+ */
+import type { ResolvedCallout } from '../lib/callouts';
+import TodoMarker from './TodoMarker.astro';
+
+interface Props {
+  callout: ResolvedCallout;
+  /** Figure-unique prefix, so two figures on a page cannot share an id. */
+  idBase: string;
+}
+
+const { callout: c, idBase } = Astro.props;
+const descId = `${idBase}-c${c.index}`;
+---
+
+<li
+  class:list={['afig__item', c.placed ? `afig__item--${c.side}` : 'is-unplaced']}
+  style={c.placed ? `--sy:${c.slotY}%` : undefined}
+>
+  {
+    c.placed ? (
+      <>
+        <button
+          type="button"
+          class="afig__ctl"
+          data-callout={c.index}
+          aria-describedby={descId}
+        >
+          {c.text}
+        </button>
+        <span id={descId} class="visually-hidden">
+          Marked at {c.region} of the drawing.
+        </span>
+      </>
+    ) : (
+      <span class="afig__ctl afig__ctl--static">
+        {c.text}
+        <span class="afig__unplaced">
+          <TodoMarker text="place on image" />
+        </span>
+      </span>
+    )
+  }
+</li>

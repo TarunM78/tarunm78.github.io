@@ -1,0 +1,128 @@
+---
+/**
+ * Sheet 2 — Projects. The detail series, as a set of sheets rather than a
+ * single very long one.
+ *
+ * This page used to render every project in full, one after another, so
+ * reaching PN-005 meant scrolling past four complete drawings, their callouts
+ * and their notes. That is not how a drawing package is read. You look at the
+ * set, you pull the sheet you want, and the rest stays in the stack — which is
+ * what this is now: an index, then the drawings as a contact sheet, each with a
+ * way through to its own sheet.
+ *
+ * Callouts are deliberately absent here. A callout needs a 38% gutter either
+ * side for its label, and at grid width there is no gutter — so an annotated
+ * drawing at this size would either crush its labels or drop them silently.
+ * The annotation is on the sheet it belongs to.
+ *
+ * So is the title block. Every field in it — part, rev, scale, drawn, started,
+ * type — is either already printed above the drawing on this card or waiting on
+ * the sheet the card links to, and docking a block into the corner of a preview
+ * costs a third of the width of the one thing the preview is for. The border
+ * stays, because the border is what makes it read as a sheet.
+ *
+ * Every cell is the same width and every drawing is fitted to a fixed frame, so
+ * the set reads as a stack of one size rather than a ragged column. A portrait
+ * drawing takes two of those frames instead of being shrunk into one: it is a
+ * longer sheet, and on a real set a longer sheet is a bigger piece of paper.
+ */
+import Sheet from '../../layouts/Sheet.astro';
+import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
+import DataTable from '../../components/DataTable.astro';
+import PartNumber from '../../components/PartNumber.astro';
+import { getProjects, getProjectSheets, projectHref, subSheetNo } from '../../lib/sheets';
+
+const projects = await getProjects();
+const series = await getProjectSheets();
+
+/** Part numbers still in build, so the index can mark them the way sheet 03 marks a current role. */
+const activePNs = new Set(
+  projects.filter((p) => p.data.status === 'active').map((p) => p.data.partNumber)
+);
+
+const STATUS: Record<string, string> = {
+  active: 'In build',
+  shipped: 'Complete',
+  shelved: 'Shelved',
+};
+
+/** A drawing taller than it is wide gets two frames' worth of the grid. */
+const isTall = (p: (typeof projects)[number]) =>
+  !!p.data.heroImage && p.data.heroImage.height > p.data.heroImage.width;
+---
+
+<Sheet
+  sheet="02"
+  sheetTitle="Projects"
+  sheetNumber={2}
+  rev="A"
+  revDate="2026-09-09"
+  description="Every project sheet: mechanisms, perception systems and medical devices, in part-number order."
+>
+  <section class="sheets" aria-labelledby="series-heading">
+    <h1 id="series-heading" class="sheettitle">Projects</h1>
+    <p class="sheetlede">
+      The detail series under sheet 02, in part-number order. PN-001 is the current work.
+      Each drawing has a sheet of its own.
+    </p>
+
+    <DataTable columns={['Sht', 'Part', 'Title', 'Rev']} class="seriesindex">
+      {
+        series.map((s) => (
+          <tr class:list={[activePNs.has(s.partNumber) && 'is-current']}>
+            <td class="meta meta--ink seriesindex__no">{s.label}</td>
+            <td class="meta meta--ink seriesindex__pn">{s.partNumber}</td>
+            <td class="seriesindex__title">
+              <a href={s.href}>{s.title}</a>
+            </td>
+            <td class="meta meta--ink seriesindex__rev">{s.rev}</td>
+          </tr>
+        ))
+      }
+    </DataTable>
+  </section>
+
+  <ol class="sheetset" aria-label="Project sheets">
+    {
+      projects.map((p, i) => (
+        <li class:list={['sheetcard', isTall(p) && 'sheetcard--tall']}>
+          <p class="sheetcard__meta">
+            <span class="meta meta--ink">{subSheetNo(i)}</span>
+            <PartNumber partNumber={p.data.partNumber} rev={p.data.rev} />
+            <span class:list={[p.data.status === 'shipped' ? 'tag-state' : 'meta']}>
+              {STATUS[p.data.status]}
+            </span>
+            {p.data.status === 'active' && <span class="tag-state">Current</span>}
+          </p>
+
+          <h2 class="sheetcard__title">
+            <a href={projectHref(p.id)}>{p.data.title}</a>
+          </h2>
+
+          {/* No callouts at this size — see the note at the top of this file. */}
+          <AnnotatedFigure
+            class="sheetcard__fig"
+            src={p.data.heroImage}
+            alt={p.data.heroImageAlt ?? ''}
+            imageType={p.data.heroImageType}
+            figureId={`card-${p.data.partNumber}`}
+            sizes="(min-width: 1024px) 44vw, 92vw"
+            framed
+            pendingNote={
+              p.data.status === 'active'
+                ? `Coming soon — ${p.data.partNumber} is current work`
+                : `${p.data.partNumber} has no drawing on file yet`
+            }
+          />
+
+          <p class="sheetcard__more">
+            <a class="sheetbutton sheetbutton--lg" href={projectHref(p.id)}>
+              <span>See more</span>
+              <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
+            </a>
+          </p>
+        </li>
+      ))
+    }
+  </ol>
+</Sheet>

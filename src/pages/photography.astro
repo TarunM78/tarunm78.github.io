@@ -1,0 +1,138 @@
+---
+/**
+ * Photography — not a sheet.
+ *
+ * The one place the drawing vocabulary steps back: no part numbers, no
+ * callouts, no title blocks, and now no sheet number either. Photographs are
+ * not parts, and the index of a drawing package has no business listing a page
+ * that is not part of the package. It is reached from the About sheet, where
+ * the hobby is mentioned. What carries over is the plate — a bordered frame
+ * with a mono caption strip under it — and the contact-sheet reading of the
+ * whole grid.
+ *
+ * The filter is CSS only. A radio per category sits before the grid, and a
+ * :checked sibling rule hides the plates that do not match, so filtering costs
+ * no JavaScript and works with the keyboard for free because it is a real radio
+ * group. Labels are what you see; the inputs are visually hidden but focusable.
+ *
+ * Images are resolved from src/assets/photography by glob at build time. A row
+ * naming a file that is not there fails the build rather than rendering a hole.
+ *
+ * They are not lazy-loaded, and that is deliberate. CSS columns fill the first
+ * column top to bottom before starting the second, so DOM order and reading
+ * order do not agree: the first four frames all land in column one, and every
+ * frame visible in columns two and three would be one the loader had decided
+ * was below the fold. The result was a page of empty plates. The frames are the
+ * content of this page, so they load.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Sheet from '../layouts/Sheet.astro';
+
+const CATEGORIES = [
+  { key: 'nature', label: 'Nature' },
+  { key: 'places', label: 'Places' },
+  { key: 'cars', label: 'Cars' },
+] as const;
+
+const photos = await getCollection('photography');
+
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/photography/*.jpg',
+  { eager: true }
+);
+
+const plates = photos.map((p) => {
+  const key = `../assets/photography/${p.data.file}`;
+  const mod = files[key];
+  if (!mod) {
+    throw new Error(
+      `photography.json references ${p.data.file}, which is not in src/assets/photography.`
+    );
+  }
+  return { ...p.data, img: mod.default };
+});
+
+const countOf = (key: string) => plates.filter((p) => p.category === key).length;
+---
+
+<Sheet
+  sheetTitle="Photography"
+  sheetNumber={0}
+  rev="A"
+  revDate="2026-09-09"
+  description="Photographs: nature, places and cars. A hobby, kept separate from the drawing package."
+>
+  <section class="sheets" aria-labelledby="photography-heading">
+    <h1 id="photography-heading" class="sheettitle">Photography</h1>
+    <p class="sheetlede">
+      Not part of the drawing package — no sheet number, no part numbers, no revisions. {plates.length} frames,
+      filtered by subject.
+    </p>
+  </section>
+
+  <div class="gallery-filter">
+    {/*
+      The inputs must precede the grid and share a parent with it: the whole
+      filter is one `:checked ~ .gallery` rule per category.
+    */}
+    <input
+      class="visually-hidden gallery-filter__input"
+      type="radio"
+      name="subject"
+      id="subject-all"
+      checked
+    />
+    {
+      CATEGORIES.map((c) => (
+        <input
+          class="visually-hidden gallery-filter__input"
+          type="radio"
+          name="subject"
+          id={`subject-${c.key}`}
+        />
+      ))
+    }
+
+    <div class="filterbar" role="group" aria-label="Filter by subject">
+      <label class="filterbar__label" for="subject-all">
+        <span>All</span>
+        <span class="meta filterbar__count">{plates.length}</span>
+      </label>
+      {
+        CATEGORIES.map((c) => (
+          <label class="filterbar__label" for={`subject-${c.key}`}>
+            <span>{c.label}</span>
+            <span class="meta filterbar__count">{countOf(c.key)}</span>
+          </label>
+        ))
+      }
+    </div>
+
+    <ul class="gallery">
+      {
+        plates.map((p, i) => (
+          <li class:list={['gallery__item', `is-${p.category}`]}>
+            <figure class="plate">
+              <a class="plate__link" href={p.img.src}>
+                <Image
+                  class="plate__img"
+                  src={p.img}
+                  alt={p.alt}
+                  widths={[400, 800]}
+                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw"
+                  loading="eager"
+                  fetchpriority={i < 4 ? 'high' : 'low'}
+                />
+              </a>
+              <figcaption class="plate__cap">
+                <span class="meta meta--ink">{p.title}</span>
+                <span class="meta plate__cat">{p.category}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Sheet>

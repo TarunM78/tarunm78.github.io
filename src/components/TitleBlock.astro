@@ -1,0 +1,75 @@
+---
+/**
+ * The title block, as on a real drawing — and it belongs to a drawing, not to a
+ * page. It docks into the lower-right corner of a framed AnnotatedFigure, where
+ * its outer edges meet the drawing border exactly, which is where a title block
+ * has always gone and the only relationship that justifies drawing the border.
+ *
+ * It identifies the drawing, not the drafter: part number, title, rev, scale,
+ * medium, and initials in the DRAWN field. The full name is stated once, in
+ * the sheet's identity strip; repeating it on every drawing would be five
+ * copies of the same fact.
+ *
+ * The scale field reads NTS — not to scale. A web page has no true scale, and
+ * printing "1:1" would be a drawing convention stating something false, which
+ * is the one thing this site is not supposed to do. NTS is the authentic
+ * drafting value for exactly this case.
+ */
+import TodoMarker from './TodoMarker.astro';
+
+interface Props {
+  partNumber: string;
+  rev: string;
+  title: string;
+  /** Year or month the part was started. Renders a TODO field when unset. */
+  started?: string;
+  /** Drafter's initials. The full name lives in the sheet's identity strip. */
+  drawnBy?: string;
+  scale?: string;
+  /** Photo, render or drawing. Stated so a render cannot read as hardware. */
+  imageType?: 'photo' | 'render' | 'drawing';
+}
+
+const {
+  partNumber,
+  rev,
+  title,
+  started,
+  drawnBy = 'TM',
+  scale = 'NTS',
+  imageType = 'photo',
+} = Astro.props;
+---
+
+<div class="titleblock">
+  <p class="titleblock__title meta meta--ink">{title}</p>
+
+  <dl class="titleblock__fields">
+    <div class="titleblock__field">
+      <dt class="meta meta--sm">Part</dt>
+      <dd class="meta meta--ink">{partNumber}</dd>
+    </div>
+    <div class="titleblock__field">
+      <dt class="meta meta--sm">Rev</dt>
+      <dd class="meta meta--ink">{rev}</dd>
+    </div>
+    <div class="titleblock__field">
+      <dt class="meta meta--sm">Scale</dt>
+      <dd class="meta meta--ink">{scale}</dd>
+    </div>
+    <div class="titleblock__field titleblock__field--row2">
+      <dt class="meta meta--sm">Drawn</dt>
+      <dd class="meta meta--ink">{drawnBy}</dd>
+    </div>
+    <div class="titleblock__field titleblock__field--row2">
+      <dt class="meta meta--sm">Started</dt>
+      <dd class="meta meta--ink">
+        {started ?? <TodoMarker text="date" />}
+      </dd>
+    </div>
+    <div class="titleblock__field titleblock__field--row2">
+      <dt class="meta meta--sm">Type</dt>
+      <dd class="meta meta--ink">{imageType}</dd>
+    </div>
+  </dl>
+</div>

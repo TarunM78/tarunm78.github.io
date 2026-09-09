@@ -1,0 +1,81 @@
+---
+/**
+ * Sheet 4 — Notebook.
+ *
+ * The index of entries. Entries are not sheets: they carry entry numbers, and
+ * the drawing language goes quiet here, so the sheet runs with the grid dropped
+ * to near-invisible.
+ *
+ * There are no entries yet, and the sheet says so rather than standing in
+ * placeholder logs — a drawing package does not ship sheets of invented data.
+ * The index and its plumbing stay in place, so the first real entry needs
+ * nothing here but the file.
+ *
+ * Entries have no pages of their own yet, so the index shows each one's summary
+ * in full rather than linking into nothing.
+ */
+import { getCollection } from 'astro:content';
+import Sheet from '../layouts/Sheet.astro';
+import DataTable from '../components/DataTable.astro';
+import { getProjects, projectHref } from '../lib/sheets';
+
+const entries = (await getCollection('notebook')).sort((a, b) => b.data.entry - a.data.entry);
+const projects = await getProjects();
+
+/** Part number to title and to its anchor on the projects sheet. */
+const titleOf = new Map(projects.map((p) => [p.data.partNumber, p.data.title]));
+const anchorOf = new Map(projects.map((p) => [p.data.partNumber, p.id]));
+
+const entryNo = (n: number) => String(n).padStart(3, '0');
+---
+
+<Sheet
+  sheet="04"
+  sheetTitle="Notebook"
+  sheetNumber={4}
+  rev="A"
+  revDate="2026-09-09"
+  description="Working notes on mechanism design, actuator selection and test method."
+  quiet
+>
+  <section class="sheets" aria-labelledby="notebook-heading">
+    <h1 id="notebook-heading" class="sheettitle">Notebook</h1>
+    <p class="sheetlede">
+      Working notes, newest first. Entries carry entry numbers rather than sheet numbers —
+      they are not part of the drawing package.
+    </p>
+
+    {
+      entries.length === 0 ? (
+        <div class="emptysheet">
+          <p class="meta meta--ink">Logs coming soon</p>
+          <p class="emptysheet__note">
+            The first entries are being written up. They will cover the work on the actuator
+            and the arm as it happens, rather than after the fact.
+          </p>
+        </div>
+      ) : (
+        <DataTable columns={['Entry', 'Title', 'Related']} class="entryindex">
+          {entries.map((e) => (
+            <tr>
+              <td class="meta meta--ink entryindex__no">{entryNo(e.data.entry)}</td>
+              <td class="entryindex__title">
+                <span class="entryindex__name">{e.data.title}</span>
+                {e.data.summary && <span class="entryindex__summary">{e.data.summary}</span>}
+              </td>
+              <td class="meta entryindex__related">
+                {e.data.relatedProjects.length === 0
+                  ? '—'
+                  : e.data.relatedProjects.map((pn) => (
+                      <a href={projectHref(anchorOf.get(pn) ?? '')} title={titleOf.get(pn)}>
+                        {pn}
+                      </a>
+                    ))}
+              </td>
+            </tr>
+          ))}
+        </DataTable>
+      )
+    }
+  </section>
+</Sheet>

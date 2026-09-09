@@ -1,0 +1,30 @@
+[
+  {
+    "id": "github",
+    "order": 1,
+    "service": "GitHub",
+    "handle": "TarunM78",
+    "url": "https://github.com/TarunM78"
+  },
+  {
+    "id": "linkedin",
+    "order": 2,
+    "service": "LinkedIn",
+    "handle": "tarunm78",
+    "url": "https://www.linkedin.com/in/tarunm78"
+  },
+  {
+    "id": "instagram",
+    "order": 3,
+    "service": "Instagram",
+    "handle": "tarun.m07",
+    "url": "https://www.instagram.com/tarun.m07"
+  },
+  {
+    "id": "spotify",
+    "order": 4,
+    "service": "Spotify",
+    "handle": "Profile",
+    "url": "https://open.spotify.com/user/g87ovcvi02dw8cbjn55bj1tuu"
+  }
+]

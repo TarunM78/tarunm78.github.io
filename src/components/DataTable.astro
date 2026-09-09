@@ -1,0 +1,29 @@
+---
+/**
+ * The one table implementation. The sheet index, the revision table, the
+ * projects index and the notebook index are all specialisations of this.
+ *
+ * Mono caps headers, hairline rules, tabular numerals, no zebra striping, no
+ * radius. This site uses tables, sheets and rules — not cards.
+ */
+interface Props {
+  columns: string[];
+  caption?: string;
+  class?: string;
+}
+const { columns, caption, class: className } = Astro.props;
+---
+
+<div class="dtable-wrap">
+  <table class:list={['dtable', className]}>
+    {caption && <caption class="meta">{caption}</caption>}
+    <thead>
+      <tr>
+        {columns.map((c) => <th scope="col" class="meta">{c}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      <slot />
+    </tbody>
+  </table>
+</div>

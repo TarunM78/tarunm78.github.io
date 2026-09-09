@@ -1,0 +1,97 @@
+---
+/**
+ * The layout every page uses. One sheet of the drawing package.
+ *
+ * Owns the printed grid and the head strip, which carries the sheet's identity
+ * on the left and the sheet index on the right. Pages declare their metadata;
+ * the Sheet renders it.
+ *
+ * The head strip is what stays fixed at 1024px and up — one thin band across the
+ * full sheet, not a column down one side. Nothing is reserved horizontally, so a
+ * drawing gets the whole width of the sheet, which is the point: the drawing is
+ * the content and the chrome is a strip.
+ *
+ * There is no border drawn around the page and no title block in its corner.
+ * A title block belongs to a drawing, not to a viewport, so it lives on the
+ * drawings themselves — see AnnotatedFigure's `titleBlock` prop, where the
+ * border and the block meet at a corner the way they do on a real sheet. What
+ * that block used to carry at page level, the sheet's own number, rev and
+ * date, is in the head strip instead: still stated, stated once.
+ */
+import { Font } from 'astro:assets';
+import SheetIndex from '../components/SheetIndex.astro';
+import PreliminaryStamp from '../components/PreliminaryStamp.astro';
+import '../styles/global.css';
+
+interface Props {
+  /**
+   * Printed in the identity strip. Omit it for a page that is not part of the
+   * drawing package — it then states its title and rev and claims no number,
+   * which is the honest thing for a page the index does not list.
+   */
+  sheet?: string;
+  sheetTitle: string;
+  /** Which row the index marks as current. 0 for a sheet outside the index. */
+  sheetNumber?: number;
+  rev: string;
+  revDate: string;
+  description?: string;
+  /** Blog posts drop the grid to near-invisible and go quiet. */
+  quiet?: boolean;
+  /** Dev-only PRELIMINARY stamp for unapproved content. */
+  preliminary?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  sheet,
+  sheetTitle,
+  sheetNumber = 0,
+  rev,
+  revDate,
+  description,
+  quiet = false,
+  preliminary = false,
+  bodyClass,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+    {description && <meta name="description" content={description} />}
+    <Font cssVariable="--font-plex-sans" preload />
+    <Font cssVariable="--font-plex-mono" preload />
+    <Font cssVariable="--font-plex-serif" />
+    <title>{sheetTitle} — Tarun Malarvasan, mechanical engineering and robotics</title>
+  </head>
+
+  <body class:list={[quiet && 'sheet--quiet', bodyClass]}>
+    <a class="skiplink" href="#sheet-body">Skip to content</a>
+
+    <div class="sheet">
+      <header class="sheet__head">
+        <p class="sheet__ident">
+          {sheet && <span class="meta meta--ink">Sheet {sheet}</span>}
+          <span class:list={['meta', !sheet && 'meta--ink']}>{sheetTitle}</span>
+          <span class="meta">Rev {rev}</span>
+          <span class="meta sheet__ident-date">{revDate}</span>
+        </p>
+
+        <SheetIndex current={sheetNumber} />
+      </header>
+
+      <main class="sheet__body" id="sheet-body">
+        <slot />
+      </main>
+    </div>
+
+    {preliminary && <PreliminaryStamp />}
+  </body>
+</html>
