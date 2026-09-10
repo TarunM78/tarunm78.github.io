@@ -1,0 +1,32 @@
+---
+/**
+ * Which reproduction of the drawing package you are reading.
+ *
+ * The two themes are not "light" and "dark" on this site — they are the two
+ * ways a drawing gets reproduced. One is printed on paper, one is run as a
+ * blueprint, and the tokens are already named for it. The control says that
+ * rather than naming a brightness.
+ *
+ * The buttons are in the markup but the sheet keeps them hidden until the
+ * inline script in the head confirms scripting and adds `has-theme-control`.
+ * That is the rule the drawing zoom already follows: a control that cannot
+ * work should not be drawn. Rendering them hidden rather than injecting them
+ * later is what keeps the head band from shifting once the script runs.
+ *
+ * Nothing here decides the initial theme. The head script does that before
+ * first paint, so a pinned sheet never flashes the other reproduction first.
+ */
+---
+
+<div class="themeswitch" role="group" aria-label="Reproduction">
+  <button class="themeswitch__opt" type="button" data-theme-set="light" aria-pressed="false">
+    Paper
+  </button>
+  <button class="themeswitch__opt" type="button" data-theme-set="dark" aria-pressed="false">
+    Blueprint
+  </button>
+</div>
+
+<script>
+  import '../scripts/theme';
+</script>

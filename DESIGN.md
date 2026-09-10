@@ -54,7 +54,16 @@ on navy and would read as an error state), interactive stays blue but brightens 
 the line color. Links additionally carry an underline in both themes, so the dark mode does
 not lean on hue alone.
 
-No theme toggle. `prefers-color-scheme` only, which keeps the site at zero JavaScript.
+A reproduction switch, defaulting to `prefers-color-scheme`. The two themes are the two
+ways a drawing gets reproduced — printed on paper, or run as a blueprint — and the control
+names them that way rather than naming a brightness. Nothing is pinned until someone
+chooses; until then the OS is in charge, and the choice persists per browser once made.
+
+This replaces "no theme toggle, which keeps the site at zero JavaScript". The cost is real
+and is stated in section 9: every sheet now carries a script, where four of them carried
+none. It buys a reader who is on a dark OS the ability to read the paper sheet, which the
+old rule left them no way to do. The `[data-theme]` hooks the tokens and the drawing
+inversion already carried existed for exactly this and cost nothing to turn on.
 
 ### Line weights — not line colors
 
@@ -204,7 +213,8 @@ real wrapping, and real selection.
 regardless of image aspect ratio. That non-uniform scale would distort stroke weights;
 `vector-effect="non-scaling-stroke"` on every path pins them to their true weight.
 
-**Desktop (1024px and up).** The figure carries a 180px gutter on each side. Callouts with
+**Desktop (1024px and up).** The figure carries a gutter of 26% of the drawing width on
+each side, which is the label measure plus the shoulder that reaches it. Callouts with
 `x < 0.5` land left, `x >= 0.5` land right. Each leader is the standard two-segment form: an
 angled shank from the anchor dot, then a short horizontal shoulder that the label sits on.
 Vertical collisions are resolved at build time — callouts are sorted by `y` within each
@@ -434,11 +444,16 @@ title block stays honest.
   `--faint-rule` is the only sub-4.5:1 value and is barred from text.
 - **Images** — `<Image />` from `astro:assets`, intrinsic width/height emitted,
   `loading="lazy"` except the home hero which is `eager` plus `fetchpriority="high"`.
-- **Lighthouse 95+** — About 1 KB of JavaScript on a sheet carrying drawings, and
-  nothing at all on the other four. Callout collision is resolved at build time and the
-  cross-highlight is CSS, so the centerpiece still ships no script; the one KB wires up
-  the detail viewer, whose own ~1.8 KB is a separate chunk fetched only if someone opens
-  a drawing. No framework, no animation library. Fonts are self-hosted, subset,
+- **Lighthouse 95+** — About 1 KB of JavaScript on a sheet carrying drawings, and, since
+  the reproduction switch, roughly 0.9 KB on the other four — 312 bytes of pin plus a
+  563-byte module, both inlined into the page rather than fetched, so the switch costs no
+  request anywhere. Callout collision is
+  resolved at build time and the cross-highlight is CSS, so the centerpiece still ships no
+  script; the one KB wires up the detail viewer, whose own ~1.8 KB is a separate chunk
+  fetched only if someone opens a drawing. The switch is two pieces: a blocking inline
+  function in the head that applies the pin before first paint, because reading it any
+  later flashes the wrong reproduction on every navigation, and a deferred module that
+  handles clicks. No framework, no animation library. Fonts are self-hosted, subset,
   preloaded, with metric-matched fallbacks.
 
 ---
@@ -455,8 +470,11 @@ Eight rules, and what each one cost.
 4. **No cards.** The projects index, sheet index, revision table and blog index are all one
    `DataTable`. `--radius: 0` and the absence of any shadow token are enforcement, not
    preference.
-5. **No fade-and-slide-up entrances.** One cut, section 11 item 4. Total site motion: the
-   project index hover.
+5. **No fade-and-slide-up entrances.** One cut, section 11 item 4. The rule is a principle
+   rather than a count: motion is permitted only where it states a tie or a state change,
+   never an entrance. A count says how much may move; it does not say what earns the right
+   to, and it goes stale the moment a sixth sheet exists. The callout draw-in cut in
+   section 11 item 4 still fails the principle, which is the test of it.
 6. **No skeuomorphic paper effects.** The drawing border is a 2px rule, not a drop shadow.
    No curl, no stain, no torn edge, no page shadow.
 7. **No monospace body text.** Mono is fenced to metadata by the explicit boundary in
@@ -512,7 +530,23 @@ Five things in my first pass matched a prohibition and were changed.
    `#0D2340`. `#7FB2F0` is 7.2:1 on the ground and sits clearly apart from the `#C8D8EC` line
    color in both hue and lightness.
 
+   **Accepted and extended.** The blueprint annotation value the spec did assign — white —
+   is the one that had to go. White gives 15.8:1 on the ground, so it never failed a
+   contrast check; it failed the rule the contrast check does not measure. Against
+   `#C8D8EC` ink it is 1.5:1, separated by lightness alone, so every one of the twenty
+   `--annotation` usages stopped reading as a layer laid over the drawing and read instead
+   as slightly brighter drawing. `#FF7A6E` is 6.20:1 on the ground and 1.75:1 against ink —
+   hue-led, exactly as `#B23A32` is against `#1C1C1A` on paper. The spec now states this
+   directly and the deviation is closed.
+
 3. **Scale marker reads `NTS`, not `1:1`.** The title block carries a scale field. A web
    page has no true scale, and `1:1` would be a drawing convention stating something false —
    which is the thing this site is not supposed to do. `NTS` (not to scale) is authentic
    drafting vocabulary for exactly this case. `1:1` remains available if preferred.
+
+4. **`--released: #2E6B3C` / `#6FD08C` added.** A third job for colour, carrying the
+   `status` enum that every project already declares and that rendered as monochrome text.
+   5.86:1 on paper, 8.32:1 on the blueprint ground. It replaces a genuine misuse: completed
+   work was stamped in `--annotation`, which said "annotation added on top of the drawing"
+   about a finished part.
+

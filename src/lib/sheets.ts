@@ -118,5 +118,20 @@ export async function getAwards() {
   return (await getCollection('awards')).sort((a, b) => a.data.order - b.data.order);
 }
 
+/** Release status, stamped the way a drawing package states where a sheet
+ *  stands. The wording and the colour travel together so a status cannot be
+ *  worded one way and coloured another, and both pages that show a status read
+ *  it from here rather than keeping their own copy of the map. */
+export function statusStamp(status: 'active' | 'shipped' | 'shelved') {
+  switch (status) {
+    case 'shipped':
+      return { label: 'Complete', class: 'tag-state tag-state--released' };
+    case 'shelved':
+      return { label: 'Shelved', class: 'tag-state tag-state--superseded' };
+    default:
+      return { label: 'In build', class: 'tag-state' };
+  }
+}
+
 /** Zero-padded to two digits, as sheet numbers are written on a drawing. */
 export const sheetNo = (n: number) => String(n).padStart(2, '0');

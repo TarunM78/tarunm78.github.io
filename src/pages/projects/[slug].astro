@@ -20,7 +20,7 @@ import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
 import PartNumber from '../../components/PartNumber.astro';
 import SectionMarker from '../../components/SectionMarker.astro';
 import TodoMarker from '../../components/TodoMarker.astro';
-import { getProjects, projectHref, subSheetNo } from '../../lib/sheets';
+import { getProjects, projectHref, statusStamp, subSheetNo } from '../../lib/sheets';
 import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -41,11 +41,7 @@ const { project, index, projects } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
 
-const STATUS: Record<string, string> = {
-  active: 'In build',
-  shipped: 'Complete',
-  shelved: 'Shelved',
-};
+const stamp = statusStamp(data.status);
 
 const label = subSheetNo(index);
 const prev = projects[index - 1];
@@ -62,15 +58,26 @@ const next = projects[index + 1];
   <section class="sheets" aria-labelledby="project-heading">
     <p class="project__pn">
       <PartNumber partNumber={data.partNumber} />
-      <span class:list={[data.status === 'shipped' ? 'tag-state' : 'meta']}>
-        {STATUS[data.status]}
-      </span>
+      {/* One stamp carries the status; "Current" alongside it said the same
+          thing again, in the same red. */}
+      <span class={stamp.class}>{stamp.label}</span>
       {data.started && <span class="meta">Started {data.started}</span>}
-      {data.status === 'active' && <span class="tag-state">Current</span>}
     </p>
 
     <h1 id="project-heading" class="sheettitle">{data.title}</h1>
     <p class="sheetlede">{data.summary}</p>
+
+    {/* The domains this part sits in. Authored on every project and shown
+        nowhere until now. Metadata, so it takes the metadata face. */}
+    {
+      data.tags.length > 0 && (
+        <p class="project__tags">
+          {data.tags.map((t) => (
+            <span class="meta">{t.replace(/-/g, ' ')}</span>
+          ))}
+        </p>
+      )
+    }
   </section>
 
   <AnnotatedFigure

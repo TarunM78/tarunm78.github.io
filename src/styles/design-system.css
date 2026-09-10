@@ -10,12 +10,18 @@
    ------------------------------------------------------------------------- */
 
 :root {
-  /* Color. Red = annotation added on top of the drawing. Blue = you can click it.
-     Neither is ever used for general emphasis. */
+  /* Color. A hue enters this system only when it names a class of information,
+     and it has to hold that meaning in both themes. Three jobs are defined:
+     red = annotation added on top of the drawing, blue = you can click it,
+     green = released. None of them is ever used for general emphasis.
+
+     --released is the third job, carrying the status already in every project's
+     frontmatter. 5.86:1 on paper here, 8.32:1 on the blueprint ground below. */
   --paper: #f7f5ef;
   --ink: #1c1c1a;
   --annotation: #b23a32;
   --reference: #2a4e8c;
+  --released: #2e6b3c;
 
   /* --faint is darkened from the spec's #8A8A82 (3.12:1, fails AA at the
      11-12px it is used at) to #6E6E66 (4.59:1). The original value survives
@@ -75,13 +81,21 @@
 /* Blueprint. The only place blueprint blue is permitted.
    The [data-theme] hooks let a subtree be pinned to one theme without any
    JavaScript. Nothing in the site sets them; they exist so both themes can be
-   reviewed on one page. A pinned light subtree wins over the OS preference. */
+   reviewed on one page. A pinned light subtree wins over the OS preference.
+
+   --annotation was #ffffff here, which broke the rule the light theme keeps:
+   white against #c8d8ec ink separates by lightness alone, so the annotation
+   layer stopped reading as a layer and the whole theme went blue and white.
+   Red on a blueprint is not an invention — redlining is the one mark on a
+   blueprint that was never blue. 6.20:1 on the ground, and it stays hue-led
+   against ink (1.75:1) exactly as #b23a32 is against #1c1c1a on paper. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0d2340;
     --ink: #c8d8ec;
-    --annotation: #ffffff;
+    --annotation: #ff7a6e;
     --reference: #7fb2f0;
+    --released: #6fd08c;
     --faint: #8a9cb4;
     --faint-rule: rgb(200 216 236 / 0.35);
     --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
@@ -92,8 +106,9 @@
 [data-theme="dark"] {
   --paper: #0d2340;
   --ink: #c8d8ec;
-  --annotation: #ffffff;
+  --annotation: #ff7a6e;
   --reference: #7fb2f0;
+  --released: #6fd08c;
   --faint: #8a9cb4;
   --faint-rule: rgb(200 216 236 / 0.35);
   --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
@@ -105,6 +120,7 @@
   --ink: #1c1c1a;
   --annotation: #b23a32;
   --reference: #2a4e8c;
+  --released: #2e6b3c;
   --faint: #6e6e66;
   --faint-rule: #8a8a82;
   --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
@@ -501,8 +517,8 @@ button.afig__ctl {
      has nothing to put in them, and reserving 43% of the width for labels that
      do not exist just shrinks the drawing. */
   .afig--gutters .afig__stage {
-    /* image + two gutters of 38% each = 176% of image width */
-    width: calc(100% / 1.76);
+    /* image + two gutters of 26% each = 152% of image width */
+    width: calc(100% / 1.52);
   }
 
   /* The home sheet is the cover, and its two drawings are what it is for, so
@@ -513,14 +529,16 @@ button.afig__ctl {
      margin is for on a drawing.
 
      Capped, because a drawing four feet wide is no more legible than one two
-     feet wide, and below --sheet-max this resolves to what it was.
+     feet wide, and below --sheet-max this resolves to what it was. The cap is
+     the span cap below divided by the same 1.52, so the pair still matches on a
+     very wide screen.
 
      Both figures take the same measure, one under the other, so they read as a
      pair. Matching a neighbour is a different reason from reserving label
      space, which is why it is stated separately from the gutter rule above —
      and after it, since the two carry the same weight and the later one wins. */
   .lead .afig__stage {
-    width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.76), 1000px);
+    width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.52), 1158px);
   }
 
   /* A figure with no callouts has no labels to hold, so it takes the whole
@@ -554,7 +572,7 @@ button.afig__ctl {
     top: var(--sy);
     transform: translateY(-50%);
     display: block;
-    width: 28%;
+    width: 22%;
   }
 
   /* No balloons in this layout, so nothing needs a number: the leader line
@@ -569,12 +587,12 @@ button.afig__ctl {
   }
 
   .afig__item--left {
-    right: 110%;
+    right: 104%;
     text-align: right;
   }
 
   .afig__item--right {
-    left: 110%;
+    left: 104%;
     text-align: left;
   }
 
@@ -584,7 +602,7 @@ button.afig__ctl {
     width: 100%;
     white-space: normal;
     text-wrap: balance;
-    /* Tighter than the stacked list: a gutter label is set to a 28% measure and
+    /* Tighter than the stacked list: a gutter label is set to a 22% measure and
        wraps to two or three lines, where the list runs one. */
     line-height: 1.25;
     letter-spacing: 0.06em;
@@ -732,6 +750,24 @@ button.afig__ctl {
   white-space: nowrap;
 }
 
+/* Release status, stamped. A drawing package states where each sheet stands,
+   and the status is already on every project in frontmatter — this is the mark
+   that says it. Three states, three colours, one box: the modifier swaps the
+   token and nothing else, so a state cannot pick up a second treatment.
+
+   The default box stays --annotation for work in build, which is the same
+   claim the red layer always makes: not final yet. Complete work was also
+   drawn in red until now, which said "annotation" about a finished part. */
+.tag-state--released {
+  color: var(--released);
+  border-color: var(--released);
+}
+
+.tag-state--superseded {
+  color: var(--faint);
+  border-color: var(--faint);
+}
+
 /* -------------------------------------------------------------------------
    7. MOTION
    The site has exactly one motion moment, on the project index rows.
@@ -793,6 +829,65 @@ button.afig__ctl {
 
 .sheet__body {
   padding-top: var(--sp-6);
+}
+
+/* -------------------------------------------------------------------------
+   9b. REPRODUCTION SWITCH — paper or blueprint
+
+   The two themes are the two ways a drawing gets reproduced, and the control
+   names them that way. "Light" and "dark" describe a screen; paper and
+   blueprint describe the thing being read, and the tokens are already named
+   for it.
+
+   Hidden until the inline head script confirms scripting, on the same rule the
+   drawing zoom follows: a control that cannot work should not be drawn. It is
+   in the markup rather than injected, so revealing it costs no reflow of the
+   band it sits in.
+   ------------------------------------------------------------------------- */
+
+.themeswitch {
+  display: none;
+}
+
+.has-theme-control .themeswitch {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  /* Sits with the index at the right of the band, not between it and the
+     identity strip: both are chrome for reading the sheet, and the identity is
+     what the left of the band is for. */
+  margin-left: auto;
+}
+
+/* A bordered field, like every other control on the sheet. Mono caps is right
+   here where it is wrong on a button elsewhere: this is not a label on an
+   action, it is a state on the drawing, which is what the metadata face is
+   fenced to. */
+.themeswitch__opt {
+  font-family: var(--font-plex-mono);
+  font-size: var(--t-h18);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  background: none;
+  border: var(--lw-thin) solid var(--faint-rule);
+  border-radius: 0;
+  padding: 1px var(--sp-2);
+  cursor: pointer;
+}
+
+.themeswitch__opt:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* The one in force is inverted, which is the mark the photography filter
+   already uses for "this is the one selected". Same device, same meaning. */
+.themeswitch__opt[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
 }
 
 /* No border is drawn around the page. The one that used to be here existed only
@@ -1618,11 +1713,11 @@ button.afig__ctl {
   margin-top: var(--sp-5);
 }
 
-/* One button sits left; a second, when there is one, goes to the far edge —
-   the way into the drawing on one side, the way out to the set on the other. */
+/* Buttons sit together at the left, in reading order: the way into the drawing
+   first, then the way out to the rest of the set. */
 .lead__more {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: var(--sp-4);
   flex-wrap: wrap;
@@ -1718,6 +1813,16 @@ button.afig__ctl {
 }
 
 .project__pn {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+/* The tag row under the lede. Same flex row as the PN line above it, because
+   it is the same kind of line: metadata about the part, not prose about it. */
+.project__tags {
   display: flex;
   align-items: baseline;
   gap: var(--sp-4);

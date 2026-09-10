@@ -74,11 +74,18 @@ Paper, not blueprint. This is a firm decision.
 - `--grid: #DCDCD2` the printed grid, extremely light
 - `--annotation: #B23A32` muted drafting red, for callouts, leader lines, revision marks, and the current-page indicator
 - `--reference: #2A4E8C` reference blue, used *only* for links and interactive elements
+- `--released: #2E6B3C` release green, used *only* to stamp completed work
 - `--faint: #8A8A82` for secondary metadata, sheet numbers, timestamps
 
-Red and blue each have exactly one job. Red means "annotation added on top of the drawing." Blue means "you can click this." Never use either for general emphasis or decoration.
+A hue enters this system only when it names a class of information, and it has to hold that meaning in both themes. A colour that survives one theme and collapses in the other was never carrying the meaning; it was carrying the theme. Three jobs are defined, and nothing is added without a fourth job to name:
 
-Dark mode inverts to a true blueprint: `#0D2340` ground, `#C8D8EC` lines, white annotations. This is the only place blueprint blue is permitted.
+- Red means "annotation added on top of the drawing."
+- Blue means "you can click this."
+- Green means "released" — the status already authored on every project.
+
+None of them is ever used for general emphasis or decoration.
+
+Dark mode inverts to a true blueprint: `#0D2340` ground, `#C8D8EC` lines. This is the only place blueprint blue is permitted. Annotations stay red there — `#FF7A6E`, 6.20:1 on the ground — because that is the rule above applied honestly: white annotations separated from `#C8D8EC` ink by lightness alone, so the annotation layer stopped reading as a layer and the theme collapsed to blue and white. Red on a blueprint is not an invention; redlining is the one mark on a blueprint that was never blue.
 
 ## Type
 
@@ -124,7 +131,7 @@ Below the fold it is a continuous scroll through the front of each index, one se
 
 **Photography (not a sheet).** A hobby page reached from About, and the one place the drawing vocabulary steps back — including the sheet number, because the index of a drawing package should not list a page that is not part of it: no part numbers, no revisions, no callouts, because a photograph is not a part. What carries over is the plate — a bordered frame with a mono caption strip — and the contact-sheet reading of the grid. Filtered by subject (nature, places, cars) with a radio group and one `:checked ~` rule per category, so it costs no JavaScript and gets keyboard and screen-reader behaviour from the browser. Masonry by CSS columns rather than a fixed ratio, so a portrait frame is not cropped to match the landscape ones.
 
-**Projects (Sheet 2).** The detail series as a set of sheets, not one very long one. A table of the sub-sheets — sheet, PN, title, rev — then the drawings as a contact sheet, two up, each carrying its designators, its title block and a way through to its own sheet. Callouts are deliberately absent at this size: a leader label needs a 38% gutter either side, and at grid width there is none, so the annotation lives on the detail sheet where it fits. Reading PN-005 no longer means scrolling past four complete drawings. Work still in build is marked the way a current role is on sheet 03: the index row inked, and a Current tag in annotation red on the block — on sheet 03 the ink is now the rule across the top of the role's cell, the index it used to mark having gone.
+**Projects (Sheet 2).** The detail series as a set of sheets, not one very long one. A table of the sub-sheets — sheet, PN, title, rev — then the drawings as a contact sheet, two up, each carrying its designators, its title block and a way through to its own sheet. Callouts are deliberately absent at this size: a leader label needs a 26% gutter either side, and at grid width there is none, so the annotation lives on the detail sheet where it fits. Reading PN-005 no longer means scrolling past four complete drawings. Work still in build is marked the way a current role is on sheet 03: the index row inked, and a Current tag in annotation red on the block — on sheet 03 the ink is now the rule across the top of the role's cell, the index it used to mark having gone.
 
 **Project detail (Sheets 02-1 and up).** One sheet per project, at `/projects/<slug>/`. Header with part number, revision, status and date; the drawing at full sheet width with its callouts live and a zoom control; body copy in Plex Sans; notes block; the external link; and a footer giving the sheets either side and the way back to the set. The head band states the real sub-sheet number — `SHEET 02-3` — and the index still marks sheet 02 as current, because that is the sheet this hangs off. A photo gallery per sheet is still to come.
 

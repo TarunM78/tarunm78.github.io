@@ -20,6 +20,7 @@
  */
 import { Font } from 'astro:assets';
 import SheetIndex from '../components/SheetIndex.astro';
+import ThemeSwitch from '../components/ThemeSwitch.astro';
 import PreliminaryStamp from '../components/PreliminaryStamp.astro';
 import '../styles/global.css';
 
@@ -63,6 +64,26 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
+
+    {/*
+      The pin, applied before first paint. It has to be inline and blocking:
+      read it after the stylesheet and a sheet pinned to paper would flash
+      blueprint first, on every navigation. It is the one script on the site
+      that is not deferred, and it is this short for that reason.
+
+      Adding the class here rather than in the deferred module is what lets the
+      switch render hidden and appear without moving the head band.
+    */}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('sheet-theme');
+          if (t === 'light' || t === 'dark')
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+        document.documentElement.classList.add('has-theme-control');
+      })();
+    </script>
     {description && <meta name="description" content={description} />}
     <Font cssVariable="--font-plex-sans" preload />
     <Font cssVariable="--font-plex-mono" preload />
@@ -80,6 +101,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           <span class:list={['meta', !sheet && 'meta--ink']}>{sheetTitle}</span>
           <span class="meta sheet__ident-date">{revDate}</span>
         </p>
+
+        <ThemeSwitch />
 
         <SheetIndex current={sheetNumber} />
       </header>

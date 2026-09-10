@@ -31,7 +31,7 @@
 import Sheet from '../../layouts/Sheet.astro';
 import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
 import PartNumber from '../../components/PartNumber.astro';
-import { getProjects, projectHref, subSheetNo } from '../../lib/sheets';
+import { getProjects, projectHref, statusStamp, subSheetNo } from '../../lib/sheets';
 
 const projects = await getProjects();
 
@@ -39,12 +39,6 @@ const projects = await getProjects();
 const activePNs = new Set(
   projects.filter((p) => p.data.status === 'active').map((p) => p.data.partNumber)
 );
-
-const STATUS: Record<string, string> = {
-  active: 'In build',
-  shipped: 'Complete',
-  shelved: 'Shelved',
-};
 
 /** A drawing taller than it is wide gets two frames' worth of the grid. */
 const isTall = (p: (typeof projects)[number]) =>
@@ -64,15 +58,16 @@ const isTall = (p: (typeof projects)[number]) =>
 
   <ol class="sheetset" aria-label="Project sheets">
     {
-      projects.map((p, i) => (
+      projects.map((p, i) => {
+        const stamp = statusStamp(p.data.status);
+        return (
         <li class:list={['sheetcard', isTall(p) && 'sheetcard--tall']}>
           <p class="sheetcard__meta">
             <span class="meta meta--ink">{subSheetNo(i)}</span>
             <PartNumber partNumber={p.data.partNumber} />
-            <span class:list={[p.data.status === 'shipped' ? 'tag-state' : 'meta']}>
-              {STATUS[p.data.status]}
-            </span>
-            {p.data.status === 'active' && <span class="tag-state">Current</span>}
+            {/* One stamp, not two: "In build" and "Current" stated the same
+                fact twice, in the same red, side by side. */}
+            <span class={stamp.class}>{stamp.label}</span>
           </p>
 
           <h2 class="sheetcard__title">
@@ -102,7 +97,8 @@ const isTall = (p: (typeof projects)[number]) =>
             </a>
           </p>
         </li>
-      ))
+        );
+      })
     }
   </ol>
 </Sheet>

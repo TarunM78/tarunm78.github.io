@@ -63,12 +63,21 @@ function regionOf(x: number, y: number): string {
 
 /** Gutter width either side, as a percentage of image width.
  *  Sized so a 30-40 character callout wraps to at most two lines at the widths
- *  this figure actually renders at. 22 was too tight and wrapped to four. */
-const GUTTER = 38;
-/** Inner edge of the label box. The shoulder lands here. */
-const LABEL_INNER = 10;
-/** Where the leader bends, just outside the image edge. */
-const KNEE = 3;
+ *  this figure actually renders at. 22 was too tight and wrapped to four; 38
+ *  held that measure by taking it out of the drawing, which on the home sheet
+ *  left the drawing a third narrower than the one below it for no gain — the
+ *  labels were simply set further out. The label keeps its measure in
+ *  millimetres here: the gutter is narrower, but the drawing it is a fraction
+ *  of is wider. */
+const GUTTER = 26;
+/** Inner edge of the label box. The shoulder lands here — close to the drawing,
+ *  because the shoulder is the segment that says which label goes with which
+ *  anchor and length adds nothing to that. */
+const LABEL_INNER = 4;
+/** Where the leader bends, just outside the image edge. Inside LABEL_INNER, or
+ *  there is no shoulder left to run: the bend has to happen before the label
+ *  starts, and the gap between the two is the whole horizontal segment. */
+const KNEE = 1.5;
 /** Minimum vertical separation between two labels on the same side. */
 const MIN_GAP = 14;
 /** Labels stay inside this vertical band so they never overhang the figure. */

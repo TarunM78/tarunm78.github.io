@@ -70,8 +70,8 @@ if (!role) throw new Error('Home expects at least one experience entry.');
 
     <p class="lead__summary">{hero.data.summary}</p>
 
-    {/* Into this drawing on the left, out to the rest of the set on the right:
-        the specific thing first, since it is the thing already on screen. */}
+    {/* Into this drawing, then out to the rest of the set: the specific thing
+        first, since it is the thing already on screen. */}
     <p class="lead__more">
       <a class="sheetbutton" href={projectHref(hero.id)}>
         <span>Learn more</span>
