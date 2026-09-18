@@ -6,23 +6,28 @@ started: '2026'
 status: active
 attribution: solo
 summary: A torso-mounted bimanual arm for imitation-learning data collection, designed so every joint stays backdrivable and every actuator stays cheap.
-heroImageType: photo
-heroImageAlt: Orthographic side view of one assembled joint module of the humanoid arm
+heroImage: ../../assets/humanoidarm.png
+heroImageType: drawing
+heroImageAlt: Line drawing of the bimanual arm seen from the front, both six-axis arms hanging from a hexagonal torso hub on a square-section post and base plate, each arm running shoulder actuator, webbed upper link, elbow, forearm and a two-finger servo gripper
 placeholder: false
 callouts:
-  - x: 0.30
-    y: 0.27
-    text: GIM6010-8 · 8:1 PLANETARY · 11 N·m
-  - x: 0.67
-    y: 0.34
+  - x: 0.74
+    y: 0.12
     text: GIM8108-8, SHOULDER JOINT
-  - x: 0.50
-    y: 0.70
-    text: MKS XDRIVE, FOC CONTROLLER
-  - x: 0.15
-    y: 0.55
+  - x: 0.26
+    y: 0.28
     text: 200 mm UPPER LINK
+  - x: 0.25
+    y: 0.42
+    text: GIM6010-8 · 8:1 PLANETARY · 11 N·m
+  - x: 0.24
+    y: 0.74
+    text: SERVO GRIPPER, TWO-FINGER
+  # The MKS XDRIVE controller is not on this drawing — it is carried off the
+  # arm — so it is not a callout. A leader line points at a component in the
+  # view, and there is nothing here for it to land on. It is stated as a note.
 notes:
+  - text: Each joint is driven by an MKS XDRIVE running field-oriented control, carried off the arm rather than at the joint.
   - text: Link lengths are 200mm shoulder to elbow, 100mm elbow to wrist, 200mm wrist to gripper.
   - text: Secondary encoders give absolute position at power-up, so there is no homing routine.
   - text: Data collection uses UMI with a T265 and an OAK-D Lite.

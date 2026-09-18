@@ -14,8 +14,14 @@ Currently in the Locomotion in Biology and Robotics Lab.
 ## Site hero
 
 The home sheet shows the front of two indexes: SECTION A-A is the first sheet in the project
-detail series — the lowest part number, read from the collection rather than named — and
-SECTION B-B is the leading role. Neither is hardcoded.
+detail series that has a drawing on it, read from the collection rather than named, and
+SECTION B-B is the leading role. Neither is hardcoded. A-A takes the first sheet with a
+drawing rather than simply the lowest part number because the cover's whole argument is a
+drawing over a sentence — a pending plate there would be the cover saying there is nothing
+to see. With PN-002 drawn, the two are the same sheet.
+
+Hero is **PN-002, the low-cost bimanual humanoid arm** (`src/assets/humanoidarm.png`), at
+sheet 02-1.
 
 The planetary humanoid actuator is no longer a project. It is the founder role at the stealth
 startup (`src/content/experience/stealth-actuator.md`), which leads the experience list, so its
@@ -26,14 +32,19 @@ DIVA PN-002, SAAR PN-003, stents PN-004, humanoid arm PN-005. PN-001 is now reti
 reissued — a part number is not reused once the part leaves the set — so the series runs
 PN-002 to PN-005.
 
-Callouts:
+Callouts, placed against the drawing — front view, both arms hanging, so the left arm carries
+three of the four and the right shoulder carries the fourth:
 
 ```
-- x: 0.30  y: 0.27   text: GIM6010-8 · 8:1 PLANETARY · 11 N·m
-- x: 0.67  y: 0.34   text: GIM8108-8, SHOULDER JOINT
-- x: 0.50  y: 0.70   text: MKS XDRIVE, FOC CONTROLLER
-- x: 0.15  y: 0.55   text: 200 mm UPPER LINK
+- x: 0.74  y: 0.12   text: GIM8108-8, SHOULDER JOINT
+- x: 0.26  y: 0.28   text: 200 mm UPPER LINK
+- x: 0.25  y: 0.42   text: GIM6010-8 · 8:1 PLANETARY · 11 N·m
+- x: 0.24  y: 0.74   text: SERVO GRIPPER, TWO-FINGER
 ```
+
+The MKS XDRIVE controller is **not** a callout. It is carried off the arm and is not in this
+view, and a leader line points at a component in the view. It is stated in the notes instead.
+The earlier coordinates were authored before there was a drawing and did not survive it.
 
 ---
 
@@ -112,13 +123,18 @@ These four were read off the exploded view rather than taken from a part list. T
 **Summary:**
 A torso-mounted bimanual arm built for imitation-learning data collection, designed around the constraint that every joint stays backdrivable and each actuator stays cheap. Six degrees of freedom per arm plus a servo gripper, roughly 600mm reach, targeting a 1 to 2 kg payload. Four GIM6010-8 actuators handle the distal joints and two GIM8108-8 carry the shoulder, with integrated 8:1 planetary reduction rather than a higher gear ratio, since raising the ratio is the fast way to lose backdrivability. One arm gets built and working before parts are ordered for the second.
 
+**Drawing:** `src/assets/humanoidarm.png` — front view of both arms on the post, black line on
+white. Rendered as `heroImageType: drawing`, which blends the white ground out onto the sheet
+and inverts it on the blueprint. Portrait, so it takes two frames of the contact sheet.
+
 **Callouts:** see site hero above.
 
 **Notes block:**
-1. Link lengths are 200mm shoulder to elbow, 100mm elbow to wrist, 200mm wrist to gripper.
-2. Secondary encoders give absolute position at power-up, so there is no homing routine.
-3. Data collection uses UMI with a T265 and an OAK-D Lite.
-4. TODO: current build status.
+1. Each joint is driven by an MKS XDRIVE running field-oriented control, carried off the arm rather than at the joint.
+2. Link lengths are 200mm shoulder to elbow, 100mm elbow to wrist, 200mm wrist to gripper.
+3. Secondary encoders give absolute position at power-up, so there is no homing routine.
+4. Data collection uses UMI with a T265 and an OAK-D Lite.
+5. TODO: current build status.
 
 ---
 
