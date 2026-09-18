@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 3
 role: Student researcher
 org: Harvard Undergraduate OpenBio Laboratory
 location: Cambridge, MA

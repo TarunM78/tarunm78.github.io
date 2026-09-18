@@ -3,9 +3,16 @@
  * Which reproduction of the drawing package you are reading.
  *
  * The two themes are not "light" and "dark" on this site — they are the two
- * ways a drawing gets reproduced. One is printed on paper, one is run as a
- * blueprint, and the tokens are already named for it. The control says that
+ * ways a drawing gets reproduced. One is printed on draft paper, one is run as
+ * a blueprint, and the tokens are already named for it. The control says that
  * rather than naming a brightness.
+ *
+ * Each option carries a mark as well as a word. The mark is the conventional
+ * one — sun for the lit sheet, moon for the dark — because the words here name
+ * a reproduction rather than a brightness, and someone scanning the band for
+ * the light/dark control should not have to read a metaphor first to find it.
+ * The mark is decorative in the accessibility tree: the word beside it is the
+ * accessible name, and a sun that also said "light" would say it twice.
  *
  * The buttons are in the markup but the sheet keeps them hidden until the
  * inline script in the head confirms scripting and adds `has-theme-control`.
@@ -20,10 +27,37 @@
 
 <div class="themeswitch" role="group" aria-label="Reproduction">
   <button class="themeswitch__opt" type="button" data-theme-set="light" aria-pressed="false">
-    Paper
+    <svg
+      class="themeswitch__mark"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="8" cy="8" r="3.25" />
+      <path d="M8 1.25v1.9M8 12.85v1.9M1.25 8h1.9M12.85 8h1.9" />
+      <path d="M3.22 3.22l1.34 1.34M11.44 11.44l1.34 1.34M12.78 3.22l-1.34 1.34M4.56 11.44l-1.34 1.34" />
+    </svg>
+    <span>Draft paper</span>
   </button>
   <button class="themeswitch__opt" type="button" data-theme-set="dark" aria-pressed="false">
-    Blueprint
+    <svg
+      class="themeswitch__mark"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z" />
+    </svg>
+    <span>Blueprint</span>
   </button>
 </div>
 

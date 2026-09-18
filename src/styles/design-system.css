@@ -864,6 +864,9 @@ button.afig__ctl {
    action, it is a state on the drawing, which is what the metadata face is
    fenced to. */
 .themeswitch__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
   font-family: var(--font-plex-mono);
   font-size: var(--t-h18);
   font-weight: 600;
@@ -875,6 +878,16 @@ button.afig__ctl {
   border-radius: 0;
   padding: 1px var(--sp-2);
   cursor: pointer;
+}
+
+/* The mark is sized off the label rather than fixed, so it tracks the caps
+   height of the word beside it at any zoom. Drawn in currentColor, which is
+   what makes it invert with the rest of the button when this option is the one
+   in force — the mark is part of the field, not a picture sitting on it. */
+.themeswitch__mark {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
 }
 
 .themeswitch__opt:hover {
@@ -1863,13 +1876,16 @@ button.afig__ctl {
    part name over its fields, which is how a title block is set.
 
    It does not pin. It is the sheet's opening statement, not chrome, and it
-   scrolls away like the rest of the sheet; the head band is what stays. */
+   scrolls away like the rest of the sheet; the head band is what stays.
+
+   No rule closes it. The heavy border that used to sit under the card was
+   drawing a boundary the sheet already states: the section marker for A is the
+   next thing down, and a marker is how this package opens a section. Two
+   devices for one job is one too many, so the card ends on space. */
 .idblock {
   display: grid;
   gap: var(--sp-4);
-  padding-bottom: var(--sp-5);
   margin-bottom: var(--sp-5);
-  border-bottom: var(--lw-heavy) solid var(--ink);
 }
 
 .idblock__name {

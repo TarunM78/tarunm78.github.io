@@ -106,6 +106,13 @@ const experience = defineCollection({
       heroImage: image().optional(),
       heroImageType: z.enum(['photo', 'render', 'drawing']).default('drawing'),
       heroImageAlt: z.string().optional(),
+      /**
+       * What the drawing is, in a few words, for the one place a role's figure
+       * is captioned. It names the machine rather than repeating the role and
+       * the org, which are already set above the figure wherever it appears.
+       * Optional: a figure with nothing to add carries no caption.
+       */
+      heroCaption: z.string().optional(),
       /** Part numbers of projects this role produced. */
       relatedProjects: z.array(z.string().regex(/^PN-\d{3}$/)).default([]),
       notes: z.array(z.object({ text: z.string().min(1) })).default([]),

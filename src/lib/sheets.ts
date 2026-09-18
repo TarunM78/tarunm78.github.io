@@ -57,7 +57,8 @@ export async function getSheets(): Promise<SheetRef[]> {
 
 /**
  * Projects in part-number order, which is the order they are meant to be read
- * in. PN-001 is the current work and leads the series.
+ * in. The lowest part number leads the series, and the home sheet reads the
+ * front of it from here rather than naming a part of its own.
  */
 export async function getProjects() {
   return (await getCollection('projects')).sort((a, b) =>

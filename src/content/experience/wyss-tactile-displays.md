@@ -1,5 +1,5 @@
 ---
-order: 5
+order: 6
 role: Student researcher
 org: Wyss Institute at Harvard University
 location: Cambridge, MA

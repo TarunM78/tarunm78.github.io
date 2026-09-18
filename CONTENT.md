@@ -13,9 +13,18 @@ Currently in the Locomotion in Biology and Robotics Lab.
 
 ## Site hero
 
-Hero is PN-001, the planetary humanoid actuator: the current work, solo, and the only drawing on the home sheet. It sits below the fold at SECTION A-A — the first screen is the identity strip and the index, nothing else.
+The home sheet shows the front of two indexes: SECTION A-A is the first sheet in the project
+detail series — the lowest part number, read from the collection rather than named — and
+SECTION B-B is the leading role. Neither is hardcoded.
 
-Part numbers were renumbered when PN-001 was added, so every existing project moved up one: DIVA PN-002, SAAR PN-003, stents PN-004, humanoid arm PN-005.
+The planetary humanoid actuator is no longer a project. It is the founder role at the stealth
+startup (`src/content/experience/stealth-actuator.md`), which leads the experience list, so its
+drawing now appears on the home sheet at SECTION B-B rather than A-A.
+
+Part numbers were renumbered when PN-001 was added, so every existing project moved up one:
+DIVA PN-002, SAAR PN-003, stents PN-004, humanoid arm PN-005. PN-001 is now retired rather than
+reissued — a part number is not reused once the part leaves the set — so the series runs
+PN-002 to PN-005.
 
 Callouts:
 
@@ -33,8 +42,10 @@ Callouts:
 `src/content/experience/`. Order is explicit (`order:` in frontmatter) rather than derived from
 the dates, because roles overlap and the dates do not say which should lead.
 
-1. **Student researcher** — Penn State Locomotion in Biology and Robotics Lab, State College, PA. Aug 2026 – present.
-2. **Student researcher** — Wharton People Lab, Philadelphia, PA. Oct 2025 – present.
+1. **Founder** — Stealth startup, State College, PA. May 2026 – present. The planetary humanoid
+   actuator, drawn but not named to an employer.
+2. **Student researcher** — Penn State Locomotion in Biology and Robotics Lab, State College, PA. Aug 2026 – present.
+3. **Student researcher** — Wharton People Lab, Philadelphia, PA. Oct 2025 – present.
 3. **Growth intern** — Symbal, San Francisco, CA. Oct 2025 – present.
 4. **Growth and media intern** — Code Four (YC X25), San Francisco, CA. Jun 2025 – Sep 2025.
 5. **Student researcher** — Harvard Undergraduate OpenBio Laboratory, Cambridge, MA. Jun 2025 – Aug 2025. Related: PN-003.
@@ -43,7 +54,8 @@ the dates, because roles overlap and the dates do not say which should lead.
 8. **Engineering intern** — Tormach, remote. Dec 2023 – Aug 2024.
 
 One further role is **deliberately withheld** at the author's request. Do not add it from the
-resume. PN-001 stays: the drawing is the author's own work and names no employer.
+resume. The startup ships as **Stealth startup** — the work and the drawing are stated, the
+company is not. Do not name it.
 
 ## Awards
 
@@ -59,12 +71,14 @@ which, and fix whichever is wrong.
 
 ---
 
-## PN-001 · Planetary humanoid actuator
+## Planetary humanoid actuator — the founder role
 
-**Title:** Planetary humanoid actuator
-**Year:** 2026
-**Status:** active
-**Attribution:** solo — TODO: confirm.
+Not a project sheet. It lives at `src/content/experience/stealth-actuator.md` as the founder
+role at the stealth startup, and carries no part number: a job is not a part. The drawing and
+its callouts are kept here because the work itself has not changed.
+
+**Role:** Founder, stealth startup, State College, PA
+**Started:** May 2026, current
 
 **Summary:**
 A planetary actuator for humanoid joints, designed from the start to be metal 3D printed rather than machined.

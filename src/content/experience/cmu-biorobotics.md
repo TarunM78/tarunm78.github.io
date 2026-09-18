@@ -1,5 +1,5 @@
 ---
-order: 3
+order: 4
 role: Student researcher
 org: Carnegie Mellon Biorobotics Laboratory
 location: Pittsburgh, PA

@@ -9,21 +9,35 @@
  * being read. Nothing here is pinned; the head band is what stays.
  *
  * Below the fold it is a continuous scroll through the front of each index, one
- * section per sheet it leads to: the current drawing, then the current role —
+ * section per sheet it leads to: the first drawing, then the current role —
  * each shown the same way, a figure over a sentence, because each is the work.
  * Each section shows the first entry and links to the rest, so the home sheet is
  * the package's cover rather than a page of its own.
  */
-import { getEntry } from 'astro:content';
 import Sheet from '../layouts/Sheet.astro';
 import AnnotatedFigure from '../components/AnnotatedFigure.astro';
 import SectionMarker from '../components/SectionMarker.astro';
 import PartNumber from '../components/PartNumber.astro';
-import { getExperience, isCurrent, period, projectHref } from '../lib/sheets';
+import {
+  getExperience,
+  getProjects,
+  isCurrent,
+  period,
+  projectHref,
+  subSheetNo,
+} from '../lib/sheets';
 
-// The hero is PN-001: the current work, and the only drawing on this sheet.
-const hero = await getEntry('projects', 'planetary-actuator');
-if (!hero) throw new Error('Home hero expects the PN-001 project entry to exist.');
+// The front of the project index, read rather than named, so the home sheet
+// cannot end up pointing at a part that has been renumbered or moved off the
+// set. It is the first sheet in the series that has a drawing on it, not simply
+// the lowest part number: this sheet is the package's cover and its whole
+// argument is a drawing over a sentence, so a pending plate here would be the
+// cover saying there is nothing to see. The series order is untouched — only
+// which sheet gets pulled to the front of the house.
+const projects = await getProjects();
+const heroIndex = projects.findIndex((p) => !!p.data.heroImage);
+const hero = projects[heroIndex];
+if (!hero) throw new Error('Home expects at least one project with a drawing on file.');
 
 // The front of the experience index is whatever role is being held now.
 const roles = await getExperience();
@@ -48,12 +62,15 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     </div>
   </div>
 
-  <SectionMarker letter="A" id="current-work" label="Current work" />
+  {/* Not "Current work" any more. The current work is the actuator, and that is
+      now a role rather than a part — it sits at B-B. A-A is the front of the
+      drawing set, which is a different claim and has to be worded as one. */}
+  <SectionMarker letter="A" id="from-the-set" label="From the drawing set" />
 
   <section class="lead">
     <p class="lead__meta">
       <PartNumber partNumber={hero.data.partNumber} />
-      <span class="meta">Sheet 02-1</span>
+      <span class="meta">Sheet {subSheetNo(heroIndex)}</span>
     </p>
 
     <AnnotatedFigure
@@ -98,12 +115,13 @@ if (!role) throw new Error('Home expects at least one experience entry.');
 
     {/* The same treatment the drawing above it gets, because it is the same
         kind of thing: the work, shown. The caption names the machine rather
-        than repeating the role and the lab from the two lines above it. No
-        callouts; the role carries none. */}
+        than repeating the role and the org from the two lines above it, and it
+        is carried by the entry so leading with a different role cannot leave
+        the wrong machine named here. No callouts; the role carries none. */}
     <AnnotatedFigure
       src={role.data.heroImage}
       alt={role.data.heroImageAlt ?? ''}
-      caption="Centipede robot"
+      caption={role.data.heroCaption}
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
