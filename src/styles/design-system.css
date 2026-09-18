@@ -1838,15 +1838,30 @@ button.afig__ctl {
   margin-top: var(--sp-5);
 }
 
-/* Buttons sit together at the left, in reading order: the way into the drawing
-   first, then the way out to the rest of the set. */
+/* Buttons stack down the column, in reading order: the way into the drawing
+   first, then the way out to the rest of the set.
+
+   Side by side they were two small fields floating at the bottom of a wide
+   column, sized by their own labels — so "Learn more" and "All projects" came
+   out different widths and the pair read as leftovers rather than as a list of
+   the ways on. Stacked and stretched they take the column's width, which is a
+   measure the sheet already uses, and they line up with the sentence above them
+   on both edges. Two fields of equal width under one another is a list; two
+   unequal fields side by side is a scatter. */
 .lead__more {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--sp-4);
-  flex-wrap: wrap;
   margin-top: var(--sp-5);
+}
+
+/* The arrow goes to the far edge rather than trailing the label. At this width
+   the mark is what says the field is a way out, and it says it from the corner
+   the reader's eye leaves by. */
+.lead__more .sheetbutton {
+  justify-content: space-between;
+  padding: var(--sp-4);
 }
 
 /* A button in this system is a bordered field, like every other block on the
