@@ -39,6 +39,29 @@ const heroIndex = projects.findIndex((p) => !!p.data.heroImage);
 const hero = projects[heroIndex];
 if (!hero) throw new Error('Home expects at least one project with a drawing on file.');
 
+/**
+ * How wide a drawing on this sheet actually lands, for the browser to pick a
+ * candidate against. It restates `.lead .afig__stage` in design-system.css: the
+ * 1.52 stage divisor and the 1158px cap above 1024px, then the content column —
+ * 100vw less twice --sheet-margin, which steps 60/40/20px down the breakpoints.
+ *
+ * Restated rather than read, because `sizes` is an HTML attribute and cannot
+ * see a custom property. That makes it the one number here that can quietly go
+ * wrong: if --sheet-margin, the 1.52 or the cap change, this has to change with
+ * them. It is worth the duplication. The old string claimed min(46vw, 800px) —
+ * 662px on a 1440px screen against a slot that was really 1320px — so the
+ * browser fetched the 800w candidate and stretched it half again, which on line
+ * art this dense is the difference between a drawing and a smudge.
+ *
+ * Both figures share it because both render at the same width. If that stops
+ * being true, this stops being one constant.
+ */
+const FIGURE_SIZES = [
+  '(min-width: 1024px) min(calc((100vw - 120px) / 1.52), 1158px)',
+  '(min-width: 768px) calc(100vw - 80px)',
+  'calc(100vw - 40px)',
+].join(', ');
+
 // The front of the experience index is whatever role is being held now.
 const roles = await getExperience();
 const role = roles[0];
@@ -81,7 +104,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       imageType={hero.data.heroImageType}
       figureId={hero.data.partNumber}
       aspect={1.78}
-      sizes="(min-width: 1024px) min(46vw, 800px), 100vw"
+      sizes={FIGURE_SIZES}
       eager
     />
 
@@ -125,7 +148,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
-      sizes="(min-width: 1024px) min(46vw, 800px), 100vw"
+      sizes={FIGURE_SIZES}
     />
 
     <p class="lead__summary">{role.data.summary}</p>

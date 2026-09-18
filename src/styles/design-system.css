@@ -533,24 +533,19 @@ button.afig__ctl {
      the span cap below divided by the same 1.52, so the pair still matches on a
      very wide screen.
 
-     Both figures take the same measure, one under the other, so they read as a
-     pair. Matching a neighbour is a different reason from reserving label
-     space, which is why it is stated separately from the gutter rule above —
-     and after it, since the two carry the same weight and the later one wins. */
+     Every drawing in a lead takes this width, labelled or not. A bare figure
+     used to take the whole span an annotated one occupies — drawing plus both
+     gutters — on the reasoning that with no labels to hold, all of it could be
+     drawing. It read as the bigger claim: the actuator came out half again as
+     wide as the arm above it, for no reason a reader could see except that it
+     had nothing to say about itself. A drawing is not bigger for carrying no
+     callouts. One width, one under the other, so the two read as a pair.
+
+     Matching a neighbour is a different reason from reserving label space,
+     which is why it is stated separately from the gutter rule above — and
+     after it, since the two carry the same weight and the later one wins. */
   .lead .afig__stage {
     width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.52), 1158px);
-  }
-
-  /* A figure with no callouts has no labels to hold, so it takes the whole
-     span the annotated one occupies — drawing plus both gutters — rather than
-     sitting at the width of a drawing that needs room either side. The two
-     still cover the same width of sheet; on the bare one all of it is drawing.
-     The figure box stays in the content column, so the caption beneath still
-     lines up with the summary and the meta above. */
-  .lead .afig:not(.afig--gutters) .afig__stage {
-    --lead-span: min(calc(100vw - 2 * var(--sheet-margin)), 1760px);
-    width: var(--lead-span);
-    margin-inline: calc((100% - var(--lead-span)) / 2);
   }
 
   .afig__leaders-wide {
