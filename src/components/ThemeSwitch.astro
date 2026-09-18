@@ -55,7 +55,12 @@
       aria-hidden="true"
       focusable="false"
     >
-      <path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z" />
+      {/* A crescent: a disc of r=6.2 about the box centre, with a second disc
+          of the same radius cut out of its upper right. The tips sit at the
+          two intersections. Shifted 0.2 off the construction so the crescent's
+          own bounding box — not the disc it was cut from — centres on 8,8;
+          measured with getBBox rather than eyeballed. */}
+      <path d="M14 10A6.2 6.2 0 1 1 6 2 6.2 6.2 0 0 0 14 10Z" />
     </svg>
     <span>Blueprint</span>
   </button>

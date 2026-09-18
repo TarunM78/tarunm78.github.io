@@ -95,7 +95,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skiplink" href="#sheet-body">Skip to content</a>
 
     <div class="sheet">
+      {/* Index first, then what sheet you are on, then how it is reproduced —
+          left to right, and the same order in the markup as on the screen. The
+          index leading also means the first thing a keyboard reaches in the
+          band is the way off the page, rather than three fields of metadata
+          about the page it is already on. */}
       <header class="sheet__head">
+        <SheetIndex current={sheetNumber} />
+
         <p class="sheet__ident">
           {sheet && <span class="meta meta--ink">Sheet {sheet}</span>}
           <span class:list={['meta', !sheet && 'meta--ink']}>{sheetTitle}</span>
@@ -103,8 +110,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         </p>
 
         <ThemeSwitch />
-
-        <SheetIndex current={sheetNumber} />
       </header>
 
       <main class="sheet__body" id="sheet-body">

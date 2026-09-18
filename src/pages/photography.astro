@@ -1,14 +1,14 @@
 ---
 /**
- * Photography — not a sheet.
+ * Photography — sheet 06.
  *
  * The one place the drawing vocabulary steps back: no part numbers, no
- * callouts, no title blocks, and now no sheet number either. Photographs are
- * not parts, and the index of a drawing package has no business listing a page
- * that is not part of the package. It is reached from the About sheet, where
- * the hobby is mentioned. What carries over is the plate — a bordered frame
- * with a mono caption strip under it — and the contact-sheet reading of the
- * whole grid.
+ * callouts, no title blocks. Photographs are not parts. It does carry a sheet
+ * number, because that is the index to the page rather than a claim about what
+ * is on it — and a page reachable only by first reading the About sheet is a
+ * page most people never reach. What carries over is the plate — a bordered
+ * frame with a mono caption strip under it — and the contact-sheet reading of
+ * the whole grid.
  *
  * The filter is CSS only. A radio per category sits before the grid, and a
  * :checked sibling rule hides the plates that do not match, so filtering costs
@@ -57,15 +57,16 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
 ---
 
 <Sheet
+  sheet="06"
   sheetTitle="Photography"
-  sheetNumber={0}
+  sheetNumber={6}
   revDate="2026-09-09"
-  description="Photographs: nature, places and cars. A hobby, kept separate from the drawing package."
+  description="Photographs: nature, places and cars. A hobby, and the one sheet that carries none of the drawing vocabulary."
 >
   <section class="sheets" aria-labelledby="photography-heading">
     <h1 id="photography-heading" class="sheettitle">Photography</h1>
     <p class="sheetlede">
-      Not part of the drawing package — no sheet number, no part numbers, no revisions. {plates.length} frames,
+      No part numbers, no revisions, no callouts — photographs are not parts. {plates.length} frames,
       filtered by subject.
     </p>
   </section>

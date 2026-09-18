@@ -13,9 +13,10 @@
  * three accounts of it start to drift apart. It is gone, and so is
  * revisions.json with it.
  *
- * Photography stays sheet 05. It is a hobby with two dozen frames on it, which
- * is a sheet, not a paragraph — so this page says the hobby exists and hands
- * you a button to the sheet that shows it.
+ * Photography is its own sheet in the index now, so this page no longer hands
+ * you a button to it. A sheet listed in the band does not need a second door
+ * cut into a different sheet, and the paragraph below still says the hobby
+ * exists — which was the part of this section that was ever about the person.
  *
  * The links table is the only place on the site that points off it. Rows whose
  * url is still TODO render as open fields rather than as links that go
@@ -87,16 +88,10 @@ const links = (await getCollection('links')).sort((a, b) => a.data.order - b.dat
       <p><TodoMarker text="hobbies" /></p>
       <p>
         A short paragraph on what you do when you are not building — photography is the
-        one with a sheet of its own, so this is the place to say why you shoot and what
-        you point the camera at.
+        one with a sheet of its own, listed in the index above, so this is the place to
+        say why you shoot and what you point the camera at.
       </p>
     </div>
 
-    <p class="lead__more">
-      <a class="sheetbutton" href="/photography/">
-        <span>Photography</span>
-        <span class="sheetbutton__arrow meta" aria-hidden="true">&rarr;</span>
-      </a>
-    </p>
   </section>
 </Sheet>

@@ -2,12 +2,13 @@
 /**
  * The navigation, rendered as a sheet index: sheet number and title.
  *
- * One horizontal row at the right of the head strip. It was a bordered block
+ * One horizontal row at the left of the head strip. It was a bordered block
  * down the right-hand side, which cost a 20rem column of every sheet for four
  * links — the drawings are the content here, and they get that width back.
  *
- * Five rows. Photography is not one of them: it carries none of the drawing
- * vocabulary and is reached from the About sheet instead.
+ * Six rows, photography among them. It used to be left out and reached from a
+ * button on the About sheet, which made finding it depend on reading a
+ * different sheet first. See getSheets in src/lib/sheets.ts.
  *
  * Sheet 02 carries the detail series under it, opening on hover or focus. That
  * is what a drawing index does for a series: the main index stays one line, and

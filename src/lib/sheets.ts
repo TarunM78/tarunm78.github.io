@@ -3,13 +3,16 @@ import { getCollection } from 'astro:content';
 /**
  * The sheet package.
  *
- * Five top-level sheets — home, projects, experience & awards, notebook,
- * about — and nothing else.
+ * Six top-level sheets — home, projects, experience & awards, notebook, about,
+ * photography — and nothing else.
  *
- * Photography is deliberately not one of them. It is a hobby with two dozen
- * frames on it, carrying none of the drawing vocabulary, and an index of the
- * drawing package should not list a page that is not part of it. It is reached
- * from the About sheet, where the hobby is actually mentioned.
+ * Photography was deliberately kept out of this index and reached from a button
+ * on the About sheet instead, on the grounds that it carries none of the
+ * drawing vocabulary. That was a rule about the contents of the sheet enforced
+ * on the index to it: two dozen frames is a sheet by any measure, and a sheet
+ * you can only find by reading another sheet first is a sheet most people never
+ * find. It is listed. What it does not carry — part numbers, revisions,
+ * callouts — is still true of the sheet itself and stays true.
  * Individual projects are not top-level sheets: they are sub-sheets of the
  * projects sheet, numbered 02-1, 02-2 and so on, which is how a real drawing
  * package carries a detail series without inflating the main index. That keeps
@@ -39,13 +42,14 @@ export interface SubSheetRef {
   href: string;
 }
 
-/** The main index: the four sheets that get a number of their own. */
+/** The main index: the sheets that get a number of their own. */
 export const SHEETS: SheetRef[] = [
   { number: 1, title: 'Home', href: '/' },
   { number: 2, title: 'Projects', href: '/projects/' },
   { number: 3, title: 'Experience', href: '/experience/' },
   { number: 4, title: 'Notebook', href: '/notebook/' },
   { number: 5, title: 'About', href: '/about/' },
+  { number: 6, title: 'Photography', href: '/photography/' },
 ];
 
 /** Sheet number of the projects sheet, which the detail series hangs off. */
