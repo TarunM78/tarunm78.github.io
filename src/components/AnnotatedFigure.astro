@@ -85,6 +85,13 @@ interface Props {
    * preview links to, and repeating them here only costs the drawing room.
    */
   framed?: boolean;
+  /**
+   * Which gutters the wide layout uses. 'both' is the sheet default — a label
+   * goes to the side of the drawing its anchor sits on. 'right' collects every
+   * label in one gutter, which is what a figure set beside a column of text
+   * needs: a left-hand label would land on the prose. See ResolveOptions.
+   */
+  gutter?: 'both' | 'right';
   /** Stable id prefix. Pass a part number where there is one. */
   figureId?: string;
   /**
@@ -109,12 +116,13 @@ const {
   pendingNote,
   titleBlock,
   framed = Astro.props.titleBlock !== undefined,
+  gutter = 'both',
   figureId,
   zoom: zoomable = false,
   class: className,
 } = Astro.props;
 
-const resolved = resolveCallouts(callouts);
+const resolved = resolveCallouts(callouts, { gutter });
 const placed = resolved.filter((c) => c.placed);
 const hasCallouts = resolved.length > 0;
 const hasPlaced = placed.length > 0;
@@ -143,6 +151,7 @@ const zoom =
     src && `afig--${imageType}`,
     framed && 'afig--sheet',
     hasPlaced && 'afig--gutters',
+    hasPlaced && gutter === 'right' && 'afig--gutter-right',
     className,
   ]}
   data-zoom-src={zoom?.src}

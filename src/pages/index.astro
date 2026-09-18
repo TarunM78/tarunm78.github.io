@@ -41,25 +41,40 @@ if (!hero) throw new Error('Home expects at least one project with a drawing on 
 
 /**
  * How wide a drawing on this sheet actually lands, for the browser to pick a
- * candidate against. It restates `.lead .afig__stage` in design-system.css: the
- * 1.52 stage divisor and the 1158px cap above 1024px, then the content column —
- * 100vw less twice --sheet-margin, which steps 60/40/20px down the breakpoints.
+ * candidate against. It restates `.lead .afig__stage` in design-system.css.
+ *
+ * Above 1024px the sheet is two columns. The content column is the sheet's
+ * 1440px cap less its 60px margins; the 60px column gap comes off that; the
+ * drawing's column is 7 of the 12 parts left. So the column is 7/12, or 0.583,
+ * of `min(100vw, 1440px) - 180px`.
+ *
+ * A figure with callout labels gives 26% of that column to the gutter holding
+ * them, so its drawing is the column over 1.26 — 0.583/1.26, or 0.463. A figure
+ * with no labels reserves nothing and takes the column outright. Hence two
+ * constants: they are the same column, divided differently.
+ *
+ * Below 1024px the layout is one column and the figure is the content column
+ * outright, with --sheet-margin stepping 40px then 20px.
  *
  * Restated rather than read, because `sizes` is an HTML attribute and cannot
- * see a custom property. That makes it the one number here that can quietly go
- * wrong: if --sheet-margin, the 1.52 or the cap change, this has to change with
- * them. It is worth the duplication. The old string claimed min(46vw, 800px) —
- * 662px on a 1440px screen against a slot that was really 1320px — so the
- * browser fetched the 800w candidate and stretched it half again, which on line
- * art this dense is the difference between a drawing and a smudge.
- *
- * Both figures share it because both render at the same width. If that stops
- * being true, this stops being one constant.
+ * see a custom property. That makes these the numbers here that can quietly go
+ * wrong: if the column split, the gap, --sheet-margin or the gutter change,
+ * these have to change with them. It is worth the duplication — a `sizes` that
+ * lies is not a layout bug, it is a blurry drawing, and on line art this dense
+ * that is the difference between a drawing and a smudge.
  */
+const narrow = ['(min-width: 768px) calc(100vw - 80px)', 'calc(100vw - 40px)'];
+
+/** A figure whose labels take a gutter out of the column. */
 const FIGURE_SIZES = [
-  '(min-width: 1024px) min(calc((100vw - 120px) / 1.52), 1158px)',
-  '(min-width: 768px) calc(100vw - 80px)',
-  'calc(100vw - 40px)',
+  '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.463)',
+  ...narrow,
+].join(', ');
+
+/** A figure with no labels: the drawing is the whole column. */
+const FIGURE_SIZES_BARE = [
+  '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.583)',
+  ...narrow,
 ].join(', ');
 
 // The front of the experience index is whatever role is being held now.
@@ -105,6 +120,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       figureId={hero.data.partNumber}
       aspect={1.78}
       sizes={FIGURE_SIZES}
+      gutter="right"
       eager
     />
 
@@ -148,7 +164,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
-      sizes={FIGURE_SIZES}
+      sizes={FIGURE_SIZES_BARE}
     />
 
     <p class="lead__summary">{role.data.summary}</p>

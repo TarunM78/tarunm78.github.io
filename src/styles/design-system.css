@@ -521,31 +521,68 @@ button.afig__ctl {
     width: calc(100% / 1.52);
   }
 
-  /* The home sheet is the cover, and its two drawings are what it is for, so
-     they are given the width the sheet's margins are not using. Only the
-     drawing grows: the figure box stays in the content column, so the caption
-     under it still lines up with the summary and the meta line above, and it
-     is the leader labels that reach out into the margin — which is what a
-     margin is for on a drawing.
+  /* One gutter instead of two: image + 26% = 126%. The stage sits hard against
+     the start of its box rather than centred, so the drawing's left edge is the
+     column's left edge and the whole gutter falls on the right where the labels
+     are. Centring it would split the reserved strip in two and leave half of it
+     empty on the left. */
+  .afig--gutter-right .afig__stage {
+    width: calc(100% / 1.26);
+    margin-inline: 0 auto;
+  }
 
-     Capped, because a drawing four feet wide is no more legible than one two
-     feet wide, and below --sheet-max this resolves to what it was. The cap is
-     the span cap below divided by the same 1.52, so the pair still matches on a
-     very wide screen.
+  /* On the home sheet a drawing sits beside what it is about, not above it: the
+     designator, the sentence and the way in occupy the left column and the
+     drawing holds the right. Stacked, the figure pushed the summary and its
+     buttons a full screen down the page, so the cover asked to be scrolled
+     before it had said anything.
 
-     Every drawing in a lead takes this width, labelled or not. A bare figure
-     used to take the whole span an annotated one occupies — drawing plus both
-     gutters — on the reasoning that with no labels to hold, all of it could be
-     drawing. It read as the bigger claim: the actuator came out half again as
-     wide as the arm above it, for no reason a reader could see except that it
-     had nothing to say about itself. A drawing is not bigger for carrying no
-     callouts. One width, one under the other, so the two read as a pair.
+     The figure takes column two and every row, and everything else falls into
+     column one. Placement is by rule rather than by wrapping the text in a box,
+     which keeps the source order — meta, drawing, sentence, buttons — as the
+     narrow layout below 1024px wants to read it. Row gap is left at zero and
+     the elements keep their own margins, because the figure spans more rows
+     than the text fills and a gap would be drawn between every empty one.
 
-     Matching a neighbour is a different reason from reserving label space,
-     which is why it is stated separately from the gutter rule above — and
-     after it, since the two carry the same weight and the later one wins. */
+     The drawing is now measured against its column, not the viewport, so the
+     sheet's own 1440px cap is what stops it growing and no second cap is
+     needed here. */
+  .lead {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--sp-6);
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .lead > * {
+    grid-column: 1;
+  }
+
+  .lead > .afig {
+    grid-column: 2;
+    /* More rows than the text column will ever fill. There is no explicit row
+       template to run to, so `-1` would resolve to line 1 and span nothing. */
+    grid-row: 1 / span 20;
+  }
+
+  /* A drawing takes its whole column. The gutter is reserved for labels, so a
+     figure carrying none reserves nothing and the drawing runs the full width
+     instead of sitting beside an empty strip.
+
+     Both figures still occupy the same span — the column — which is the thing
+     that has to match for the two sections to read as a pair. What differs is
+     how much of that span is drawing: all of it on the bare one, 1/1.26 of it
+     on the annotated one, with the rest holding the labels. That is a
+     difference a reader can see the reason for, which is what the old
+     full-bleed rule could not claim. */
   .lead .afig__stage {
-    width: min(calc((100vw - 2 * var(--sheet-margin)) / 1.52), 1158px);
+    width: 100%;
+  }
+
+  .lead .afig--gutter-right .afig__stage {
+    width: calc(100% / 1.26);
+    margin-inline: 0 auto;
   }
 
   .afig__leaders-wide {
@@ -1196,19 +1233,35 @@ button.afig__ctl {
   font-size: var(--t-h50);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink);
+  /* Blue, because this is a link and blue is the one thing blue means here.
+     A section cut is the only heading on a sheet that goes somewhere — the
+     marker letter is the anchor id, so SECTION B-B is a working deep link —
+     and setting it in the reference hue says so at rest rather than waiting
+     for a hover no one on a touch screen will perform. This is the hue naming
+     a class of information, not decorating a heading; the sheet titles stay
+     ink for exactly that reason. */
+  color: var(--reference);
   text-decoration: none;
 }
+
+/* Hover had been the blue. With blue moved to rest it needs its own mark, so
+   the label underlines — the ordinary thing a link does, at the ordinary
+   moment. The rule either side stays ink: it is the cut, not the link. */
 .secmark__tag:hover .secmark__label,
 .secmark__tag:focus-visible .secmark__label {
-  color: var(--reference);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
 }
 
 /* The label is what the section actually is; "SECTION A-A" is only its
    designator. Set at 600 — the heaviest weight the mono face ships, so nothing
    here is a synthesised bold. */
 .secmark__label {
-  color: var(--faint);
+  /* Inherits the tag's blue rather than dropping to --faint. The marker is one
+     heading and reads as one thing; splitting it two-tone put the quietest
+     colour on the half that carries the meaning. The hierarchy between
+     designator and label is still drawn — by weight, which is how a drawing
+     draws hierarchy everywhere else on this sheet. */
   font-weight: 600;
 }
 

@@ -170,7 +170,31 @@ function resolveSlots(ys: number[]): number[] {
  */
 export const MAX_CALLOUTS = 10;
 
-export function resolveCallouts(callouts: CalloutInput[] = []): ResolvedCallout[] {
+export interface ResolveOptions {
+  /**
+   * Which gutters the wide layout has.
+   *
+   * 'both' is the drawing-sheet default: a label goes to whichever side of the
+   * drawing its anchor sits on, and the figure is read with paper either side
+   * of it.
+   *
+   * 'right' puts every label in one gutter. That is what a figure set beside a
+   * column of text needs — a left-hand label would land on the prose rather
+   * than on paper, and a leader line crossing a paragraph reads as a mistake.
+   * It also buys the drawing width back: one gutter instead of two takes the
+   * figure's span from 152% of the drawing to 126%.
+   *
+   * The stacked layout below 1024px is unaffected either way. There the labels
+   * are a numbered list under the figure, not gutter labels, so `side` carries
+   * no meaning and only the stub direction reads from it.
+   */
+  gutter?: 'both' | 'right';
+}
+
+export function resolveCallouts(
+  callouts: CalloutInput[] = [],
+  { gutter = 'both' }: ResolveOptions = {}
+): ResolvedCallout[] {
   if (!callouts.length) return [];
   if (callouts.length > MAX_CALLOUTS) {
     throw new Error(
@@ -210,7 +234,12 @@ export function resolveCallouts(callouts: CalloutInput[] = []): ResolvedCallout[
       text: c.text,
       x: clamp(c.x * 100, 0, 100),
       y: clamp(c.y * 100, 0, 100),
-      side: c.x < 0.5 ? 'left' : 'right',
+      /* One gutter means one band, so every label lands in the same stack and
+         resolveSlots pushes all of them apart together rather than two
+         half-length groups. Past roughly six callouts that band is full and
+         they distribute evenly — which is the same ceiling a one-sided
+         engineering drawing has, and the reason drawings use both margins. */
+      side: gutter === 'right' ? 'right' : c.x < 0.5 ? 'left' : 'right',
     });
   });
 
