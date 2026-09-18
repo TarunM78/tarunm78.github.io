@@ -144,6 +144,7 @@ and inverts it on the blueprint. Portrait, so it takes two frames of the contact
 **Year:** TODO
 **Status:** shipped
 **Attribution:** solo, ISEF ENBM047
+**Links:** ISEF ENBM047; `public/auxetic-stent-publication.pdf` — 13pp, no text layer (Print to PDF), so its title is not recorded here.
 **Link:** https://isef.net/project/enbm047-patient-specific-optimization-using-auxetic-stents
 
 **Summary:**
@@ -172,6 +173,7 @@ About a third of stent patients develop restenosis, and a large part of the caus
 **Year:** TODO
 **Status:** shipped
 **Attribution:** team project, ISEF ENBM060T
+**Links:** ISEF ENBM060T; `public/diva-abstract.pdf` — "DIVA: Spatial Navigation for the Visually Impaired using Depth Sensing Artificial Intelligence, Convolutional Neural Networks, and Sensor Fusion". Tarun Malarvasan, Karthik Muthukkumar, Pranav Sristy; Urbana High School, Frederick MD; advisor Mrs Beall.
 **Link:** https://isef.net/project/enbm060t-depth-intelligent-navigation-for-visually-impaired
 
 **Summary:**
@@ -198,6 +200,7 @@ A wearable navigation aid for blind and low-vision users, built to cost a few hu
 **Year:** TODO
 **Status:** shipped
 **Attribution:** team project, ISEF ENBM051T
+**Links:** ISEF ENBM051T; `public/saar-abstract.pdf` — "SAAR: Surgical Aid for Anatomical Reconstructions Using Projector-Based Augmented Reality and Computer Vision Systems". Same three authors and advisor as DIVA.
 **Link:** https://isef.net/project/enbm051t-surgical-navigation-via-projector-based-ar-and-cv
 
 **Summary:**

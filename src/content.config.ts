@@ -39,8 +39,27 @@ const projects = defineCollection({
         /** Required and non-empty when attribution is team. Checked below. */
         attributionNote: z.string().optional(),
 
-        externalLink: z.string().url().optional(),
-        externalLinkLabel: z.string().optional(),
+        /**
+         * Where else this work exists: a fair listing, a paper, a repository.
+         *
+         * A list rather than the single externalLink/externalLinkLabel pair it
+         * replaces, because a project can be published more than once — the
+         * stents are both an ISEF entry and a paper — and the pair could only
+         * ever hold whichever came first.
+         *
+         * `href` takes a site-relative path as well as a URL, so a PDF served
+         * out of public/ is named the same way an outside link is. Both are
+         * "where else to read this"; only one of them happens to be hosted
+         * here. The label is required, so a link cannot ship unnamed.
+         */
+        links: z
+          .array(
+            z.object({
+              href: z.string().min(1),
+              label: z.string().min(1),
+            })
+          )
+          .default([]),
 
         summary: z.string().min(1),
         heroImage: image().optional(),
@@ -62,13 +81,23 @@ const projects = defineCollection({
               `must name your own contribution. An unmarked team project misrepresents authorship.`,
           });
         }
-        if (data.externalLink && !data.externalLinkLabel) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['externalLinkLabel'],
-            message: `${data.partNumber} has an externalLink with no externalLinkLabel to name it.`,
-          });
-        }
+        data.links.forEach((link, i) => {
+          /* A link is either an absolute URL or a path rooted at the site.
+             Anything else — a bare filename, a relative hop — resolves against
+             whatever sheet happens to render it, which is how a link works on
+             one page and 404s on the next. */
+          const rooted = link.href.startsWith('/');
+          const absolute = /^https?:\/\//.test(link.href);
+          if (!rooted && !absolute) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['links', i, 'href'],
+              message:
+                `${data.partNumber} link "${link.label}" is neither an absolute URL nor ` +
+                `rooted at the site. Write it as https://… or /file.pdf.`,
+            });
+          }
+        });
       }),
 });
 

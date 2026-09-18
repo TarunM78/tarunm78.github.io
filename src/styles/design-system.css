@@ -1919,8 +1919,16 @@ button.afig__ctl {
   border-bottom: var(--lw-thin) solid var(--faint-rule);
 }
 
-.project__link {
+/* Where the work was published. A row on a wide sheet and a stack on a narrow
+   one, which is what flex-wrap gives for free — these are peers, not a list
+   with an order, so no marker and no numbering. */
+.project__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-5);
   margin-top: var(--sp-4);
+  padding: 0;
+  list-style: none;
 }
 
 /* The identity card. The name is the one thing on this site set at display size
