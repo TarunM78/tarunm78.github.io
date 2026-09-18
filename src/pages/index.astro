@@ -100,10 +100,17 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     </div>
   </div>
 
-  {/* Not "Current work" any more. The current work is the actuator, and that is
-      now a role rather than a part — it sits at B-B. A-A is the front of the
-      drawing set, which is a different claim and has to be worded as one. */}
-  <SectionMarker letter="A" id="from-the-set" label="From the drawing set" />
+  {/* The label names the thing, rather than the shelf it came off. Both labels
+      are read from the entry below them rather than typed here: the lead
+      project and the leading role have each changed twice already, and a label
+      that has to be edited by hand to stay true is a label that will one day
+      be false. The marker is set in caps by the stylesheet, so the title's own
+      casing does not matter here. */}
+  <SectionMarker
+    letter="A"
+    id="current-project"
+    label={`Current project: ${hero.data.title}`}
+  />
 
   <section class="lead">
     <p class="lead__meta">
@@ -140,7 +147,11 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     </p>
   </section>
 
-  <SectionMarker letter="B" id="current-role" label="Current role" />
+  <SectionMarker
+    letter="B"
+    id="current-role"
+    label={`Current role: ${role.data.role} @ ${role.data.org}`}
+  />
 
   <section class="lead">
     <p class="lead__meta">

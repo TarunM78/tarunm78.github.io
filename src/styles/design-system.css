@@ -1225,6 +1225,11 @@ button.afig__ctl {
 .secmark__tag {
   display: flex;
   align-items: baseline;
+  /* The designator and the label are separate flex items, so without this a
+     long label squeezes itself into a narrow column beside SECTION A-A rather
+     than dropping under it. A label naming a part can run to fifty characters
+     in caps; on a phone that has to be allowed to take a second line. */
+  flex-wrap: wrap;
   gap: var(--sp-3);
   font-family: var(--font-plex-mono);
   /* A section cut is a heading, not a footnote: it is the one mark that says
