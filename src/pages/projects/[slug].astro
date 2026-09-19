@@ -43,6 +43,9 @@ const { Content } = await render(project);
 
 const stamp = statusStamp(data.status);
 
+/** A portrait drawing: taller than it is wide, so the sheet has room beside it. */
+const isTall = !!data.heroImage && data.heroImage.height > data.heroImage.width;
+
 const label = subSheetNo(index);
 const prev = projects[index - 1];
 const next = projects[index + 1];
@@ -79,25 +82,88 @@ const next = projects[index + 1];
     }
   </section>
 
-  <AnnotatedFigure
-    src={data.heroImage}
-    alt={data.heroImageAlt ?? ''}
-    callouts={data.callouts}
-    imageType={data.heroImageType}
-    figureId={data.partNumber}
-    aspect={1.6}
-    zoom
-    pendingNote={
-      data.status === 'active'
-        ? `Coming soon — ${data.partNumber} is current work`
-        : `${data.partNumber} has no drawing on file yet`
+  {/* The drawing and the places this work is published, as one plate.
+      The links used to sit at the foot of the sheet, under the notes, which is
+      the last place a reader looks for them and a long way from the thing they
+      are about. Directly under the drawing they read as part of it.
+
+      A portrait drawing puts them beside it instead. A tall plate leaves a
+      column of empty paper down one side — the callout labels use a fraction of
+      it — and a column of empty paper is where the buttons belong. It also
+      stops the drawing running the full width, which on a 975x1614 render meant
+      most of a screen of robot. */}
+  <div class:list={['projectplate', isTall && 'projectplate--tall']}>
+    <AnnotatedFigure
+      src={data.heroImage}
+      alt={data.heroImageAlt ?? ''}
+      callouts={data.callouts}
+      imageType={data.heroImageType}
+      figureId={data.partNumber}
+      aspect={1.6}
+      zoom
+      pendingNote={
+        data.status === 'active'
+          ? `Coming soon — ${data.partNumber} is current work`
+          : `${data.partNumber} has no drawing on file yet`
+      }
+      titleBlock={{
+        partNumber: data.partNumber,
+        title: data.title,
+        started: data.started,
+      }}
+    />
+
+    {
+      data.links.length > 0 && (
+        <ul class="project__links" aria-label="Published elsewhere">
+          {data.links.map((link) => (
+            <li>
+              <a class="sheetbutton plink" href={link.href}>
+                {/* What the button opens, drawn rather than described: a sheet
+                    of paper with its corner turned for a PDF, a window with an
+                    arrow leaving it for a page somewhere else. Decorative in
+                    the accessibility tree — the label already says which. */}
+                {link.href.endsWith('.pdf') ? (
+                  <svg
+                    class="plink__mark"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.25"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M9.5 1.5H4a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V4.5z" />
+                    <path d="M9.5 1.5v3h3" />
+                  </svg>
+                ) : (
+                  <svg
+                    class="plink__mark"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.25"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M8 2.5H2.5v11h11V8" />
+                    <path d="M10 2.5h3.5V6" />
+                    <path d="M13.5 2.5 7.5 8.5" />
+                  </svg>
+                )}
+                <span>{link.label}</span>
+                <span class="sheetbutton__arrow meta" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
     }
-    titleBlock={{
-      partNumber: data.partNumber,
-      title: data.title,
-      started: data.started,
-    }}
-  />
+  </div>
 
   <SectionMarker letter="A" id="description" label="Description" />
 
@@ -121,37 +187,6 @@ const next = projects[index + 1];
           </ul>
         </section>
       </>
-    )
-  }
-
-  {/* Where else this work exists. A list, because a project can be published
-      more than once — the stents are an ISEF entry and a paper. A PDF served
-      out of public/ is listed the same way an outside link is: both answer
-      "where else can I read this", and which host happens to serve it is not a
-      distinction worth a second treatment.
-
-      Set as fields, not as a line of blue text. These were bare links sitting
-      between the last section of the sheet and the series footer, and on a
-      sheet where blue already marks every section cut and every cross
-      reference, two more blue words read as part of the prose rather than as
-      the two places this work is actually published. A bordered field is what
-      this system uses for something you can act on, so they use it — the same
-      button the cover and the contact sheet carry, rather than a fourth
-      treatment invented for a link. */}
-  {
-    data.links.length > 0 && (
-      <ul class="project__links" aria-label="Published elsewhere">
-        {data.links.map((link) => (
-          <li>
-            <a class="sheetbutton" href={link.href}>
-              <span>{link.label}</span>
-              <span class="sheetbutton__arrow meta" aria-hidden="true">
-                &rarr;
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
     )
   }
 

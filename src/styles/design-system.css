@@ -1977,13 +1977,88 @@ button.afig__ctl {
    They are buttons now, so the gap is the one the other button rows use, and
    the space above is a section's worth rather than a paragraph's: these are
    the end of the sheet's argument, not a footnote to the last block. */
+/* The drawing and the places this work is published, as one plate. Stacked by
+   default: drawing, then the ways out of it. */
 .project__links {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-4);
-  margin-top: var(--sp-6);
+  margin-top: var(--sp-5);
   padding: 0;
   list-style: none;
+}
+
+/* A published link, as a field. The mark says what opens — a sheet of paper
+   with its corner turned, or a window with an arrow leaving it — and sits where
+   a title block's type field does, before the thing it qualifies. */
+.plink {
+  gap: var(--sp-3);
+  align-items: center;
+}
+
+.plink__mark {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  color: var(--faint);
+}
+
+.plink:hover .plink__mark,
+.plink:focus-visible .plink__mark {
+  color: var(--reference);
+}
+
+/* A portrait drawing gets the buttons beside it rather than under it.
+
+   The plate splits in two: the links hold a column of their own and the drawing
+   takes the rest, which is what stops a 975x1614 render running the full width
+   of the sheet and costing most of a screen. The buttons stretch to their
+   column and stack, because the space they are filling is vertical.
+
+   The drawing keeps both its gutters — they are inside its own column here, so
+   a left-hand callout label has nothing to collide with. */
+@media (min-width: 1024px) {
+  .projectplate--tall {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+
+  /* Placed, not left to source order. The drawing stays first in the markup —
+     it is what the sheet is about, and on a narrow screen it has to come before
+     the ways out of it — so the columns are assigned rather than filled. */
+  .projectplate--tall > .afig {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .projectplate--tall .project__links {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 0;
+  }
+
+  /* The list item stretches to the column; the field inside it has to be told
+     to fill that, or an inline-flex button sits at its own text width and the
+     column looks half-used again. */
+  .projectplate--tall .project__links > li {
+    display: flex;
+  }
+
+  .projectplate--tall .plink {
+    flex: 1;
+    justify-content: flex-start;
+    padding: var(--sp-4);
+  }
+
+  /* The arrow goes to the far edge of a stretched field, the way the home
+     sheet's buttons do, rather than trailing the label halfway across it. */
+  .projectplate--tall .plink .sheetbutton__arrow {
+    margin-left: auto;
+  }
 }
 
 /* The identity card. The name is the one thing on this site set at display size
