@@ -2,9 +2,15 @@
 /**
  * A section cut symbol between major content breaks.
  *
- * Constrained deliberately: the marker letter IS the anchor id, so SECTION B-B
+ * Constrained deliberately: the marker letter IS the anchor id, so SECTION B
  * is a working deep link to the section it marks. It marks a cut and it points
  * somewhere. It is never used as a decorative divider between paragraphs.
+ *
+ * The designator is the single letter, not the doubled A-A a drafting sheet
+ * would carry. On paper the letter is repeated because a cutting plane is
+ * labelled at both of its ends and the view is named for the pair. Nothing
+ * here draws that cutting plane, so the second letter was naming an end that
+ * does not exist, and reading it aloud got two letters where one is meant.
  */
 interface Props {
   letter: string;
@@ -17,7 +23,7 @@ const { letter, id, label } = Astro.props;
 <div class="secmark" id={id}>
   <span class="secmark__rule" aria-hidden="true"></span>
   <a class="secmark__tag" href={`#${id}`}>
-    Section {letter}-{letter}
+    Section {letter}
     {label && <span class="secmark__label">{label}</span>}
   </a>
   <span class="secmark__rule" aria-hidden="true"></span>
