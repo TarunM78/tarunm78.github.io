@@ -36,12 +36,24 @@ interface Props {
   side?: 'left' | 'right';
   /** 'drawing' is black on white and joins the sheet; 'figure' keeps its ink. */
   type?: 'drawing' | 'figure';
+  /**
+   * Give the drawing more of the row. For a passage carrying two sections of
+   * writing against one figure, the default split leaves the figure small and
+   * the column beside it half empty. Wide moves the divide and drops the cap.
+   */
+  wide?: boolean;
 }
 
-const { src, alt, srcDark, side = 'right', type = 'drawing' } = Astro.props;
+const { src, alt, srcDark, side = 'right', type = 'drawing', wide = false } = Astro.props;
+
+/* What the drawing actually lands at, for the browser to pick a candidate
+   against. The content column less the 60px gap, split either 1:1 with the
+   image at 85% of its half, or 1:1.25 with the image filling its share. */
+const slot = wide ? '0.556' : '0.425';
+const sizes = `(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * ${slot}), calc(100vw - 40px)`;
 ---
 
-<section class:list={['passage', `passage--${side}`]}>
+<section class:list={['passage', `passage--${side}`, wide && 'passage--wide']}>
   <div class="passage__text">
     <slot />
   </div>
@@ -51,7 +63,7 @@ const { src, alt, srcDark, side = 'right', type = 'drawing' } = Astro.props;
     src={src}
     alt={alt}
     widths={[400, 700, 1000]}
-    sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.425), calc(100vw - 40px)"
+    sizes={sizes}
     loading="lazy"
     decoding="async"
   />
@@ -64,7 +76,7 @@ const { src, alt, srcDark, side = 'right', type = 'drawing' } = Astro.props;
         alt=""
         aria-hidden="true"
         widths={[400, 700, 1000]}
-        sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.425), calc(100vw - 40px)"
+        sizes={sizes}
         loading="lazy"
         decoding="async"
       />
