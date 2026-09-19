@@ -144,6 +144,23 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* The full-bleed band is sized in vw, which counts the scrollbar, so it
+     overhangs the page by that much and would otherwise add a sideways scroll.
+
+     It has to be clipped here and nowhere else. Lower down, every element in
+     the sheet is the content column or narrower, so clipping on one of them
+     cuts the bleed off at exactly the edge it exists to escape — which is what
+     .sheet__body did on the first attempt. On `body` it is worse: overflow set
+     on the body propagates to the viewport, and the fixed head band came
+     unstuck and landed in the middle of the page.
+
+     `hidden` rather than `clip` only because it is the better-supported way to
+     take the axis away; both leave the box scrollable from script, which is by
+     design and not a difference a reader can feel. On the root element this is
+     safe: the vertical axis stays auto, and the head band is fixed to the
+     viewport rather than to anything being clipped — verified, because putting
+     the same rule on `body` did unstick it. */
+  overflow-x: hidden;
 }
 
 body {
@@ -320,18 +337,21 @@ img {
    In blueprint the image is inverted first — white lines on black — and screened
    for the same reason. Photographs and renders are never touched: their ground
    is content. */
-.afig--drawing .afig__img {
+.afig--drawing .afig__img,
+.sectionband {
   mix-blend-mode: multiply;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .afig--drawing .afig__img {
+  :root:not([data-theme='light']) .afig--drawing .afig__img,
+  :root:not([data-theme='light']) .sectionband {
     filter: invert(1);
     mix-blend-mode: screen;
   }
 }
 
-[data-theme='dark'] .afig--drawing .afig__img {
+[data-theme='dark'] .afig--drawing .afig__img,
+[data-theme='dark'] .sectionband {
   filter: invert(1);
   mix-blend-mode: screen;
 }
@@ -2246,6 +2266,19 @@ button.afig__ctl {
   border-top: var(--lw-med) solid var(--ink);
 }
 
+/* The place over the exposure data. min-width:0 so a long place name wraps
+   inside the caption rather than shoving the category off the plate. */
+.plate__id {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.plate__shot {
+  color: var(--faint);
+}
+
 .plate__cat {
   color: var(--faint);
   white-space: nowrap;
@@ -2468,5 +2501,59 @@ button.afig__ctl {
      sits in a box 8px taller at the top, so the number comes down to meet it. */
   .afig__item::before {
     margin-top: var(--sp-2);
+  }
+}
+
+/* The home sheet's supporting drawing: one arm of the pair, filling the column
+   the text leaves short beside a tall drawing.
+
+   It is a two-column device. Below 1024px the sheet is one column, the text
+   runs the full width and there is no gap to fill, so the arm is not drawn at
+   all rather than stacked as a second figure to scroll past.
+
+   Both halves are stated here rather than beside the rest of the .lead grid,
+   because the grid lives in section 5 and these base rules would come after it
+   in the file — `display: none` written down there would win over a
+   `display: block` written up there at the same weight, and the arm would
+   vanish from the sheet it was drawn for.
+
+   scaleX(-1) is the mirror. The render reaches left, off the sheet; flipped it
+   reaches across the gutter toward the drawing it belongs to. */
+.sectionband {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sectionband {
+    display: block;
+    height: auto;
+    margin-block: var(--sp-4) var(--sp-6);
+
+    /* Full bleed. The sheet is capped at 1440px and padded either side, so the
+       band has to escape both to reach the screen edges: it takes the viewport
+       width and pulls itself back out by the difference between that and its
+       container. 100vw counts the scrollbar, which is the overhang the body
+       clips rather than let it become a sideways scroll. */
+    width: 100vw;
+    /* Tailwind's preflight caps every img at max-width:100%, which here is the
+       content column — the bleed would silently do nothing without this. */
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    transform: scaleX(-1);
+
+    /* Cropped to the drawing. The render is 1829x860 but the arm only occupies
+       y 162..562 of it — 18.8% empty above and 34.5% below — so at full screen
+       width its natural ratio made a 900px block that was mostly paper. The box
+       is set to the ratio of the ink instead, and the image covers it.
+
+       35% is where the crop window has to sit to hold the arm with a little air
+       either side: the window is 49% of the source's height, the arm's centre
+       is at 42% of it, and object-position measures the window's start as a
+       fraction of the leftover. Re-measure both numbers if the render is
+       replaced — they describe this file, not the layout. */
+    aspect-ratio: 1829 / 421;
+    object-fit: cover;
+    object-position: center 35%;
   }
 }

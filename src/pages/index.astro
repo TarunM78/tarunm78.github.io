@@ -26,6 +26,8 @@ import {
   projectHref,
   subSheetNo,
 } from '../lib/sheets';
+import { Image } from 'astro:assets';
+import singleArm from '../assets/singlearm.png';
 
 // The front of the project index, read rather than named, so the home sheet
 // cannot end up pointing at a part that has been renumbered or moved off the
@@ -112,6 +114,30 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     label={`Current project: ${hero.data.title}`}
   />
 
+  {/* One arm of the pair, extended, run the full width of the screen between
+      the section marker and the drawing it belongs to. It sits outside the
+      lead block rather than in it: that grid gives the figure every row, so a
+      band inside it would have to fight the drawing for space instead of
+      simply standing above it. Out here it bleeds to the viewport edges and
+      pushes the whole two-column block down the sheet.
+
+      Mirrored. The render has the arm reaching left, off the sheet; flipped it
+      reaches into the sheet instead. A transform rather than a second export:
+      same file, and the mirror is stated where it is done.
+
+      Empty alt. It is the same arm the drawing below already describes in
+      full, in a second pose — a reader using a screen reader gains nothing
+      from hearing the subject twice, and this one is here to fill a band. */}
+  <Image
+    class="sectionband"
+    src={singleArm}
+    alt=""
+    widths={[900, 1400, 1920, 2400]}
+    sizes="(min-width: 1024px) 100vw, 0px"
+    loading="lazy"
+    decoding="async"
+  />
+
   <section class="lead">
     <p class="lead__meta">
       <PartNumber partNumber={hero.data.partNumber} />
@@ -160,14 +186,13 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       {isCurrent(role) && <span class="tag-state">Current</span>}
     </p>
 
-    <h2 class="role__title">{role.data.role}</h2>
-    <p class="role__org">{role.data.org}</p>
-
     {/* The same treatment the drawing above it gets, because it is the same
         kind of thing: the work, shown. The caption names the machine rather
-        than repeating the role and the org from the two lines above it, and it
-        is carried by the entry so leading with a different role cannot leave
-        the wrong machine named here. No callouts; the role carries none. */}
+        than the role and the org, which the section marker above has already
+        stated in full — a sheet that says the same thing twice in two type
+        sizes is a sheet arguing with itself. The caption is carried by the
+        entry, so leading with a different role cannot leave the wrong machine
+        named here. No callouts; the role carries none. */}
     <AnnotatedFigure
       src={role.data.heroImage}
       alt={role.data.heroImageAlt ?? ''}
