@@ -680,6 +680,23 @@ button.afig__ctl {
     max-width: var(--measure-sans);
   }
 
+  /* The render carries a strip of empty paper at its foot: the ink stops at
+     95.7% of the frame's height. Left alone the sentence below sits its forty
+     pixels from the edge of the paper rather than from the drawing, which
+     reads as a gap half again the size of every other on the sheet. This takes
+     the strip back.
+
+     Stated as a percentage because a percentage margin resolves against the
+     container's width, and the image's height is a fixed ratio of that width:
+     4.3% of the height, over an aspect of 1.79, is 2.4% of the width. So it
+     holds at every width rather than at the one it was measured on.
+
+     It is measured off this particular render. Swap the drawing and the number
+     is wrong, which is why it says what it was measured from. */
+  .lead--stacked .afig {
+    margin-bottom: -2.4%;
+  }
+
   .afig__leaders-wide {
     display: revert;
   }
