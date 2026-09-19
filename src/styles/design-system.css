@@ -2086,6 +2086,11 @@ button.afig__ctl {
   gap: var(--sp-4);
   flex-wrap: wrap;
   margin-bottom: var(--sp-4);
+  /* Out from under the reading measure every other <p> takes. This is a row of
+     designator fields, not a line of prose, and it has to reach the full width
+     of the sheet for the way back to sit on the same right edge as the drawing
+     below it. The title and the lede under it keep the measure. */
+  max-width: none;
 }
 
 /* The way back up, pushed to the far end of the designator line. Smaller than
