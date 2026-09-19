@@ -659,6 +659,27 @@ button.afig__ctl {
     margin-inline: 0 auto;
   }
 
+  /* --- The role section, stacked rather than columned. ---
+
+     The project above it is a drawing with an argument beside it, so it reads
+     across: text one side, plate the other. The role is not that. There is one
+     photograph of the thing being built and a sentence about it, and the
+     photograph is the whole of what there is to show, so it takes the sheet's
+     width and the sentence and the way out go under it.
+
+     `display: block` is what undoes the grid: the children fall back into
+     source order, which is already meta, figure, sentence, buttons. */
+  .lead--stacked {
+    display: block;
+  }
+
+  /* The sentence keeps the reading measure, and the button keeps the sentence's
+     width so the two share an edge. Left to stretch it would run the whole
+     sheet, which is a very long way to travel to read two words. */
+  .lead--stacked .lead__more {
+    max-width: var(--measure-sans);
+  }
+
   .afig__leaders-wide {
     display: revert;
   }
