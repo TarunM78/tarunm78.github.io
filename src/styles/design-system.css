@@ -1638,8 +1638,114 @@ button.afig__ctl {
   max-width: var(--measure-sans);
 }
 
+/* A passage sets its own width: it is a column of text beside a drawing, not a
+   column of text, so the reading measure applies inside it rather than to it. */
+.projectbody > .passage {
+  max-width: none;
+}
+
+/* --- Passage: a stretch of writing and the drawing that belongs to it ---
+
+   Stacked by default, text first — a drawing explains a paragraph that has
+   already been read, and on a narrow sheet there are no sides to take. */
+
+/* The body's own rhythm applies a level down now. `.projectbody > * + *` sets
+   the space between blocks, and wrapping the prose in a passage put every
+   paragraph out of its reach — they came out stacked with no gap at all. */
+.passage__text > * + * {
+  margin-top: var(--sp-4);
+}
+
+.passage__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: var(--sp-4);
+}
+
+/* Above 1024px the two sit side by side and the drawing changes sides down the
+   sheet. Four plates all landing on the same side reads as one long column
+   with pictures in it; alternating them makes each section its own block.
+
+   Placed by rule rather than by source order, so the writing stays first in the
+   markup whichever side it ends up on. */
+@media (min-width: 1024px) {
+  .passage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+
+  .passage__img {
+    margin-top: 0;
+  }
+
+  .passage--right .passage__text {
+    grid-column: 1;
+  }
+
+  .passage--right .passage__img {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .passage--left .passage__text {
+    grid-column: 2;
+  }
+
+  .passage--left .passage__img {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* The ground. A line drawing is black on white: the white multiplies away and
+   the sheet's own ruling reads through it, and on the blueprint it inverts to
+   white line on navy — the same treatment every other drawing here gets.
+
+   A figure carrying real colour cannot take that. Inverting a stress plot turns
+   red into cyan and makes it say the opposite of what it says, so on the
+   blueprint it keeps its own white ground and reads as a figure printed and
+   laid onto the sheet. */
+.passage__img--drawing,
+.passage__img--figure {
+  mix-blend-mode: multiply;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .passage__img--drawing {
+    filter: invert(1);
+    mix-blend-mode: screen;
+  }
+
+  :root:not([data-theme='light']) .passage__img--figure {
+    mix-blend-mode: normal;
+    background: #fff;
+    padding: var(--sp-3);
+  }
+}
+
+[data-theme='dark'] .passage__img--drawing {
+  filter: invert(1);
+  mix-blend-mode: screen;
+}
+
+[data-theme='dark'] .passage__img--figure {
+  mix-blend-mode: normal;
+  background: #fff;
+  padding: var(--sp-3);
+}
+
 .projectbody > * + * {
   margin-top: var(--sp-4);
+}
+
+/* A passage is a block, not a paragraph: it takes the space between sections
+   rather than the space between lines. */
+.projectbody > .passage + .passage,
+.projectbody > .passage + * {
+  margin-top: var(--sp-6);
 }
 
 .seriesnav {

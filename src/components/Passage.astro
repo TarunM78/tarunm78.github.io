@@ -1,0 +1,49 @@
+---
+/**
+ * A stretch of writing with the drawing that belongs to it, side by side.
+ *
+ * Used in a project's MDX body, one per section. The drawing alternates sides
+ * down the sheet — text left, then text right — which is how a technical
+ * article sets a run of figures, and which stops four plates in a column
+ * reading as four identical blocks.
+ *
+ * Below 1024px there are no sides. The text comes first and the drawing sits
+ * under it, because a drawing explains a paragraph that has already been read.
+ *
+ * `type` decides how the ground is handled, and it is the same distinction
+ * AnnotatedFigure draws. A line drawing is black on white, so the white is
+ * dropped and the lines are inverted on the blueprint — it becomes part of the
+ * sheet. A figure carrying real colour cannot be inverted without turning a
+ * stress plot into a photographic negative, so on the blueprint it keeps its
+ * own white ground and reads as something printed and laid on the sheet.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  /** Required. A figure nobody can see is a figure nobody can read. */
+  alt: string;
+  /** Which side the drawing sits on above 1024px. */
+  side?: 'left' | 'right';
+  /** 'drawing' is black on white and joins the sheet; 'figure' keeps its ink. */
+  type?: 'drawing' | 'figure';
+}
+
+const { src, alt, side = 'right', type = 'drawing' } = Astro.props;
+---
+
+<section class:list={['passage', `passage--${side}`]}>
+  <div class="passage__text">
+    <slot />
+  </div>
+
+  <Image
+    class:list={['passage__img', `passage__img--${type}`]}
+    src={src}
+    alt={alt}
+    widths={[400, 700, 1000]}
+    sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.5), calc(100vw - 40px)"
+    loading="lazy"
+    decoding="async"
+  />
+</section>

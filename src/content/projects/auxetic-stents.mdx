@@ -31,6 +31,14 @@ notes:
 tags: [mechanisms, medical, simulation]
 ---
 
+import Passage from '../../components/Passage.astro';
+import lattice from '../../assets/why_stent_needs_one.png';
+import inVessel from '../../assets/what_auxetic_is.png';
+import pipeline from '../../assets/how_one_gets_built.png';
+import results from '../../assets/what_the_simulations_showed.png';
+
+<Passage src={lattice} side="right" type="drawing" alt="Two lattices pulled lengthwise. The conventional one narrows through the middle as it stretches; the auxetic one, built from bow-tie cells, widens instead.">
+
 ### What an auxetic is
 
 Stretch a rubber band and it gets thinner. Nearly everything does that — pull it one
@@ -42,6 +50,10 @@ On a stent that matters, because expanding the tube along its length also opens 
 outward. How much it opens is set cell by cell — by the width of each strut and the
 angle between struts — so a single stent can push hard where an artery is narrowed and
 barely at all where it is healthy.
+
+</Passage>
+
+<Passage src={inVessel} side="left" type="drawing" alt="A stent inside a vessel that narrows through the middle, shown expanded against the vessel wall, and below it the same stent crimped for delivery beside its expanded shape.">
 
 ### Why a stent needs one
 
@@ -55,6 +67,10 @@ artery narrowing again after the stent goes in.
 The lattice is also bi-stable: compliant hinges give it two stable shapes instead of
 one. It holds itself crimped for delivery through a catheter without being clamped, and
 holds itself open afterwards without being pushed.
+
+</Passage>
+
+<Passage src={pipeline} side="right" type="figure" alt="The fitting pipeline in three rows: angiograms segmented into healthy, stenotic and thrombotic regions, then a CT stack reconstructed into a 3D vessel; the lattice wrapped onto that vessel with a single cell and a cross-section drawn out; and a stress plot feeding a neural network that returns the reinforced stent.">
 
 ### How one gets built
 
@@ -77,6 +93,10 @@ flow. Running that by hand for every design is slow, so a graph neural network w
 trained on the simulation output — node positions in, von Mises stress out — to predict
 where a new mesh will concentrate stress and thicken those regions automatically.
 
+</Passage>
+
+<Passage src={results} side="left" type="figure" alt="Six auxetic cell geometries in a row, then two stents deployed in vessels with their stress fields plotted, and below them two flow visualisations comparing the streamlines through each.">
+
 ### What the simulations showed
 
 Six cell geometries were screened in three-point bending: re-entrant, trichiral,
@@ -89,6 +109,8 @@ times the predicted fatigue life. Blood-flow simulation over several cardiac cyc
 showed a higher and steadier flow rate, where the conventional stent produced
 fluctuation and local turbulence — a consequence of expanding evenly into a vessel that
 is not even.
+
+</Passage>
 
 ### What this does not show
 
