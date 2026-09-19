@@ -1972,12 +1972,16 @@ button.afig__ctl {
 
 /* Where the work was published. A row on a wide sheet and a stack on a narrow
    one, which is what flex-wrap gives for free — these are peers, not a list
-   with an order, so no marker and no numbering. */
+   with an order, so no marker and no numbering.
+
+   They are buttons now, so the gap is the one the other button rows use, and
+   the space above is a section's worth rather than a paragraph's: these are
+   the end of the sheet's argument, not a footnote to the last block. */
 .project__links {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-3) var(--sp-5);
-  margin-top: var(--sp-4);
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
   padding: 0;
   list-style: none;
 }
