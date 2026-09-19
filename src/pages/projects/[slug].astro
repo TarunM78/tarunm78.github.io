@@ -16,8 +16,8 @@
  */
 import { render } from 'astro:content';
 import Sheet from '../../layouts/Sheet.astro';
-import { Image } from 'astro:assets';
 import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
+import AsideView from '../../components/AsideView.astro';
 import PartNumber from '../../components/PartNumber.astro';
 import SectionMarker from '../../components/SectionMarker.astro';
 import { getProjects, projectHref, statusStamp, subSheetNo } from '../../lib/sheets';
@@ -46,11 +46,20 @@ const stamp = statusStamp(data.status);
 /** A portrait drawing: taller than it is wide, so the sheet has room beside it. */
 const isTall = !!data.heroImage && data.heroImage.height > data.heroImage.width;
 
-/* Extra views beside the drawing. They narrow the plate and, in doing so, buy
-   the title block its corner: with the drawing no longer running the full
-   width, a block banded underneath it would be a rule across half a sheet. */
+/* Extra views of the part. They narrow the plate and, in doing so, buy the
+   title block its corner: with the drawing no longer running the full width, a
+   block banded underneath it would be a rule across half a sheet.
+
+   The first goes in the column beside the drawing and the rest go in a strip
+   under it. A column is narrow and a strip is wide, so the order in the
+   frontmatter is what decides which view gets which: the upright one leads,
+   and the ones shaped like the drawing follow it. Put three stills on a
+   project and the first still sits in the column, which is the right answer
+   for the same reason. */
 const aside = data.aside;
 const hasAside = aside.length > 0;
+const asideLead = aside[0];
+const asideRest = aside.slice(1);
 
 const prev = projects[index - 1];
 const next = projects[index + 1];
@@ -187,39 +196,30 @@ const next = projects[index + 1];
     }
 
     {
-      hasAside && (
+      asideLead && (
         <div class="projectaside">
-          {aside.map((v) => (
-            <figure class="projectaside__item">
-              {v.video ? (
-                /* Muted, looping and inline: a five-second clip of a rig
-                   moving is an illustration that happens to have frames, and
-                   an illustration does not ask to be started. Controls stay
-                   on, because a reader who wants it stopped should not have
-                   to leave the sheet to do it. */
-                <video
-                  class="projectaside__media"
-                  src={v.video}
-                  aria-label={v.alt}
-                  controls
-                  muted
-                  loop
-                  playsinline
-                  preload="metadata"
-                />
-              ) : (
-                <Image
-                  class="projectaside__media"
-                  src={v.image!}
-                  alt={v.alt}
-                  widths={[400, 800]}
-                  sizes="(min-width: 1024px) 24vw, 92vw"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-              {v.caption && <figcaption class="projectaside__cap meta">{v.caption}</figcaption>}
-            </figure>
+          <AsideView
+            image={asideLead.image}
+            video={asideLead.video}
+            alt={asideLead.alt}
+            caption={asideLead.caption}
+            sizes="(min-width: 1024px) 24vw, 92vw"
+          />
+        </div>
+      )
+    }
+
+    {
+      asideRest.length > 0 && (
+        <div class="projectstrip">
+          {asideRest.map((v) => (
+            <AsideView
+              image={v.image}
+              video={v.video}
+              alt={v.alt}
+              caption={v.caption}
+              sizes="(min-width: 1024px) 32vw, 92vw"
+            />
           ))}
         </div>
       )

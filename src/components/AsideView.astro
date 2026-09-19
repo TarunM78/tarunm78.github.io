@@ -1,0 +1,57 @@
+---
+/**
+ * One extra view of a part: a still, or a clip of the thing working.
+ *
+ * A plate like any other on this site, so a second angle reads as part of the
+ * same package as the drawing: heavy border, caption ruled off inside it.
+ *
+ * It exists as a component because the sheet sets these in two places. The
+ * first goes in the column beside the drawing and the rest go in a strip under
+ * it, and one markup for both is what stops the strip and the column drifting
+ * into two slightly different plates.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image?: ImageMetadata;
+  video?: string;
+  alt: string;
+  caption?: string;
+  /** Rendered width, for the browser to pick a candidate against. */
+  sizes: string;
+}
+const { image, video, alt, caption, sizes } = Astro.props;
+---
+
+<figure class="projectaside__item">
+  {
+    video ? (
+      /* Muted, looping and inline: a few seconds of a rig moving is an
+         illustration that happens to have frames, and an illustration does not
+         ask to be started. Controls stay on, because a reader who wants it
+         stopped should not have to leave the sheet to do it. */
+      <video
+        class="projectaside__media"
+        src={video}
+        aria-label={alt}
+        controls
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      />
+    ) : (
+      <Image
+        class="projectaside__media"
+        src={image!}
+        alt={alt}
+        widths={[400, 800, 1200]}
+        sizes={sizes}
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+  {caption && <figcaption class="projectaside__cap meta">{caption}</figcaption>}
+</figure>

@@ -2223,18 +2223,40 @@ button.afig__ctl {
   .projectplate--aside {
     display: grid;
     grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+    /* The drawing, then the strip of stills under it, then the buttons across
+       the foot. The clip beside the drawing spans the first two rows, so it
+       runs down the side of both rather than pinning either of them to its own
+       height. The last row is flexible: if the clip ends up the tallest thing
+       on the plate, its surplus lands there, under the buttons, instead of
+       being distributed back into the rows above and opening a gap between the
+       drawing and the strip. */
+    grid-template-rows: auto auto minmax(0, 1fr);
     column-gap: var(--sp-5);
-    align-items: start;
   }
 
-  .projectplate--aside > .afig,
-  .projectplate--aside > .project__links {
+  .projectplate--aside > .afig {
     grid-column: 1;
+    grid-row: 1;
+  }
+
+  .projectplate--aside > .projectstrip {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* Across the foot of the whole plate, under the strip and under the clip
+     both. They are the way out of the sheet, so nothing it shows should come
+     after them. */
+  .projectplate--aside > .project__links {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    align-self: start;
   }
 
   .projectplate--aside > .projectaside {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 1 / 3;
+    align-self: start;
   }
 
   /* The wrapper is shrink-to-fit once it is out of flow, so the block's own
@@ -2281,6 +2303,16 @@ button.afig__ctl {
   margin-top: var(--sp-5);
 }
 
+/* The stills, in a row under the drawing. auto-fit rather than a fixed two,
+   so one still takes the width and three share it, and below the breakpoint
+   for the minimum they stack. */
+.projectstrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-5);
+}
+
 .projectaside__item {
   margin: 0;
   border: var(--lw-heavy) solid var(--ink);
@@ -2294,6 +2326,11 @@ button.afig__ctl {
   width: 100%;
   height: auto;
 }
+
+/* A clip shot on a phone is nine by sixteen, which is why it is the view that
+   goes in the column: upright next to the drawing, where the stills would have
+   been six hundred pixels of one photograph stacked on two more. It has the
+   column to itself, so it is not capped. */
 
 .projectaside__cap {
   padding: var(--sp-2) var(--sp-3);
