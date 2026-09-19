@@ -44,8 +44,9 @@ if (!hero) throw new Error('Home expects at least one project with a drawing on 
  *
  * Above 1024px the sheet is two columns. The content column is the sheet's
  * 1440px cap less its 60px margins; the 60px column gap comes off that; the
- * drawing's column is 7 of the 12 parts left. So the column is 7/12, or 0.583,
- * of `min(100vw, 1440px) - 180px`.
+ * assembled drawing's column is 5 of the 12 parts left and the column beside
+ * it — the single arm, the sentence, the buttons — is 7. So they are 5/12 and
+ * 7/12, or 0.417 and 0.583, of `min(100vw, 1440px) - 180px`.
  *
  * Neither figure on this sheet carries labels now, so neither reserves a
  * gutter and both take that column whole. There was a second constant here for
@@ -65,7 +66,7 @@ if (!hero) throw new Error('Home expects at least one project with a drawing on 
  * difference between a drawing and a smudge.
  */
 const FIGURE_SIZES = [
-  '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.583)',
+  '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.417)',
   '(min-width: 768px) calc(100vw - 80px)',
   'calc(100vw - 40px)',
 ].join(', ');
@@ -123,8 +124,8 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       class="sectionband"
       src={singleArm}
       alt=""
-      widths={[400, 600, 900, 1200]}
-      sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.417), 0px"
+      widths={[600, 900, 1200, 1600]}
+      sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.583), 0px"
       loading="eager"
       decoding="async"
     />

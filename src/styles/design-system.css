@@ -563,7 +563,14 @@ button.afig__ctl {
      needed here. */
   .lead {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    /* Seven parts to the column that holds the single arm and the text, five
+       to the assembled drawing. It was the other way round when the drawing
+       carried callout labels and needed the room; without them it is a
+       portrait plate that reads perfectly well at the smaller size, and the
+       width is better spent on the arm beside it. The drawing fills its column,
+       so shrinking the column is also what moves it right — its right edge
+       stays on the margin and its left edge comes in. */
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: var(--sp-6);
     row-gap: 0;
     align-items: start;
@@ -903,9 +910,10 @@ button.afig__ctl {
      from everything else in the band. */
   align-items: center;
   gap: var(--sp-2);
-  /* Last in the band, hard right. The index holds the left, the sheet's own
-     identity sits between them — closest to the control that restates how that
-     sheet is being reproduced. */
+  /* Last in the band. This is only the gap from whatever precedes it; what
+     actually holds it to the right is the band's space-between on one row, and
+     an auto margin in the range where the band wraps. There used to be a third
+     field between the two, and this margin was the space either side of it. */
   margin-left: var(--sp-4);
 }
 
