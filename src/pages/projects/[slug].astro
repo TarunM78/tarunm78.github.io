@@ -123,6 +123,8 @@ const next = projects[index + 1];
       hasAside && 'projectplate--aside',
     ]}
   >
+    {/* The drawing and the stills under it. */}
+    <div class="projectplate__main">
     <AnnotatedFigure
       cornerBlock={hasAside}
       src={data.heroImage}
@@ -143,6 +145,39 @@ const next = projects[index + 1];
         started: data.started,
       }}
     />
+
+    {
+      asideRest.length > 0 && (
+        <div class="projectstrip">
+          {asideRest.map((v) => (
+            <AsideView
+              image={v.image}
+              video={v.video}
+              alt={v.alt}
+              caption={v.caption}
+              sizes="(min-width: 1024px) 32vw, 92vw"
+            />
+          ))}
+        </div>
+      )
+    }
+    </div>
+
+    {/* The clip, and under it the way out. */}
+    <div class="projectplate__side">
+    {
+      asideLead && (
+        <div class="projectaside">
+          <AsideView
+            image={asideLead.image}
+            video={asideLead.video}
+            alt={asideLead.alt}
+            caption={asideLead.caption}
+            sizes="(min-width: 1024px) 24vw, 92vw"
+          />
+        </div>
+      )
+    }
 
     {
       data.links.length > 0 && (
@@ -194,36 +229,7 @@ const next = projects[index + 1];
         </ul>
       )
     }
-
-    {
-      asideLead && (
-        <div class="projectaside">
-          <AsideView
-            image={asideLead.image}
-            video={asideLead.video}
-            alt={asideLead.alt}
-            caption={asideLead.caption}
-            sizes="(min-width: 1024px) 24vw, 92vw"
-          />
-        </div>
-      )
-    }
-
-    {
-      asideRest.length > 0 && (
-        <div class="projectstrip">
-          {asideRest.map((v) => (
-            <AsideView
-              image={v.image}
-              video={v.video}
-              alt={v.alt}
-              caption={v.caption}
-              sizes="(min-width: 1024px) 32vw, 92vw"
-            />
-          ))}
-        </div>
-      )
-    }
+    </div>
   </div>
 
   <SectionMarker letter="A" id="description" label="Description" />
