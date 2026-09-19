@@ -1674,7 +1674,10 @@ button.afig__ctl {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: var(--sp-6);
-    align-items: start;
+    /* Centred on the prose, not ranged with its first line. The columns are
+       rarely the same height — four lines of text against a tall figure — and
+       top-aligning left the shorter one hanging off the top of the taller. */
+    align-items: center;
   }
 
   .passage__img {
@@ -1700,40 +1703,42 @@ button.afig__ctl {
   }
 }
 
-/* The ground. A line drawing is black on white: the white multiplies away and
-   the sheet's own ruling reads through it, and on the blueprint it inverts to
-   white line on navy — the same treatment every other drawing here gets.
+/* The ground is cut out of the files themselves — the near-white paper around
+   each figure is transparent, flood-filled in from the border so the white
+   inside a vessel or a CT slice is kept, because that is content.
 
-   A figure carrying real colour cannot take that. Inverting a stress plot turns
-   red into cyan and makes it say the opposite of what it says, so on the
-   blueprint it keeps its own white ground and reads as a figure printed and
-   laid onto the sheet. */
-.passage__img--drawing,
-.passage__img--figure {
-  mix-blend-mode: multiply;
-}
+   It is done in the image rather than with mix-blend-mode, which is what this
+   was before and which could not work here: the sheet's ruled paper is a
+   background on `body`, and a background on the body propagates to the canvas.
+   The canvas is painted outside the element tree, so a blend mode on a
+   descendant has nothing to blend with — every figure laid its own near-white
+   ground over the ruling as an opaque plate, which is the pale rectangles that
+   were interrupting the grid. */
 
+/* On the blueprint a line drawing inverts, black line becoming white, the same
+   as every other drawing here. Transparency survives the filter, so only the
+   ink flips and the sheet still reads through. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .passage__img--drawing {
     filter: invert(1);
-    mix-blend-mode: screen;
   }
 
   :root:not([data-theme='light']) .passage__img--figure {
-    mix-blend-mode: normal;
-    background: #fff;
+    background: #f4f2ec;
     padding: var(--sp-3);
   }
 }
 
 [data-theme='dark'] .passage__img--drawing {
   filter: invert(1);
-  mix-blend-mode: screen;
 }
 
+/* A figure carrying real colour cannot invert — it would turn a stress scale
+   into its own negative and make red mean cold. Cut out and laid straight onto
+   the blueprint its black linework would disappear into the navy, so it keeps a
+   sheet of pale ground under it and reads as a figure printed and laid on. */
 [data-theme='dark'] .passage__img--figure {
-  mix-blend-mode: normal;
-  background: #fff;
+  background: #f4f2ec;
   padding: var(--sp-3);
 }
 
