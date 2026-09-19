@@ -372,6 +372,61 @@ img {
   opacity: calc(1 - var(--afig-dim, 0) * 0.55);
 }
 
+/* The leader a legend does not print until it is asked for.
+
+   A legend figure has none of the leaders above: the list sits in the sheet's
+   corner, so every one of them would cross the drawing to reach it, and seven
+   lines laid over a drawing is worse than no lines. The balloon numbers tie the
+   two together instead, the way a parts list is keyed to an assembly.
+
+   That reasoning is about the printed state. Point at one entry and there is
+   exactly one line to draw with nothing competing against it, so the leader
+   appears: balloon to bullet, circle edge to circle edge, gone when the pointer
+   leaves. The sheet is never carrying more than one of these.
+
+   Geometry comes from afig-legend.ts, because the balloon sits at a percentage
+   of the image and the entry sits wherever its text put it. Everything here is
+   the mark itself, so with scripting off there is nothing to see and nothing
+   out of place.
+
+   Out of flow and untouchable: it must not take a hover from the balloon it is
+   drawn to, or the line would flicker as the pointer crossed its own leader. */
+.afig__links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  /* The same 120ms the rest of the callout state uses, so the line arrives with
+     the highlight rather than after it. The reduced-motion block zeroes it. */
+  transition: opacity 120ms ease-out;
+}
+
+.afig.is-linked .afig__links {
+  opacity: 1;
+}
+
+.afig__links path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Drawn at the live callout's weight, because a leader that only exists while
+   its callout is live is never anything but live. */
+.afig__linkhalo {
+  stroke: var(--paper);
+  stroke-width: calc(var(--lw-med) + 3px);
+  opacity: 0.72;
+}
+
+.afig__linkstroke {
+  stroke: var(--annotation);
+  stroke-width: calc(var(--lw-med) + 1px);
+}
+
 .afig__dot {
   position: absolute;
   left: var(--cx);
