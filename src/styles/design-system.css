@@ -1678,8 +1678,15 @@ button.afig__ctl {
     align-items: center;
   }
 
+  /* A little under its column, centred in it. The two sides of a passage are
+     rarely the same height, and where the drawing is the taller one every pixel
+     it stands above the prose is empty paper down the other side. Held at 85%
+     the drawings still carry, and about 230px of that gap comes out of the
+     sheet. */
   .passage__img {
     margin-top: 0;
+    max-width: 85%;
+    justify-self: center;
   }
 
   .passage--right .passage__text {
@@ -1721,24 +1728,18 @@ button.afig__ctl {
     filter: invert(1);
   }
 
-  :root:not([data-theme='light']) .passage__img--figure {
-    background: #f4f2ec;
-    padding: var(--sp-3);
-  }
 }
 
 [data-theme='dark'] .passage__img--drawing {
   filter: invert(1);
 }
 
-/* A figure carrying real colour cannot invert — it would turn a stress scale
-   into its own negative and make red mean cold. Cut out and laid straight onto
-   the blueprint its black linework would disappear into the navy, so it keeps a
-   sheet of pale ground under it and reads as a figure printed and laid on. */
-[data-theme='dark'] .passage__img--figure {
-  background: #f4f2ec;
-  padding: var(--sp-3);
-}
+/* A figure carrying real colour still does not invert — that would turn a
+   stress scale into its own negative and make red mean cold — but it no longer
+   sits on a pale plate either. The plate was there because the first cut of
+   these two had black linework that vanished into the navy; the second cut
+   draws them light, so they read on the blueprint as they are, with the ruling
+   through the cut-out ground like every other figure here. */
 
 .projectbody > * + * {
   margin-top: var(--sp-4);
