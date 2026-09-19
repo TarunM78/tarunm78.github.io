@@ -17,14 +17,12 @@
 import Sheet from '../layouts/Sheet.astro';
 import AnnotatedFigure from '../components/AnnotatedFigure.astro';
 import SectionMarker from '../components/SectionMarker.astro';
-import PartNumber from '../components/PartNumber.astro';
 import {
   getExperience,
   getProjects,
   isCurrent,
   period,
   projectHref,
-  subSheetNo,
 } from '../lib/sheets';
 import { Image } from 'astro:assets';
 import singleArm from '../assets/singlearm.png';
@@ -37,8 +35,7 @@ import singleArm from '../assets/singlearm.png';
 // cover saying there is nothing to see. The series order is untouched — only
 // which sheet gets pulled to the front of the house.
 const projects = await getProjects();
-const heroIndex = projects.findIndex((p) => !!p.data.heroImage);
-const hero = projects[heroIndex];
+const hero = projects.find((p) => !!p.data.heroImage);
 if (!hero) throw new Error('Home expects at least one project with a drawing on file.');
 
 /**
@@ -118,8 +115,9 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       the section marker and the drawing it belongs to. It sits outside the
       lead block rather than in it: that grid gives the figure every row, so a
       band inside it would have to fight the drawing for space instead of
-      simply standing above it. Out here it bleeds to the viewport edges and
-      pushes the whole two-column block down the sheet.
+      simply standing above it. It runs the width of the sheet and stops at the
+      same margins as everything else, so the section reads as blocks stacked on
+      one column rather than a banner with a page underneath it.
 
       Mirrored. The render has the arm reaching left, off the sheet; flipped it
       reaches into the sheet instead. A transform rather than a second export:
@@ -132,18 +130,17 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     class="sectionband"
     src={singleArm}
     alt=""
-    widths={[900, 1400, 1920, 2400]}
-    sizes="(min-width: 1024px) 100vw, 0px"
+    widths={[900, 1400, 1920]}
+    sizes="(min-width: 1024px) calc(min(100vw, 1440px) - 120px), 0px"
     loading="lazy"
     decoding="async"
   />
 
+  {/* No designator line on this section. The marker above already names the
+      project in full, and PN-002 / Sheet 02-1 restated in mono under it was the
+      sheet introducing the same thing twice. The part number is on the detail
+      sheet, one tap away, where it designates something. */}
   <section class="lead">
-    <p class="lead__meta">
-      <PartNumber partNumber={hero.data.partNumber} />
-      <span class="meta">Sheet {subSheetNo(heroIndex)}</span>
-    </p>
-
     <AnnotatedFigure
       src={hero.data.heroImage}
       alt={hero.data.heroImageAlt ?? ''}

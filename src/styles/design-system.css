@@ -144,23 +144,6 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* The full-bleed band is sized in vw, which counts the scrollbar, so it
-     overhangs the page by that much and would otherwise add a sideways scroll.
-
-     It has to be clipped here and nowhere else. Lower down, every element in
-     the sheet is the content column or narrower, so clipping on one of them
-     cuts the bleed off at exactly the edge it exists to escape — which is what
-     .sheet__body did on the first attempt. On `body` it is worse: overflow set
-     on the body propagates to the viewport, and the fixed head band came
-     unstuck and landed in the middle of the page.
-
-     `hidden` rather than `clip` only because it is the better-supported way to
-     take the axis away; both leave the box scrollable from script, which is by
-     design and not a difference a reader can feel. On the root element this is
-     safe: the vertical axis stays auto, and the head band is fixed to the
-     viewport rather than to anything being clipped — verified, because putting
-     the same rule on `body` did unstick it. */
-  overflow-x: hidden;
 }
 
 body {
@@ -563,35 +546,24 @@ button.afig__ctl {
      narrow layout below 1024px wants to read it.
 
      The two columns are not the same height: the drawing is taller than the
-     three or four lines of text beside it. That surplus used to pile up in one
-     lump under the buttons — four hundred-odd pixels of blank column before the
-     next section cut, which read as the sheet having run out rather than as
-     margin. So the column is set against the drawing rather than stacked at the
-     top of it: the designator holds the drawing's top edge, the way in holds
-     its bottom edge, and the sentence floats between them. A column of text
-     ranged along the height of the thing it describes is how the rest of the
-     set is drawn; a column that stops a third of the way down is not.
+     three or four lines of text beside it. That surplus used to be spread
+     through the text column by a row template with two flexible tracks in it,
+     which ranged the sentence and the buttons down the drawing's full height —
+     and left three hundred pixels of blank paper between them. Ranging text
+     along a drawing is right on a sheet where the text runs the drawing's
+     length; here it only set two short blocks a screen apart.
 
-     The row template is what does it. The last row is the buttons and the row
-     above the sentence and the row below it are the flexible pair that take the
-     surplus; the rows before that are auto, and hold whatever the section puts
-     there — one meta line on a project, a title and an organisation as well on
-     a role. Six is more than either shape needs. The elements keep their own
-     margins, which is the floor on the spacing for the case the flexible rows
-     collapse to nothing because the text came out longer than the drawing.
+     So the rows are auto and the column packs to the top. The surplus goes back
+     to the bottom of the column, under the buttons, where it is the margin
+     before the next section cut rather than a hole in the middle of a
+     paragraph.
 
-     Sizing a spanning item against a flexible track is what keeps this honest:
-     because the figure's span includes an `fr`, its height is not distributed
-     back into the auto rows, so the surplus lands in the two rows meant for it
-     rather than a slice of it after every line.
-
-     The drawing is now measured against its column, not the viewport, so the
+     The drawing is measured against its column, not the viewport, so the
      sheet's own 1440px cap is what stops it growing and no second cap is
      needed here. */
   .lead {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: repeat(6, auto) 1fr auto 1fr auto;
     column-gap: var(--sp-6);
     row-gap: 0;
     align-items: start;
@@ -601,19 +573,11 @@ button.afig__ctl {
     grid-column: 1;
   }
 
-  /* Counted from the end, so a section with an extra line or two above the
-     sentence still lands its sentence and its buttons on the same rows. */
-  .lead > .lead__summary {
-    grid-row: -4 / -3;
-  }
-
-  .lead > .lead__more {
-    grid-row: -2 / -1;
-  }
-
   .lead > .afig {
     grid-column: 2;
-    grid-row: 1 / -1;
+    /* More rows than the text column will ever fill. With no explicit row
+       template to run to, `-1` would resolve to line 1 and span nothing. */
+    grid-row: 1 / span 20;
   }
 
   /* A drawing takes its whole column. The gutter is reserved for labels, so a
@@ -2527,19 +2491,15 @@ button.afig__ctl {
   .sectionband {
     display: block;
     height: auto;
-    margin-block: var(--sp-4) var(--sp-6);
+    /* Tight to the marker above it and to the block below. This band is the
+       section's opening line, not a spacer — the sheet had a screen of paper
+       either side of it when it bled, and none of that gap was doing work. */
+    margin-block: var(--sp-3) var(--sp-4);
 
-    /* Full bleed. The sheet is capped at 1440px and padded either side, so the
-       band has to escape both to reach the screen edges: it takes the viewport
-       width and pulls itself back out by the difference between that and its
-       container. 100vw counts the scrollbar, which is the overhang the body
-       clips rather than let it become a sideways scroll. */
-    width: 100vw;
-    /* Tailwind's preflight caps every img at max-width:100%, which here is the
-       content column — the bleed would silently do nothing without this. */
-    max-width: none;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    /* The sheet's own width, stopping at the same margins as every other block
+       on the page. It bled to the viewport edges before, which read as a banner
+       with the sheet printed underneath rather than as part of the sheet. */
+    width: 100%;
     transform: scaleX(-1);
 
     /* Cropped to the drawing. The render is 1829x860 but the arm only occupies
