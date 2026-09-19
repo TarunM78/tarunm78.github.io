@@ -26,8 +26,21 @@
  * a keyboard. Below 1024px it is display:none and costs nothing: the band
  * wraps into the flow there, and the collection page lists the same sheets.
  *
- * Not a nav bar and not a hamburger. Titles stay in the body face: caps-mono is
- * for metadata, never for link text.
+ * Below 1024px it is a menu. The six rows and the sheet's identity and the
+ * reproduction switch do not fit a phone across, and stacked they cost 184px of
+ * masthead before a reader reaches the drawing — so the index folds behind a
+ * button and opens as a panel. That is a hamburger, and this file used to say
+ * it would never be one; the note was written when the index was four rows
+ * wide enough to sit in the band on any screen, and it stopped being true when
+ * the index grew. Above 1024px nothing has changed: the index is still laid out
+ * in full across the band, and the button is not rendered.
+ *
+ * The toggle is a checkbox, not a button with script behind it, which is the
+ * same device the photography filter uses. Navigation is the last thing on a
+ * sheet that should depend on JavaScript loading: if the stylesheet fails the
+ * list is simply visible, and if the script fails there is no script to fail.
+ *
+ * Titles stay in the body face: caps-mono is for metadata, never for link text.
  */
 import { getSheets, getProjectSheets, sheetNo } from '../lib/sheets';
 
@@ -44,6 +57,12 @@ const SERIES_PARENT = 2;
 ---
 
 <nav class="sheetindex" aria-label="Sheet index">
+  <input class="visually-hidden sheetindex__toggle" type="checkbox" id="sheet-index" />
+  <label class="sheetindex__button" for="sheet-index">
+    <span class="sheetindex__burger" aria-hidden="true"></span>
+    <span>Index</span>
+  </label>
+
   <ol class="sheetindex__list">
     {
       sheets.map((s) => (
