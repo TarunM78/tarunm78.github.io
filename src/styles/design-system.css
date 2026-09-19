@@ -2068,18 +2068,6 @@ button.afig__ctl {
   margin: 0 0 var(--sp-5);
 }
 
-.project__notes {
-  margin: var(--sp-5) 0 0;
-  padding: 0;
-  list-style: none;
-  max-width: var(--measure-sans);
-}
-
-.project__notes li {
-  padding: var(--sp-3) 0;
-  border-bottom: var(--lw-thin) solid var(--faint-rule);
-}
-
 /* Where the work was published. A row on a wide sheet and a stack on a narrow
    one, which is what flex-wrap gives for free — these are peers, not a list
    with an order, so no marker and no numbering.

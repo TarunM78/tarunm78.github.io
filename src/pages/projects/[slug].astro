@@ -4,8 +4,8 @@
  *
  * The spec has carried this as "not yet built" since the beginning. It is the
  * sheet the collection hands you: the drawing at full width with its callouts
- * live and a zoom control, then the part number and its fields, the write-up,
- * and the notes block.
+ * live and a zoom control, then the part number and its fields, and the
+ * write-up.
  *
  * It takes a real sheet number — 02-3, not a part number — because the
  * detail series is numbered off sheet 02 and always has been. The index still
@@ -19,7 +19,6 @@ import Sheet from '../../layouts/Sheet.astro';
 import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
 import PartNumber from '../../components/PartNumber.astro';
 import SectionMarker from '../../components/SectionMarker.astro';
-import TodoMarker from '../../components/TodoMarker.astro';
 import { getProjects, projectHref, statusStamp, subSheetNo } from '../../lib/sheets';
 import type { CollectionEntry } from 'astro:content';
 
@@ -83,9 +82,9 @@ const next = projects[index + 1];
   </section>
 
   {/* The drawing and the places this work is published, as one plate.
-      The links used to sit at the foot of the sheet, under the notes, which is
-      the last place a reader looks for them and a long way from the thing they
-      are about. Directly under the drawing they read as part of it.
+      The links used to sit at the very foot of the sheet, which is the last
+      place a reader looks for them and a long way from the thing they are
+      about. Directly under the drawing they read as part of it.
 
       A portrait drawing puts them beside it instead. A tall plate leaves a
       column of empty paper down one side — the callout labels use a fraction of
@@ -171,24 +170,6 @@ const next = projects[index + 1];
     <h2 id="description-heading" class="visually-hidden">Description</h2>
     <Content />
   </section>
-
-  {
-    data.notes.length > 0 && (
-      <>
-        <SectionMarker letter="B" id="notes" label="Notes" />
-        <section aria-labelledby="notes-heading">
-          <h2 id="notes-heading" class="sheettitle sheettitle--sm">
-            Notes
-          </h2>
-          <ul class="project__notes">
-            {data.notes.map((n) => (
-              <li>{/^TODO:?\s*/i.test(n.text) ? <TodoMarker text={n.text} /> : n.text}</li>
-            ))}
-          </ul>
-        </section>
-      </>
-    )
-  }
 
   {/* The set this sheet came out of, and the sheets either side of it. */}
   <nav class="seriesnav" aria-label="Detail series">
