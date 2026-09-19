@@ -144,7 +144,7 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
     <ul class="gallery" id="gallery">
       {
         plates.map((p) => (
-          <li class:list={['gallery__item', `is-${p.category}`]}>
+          <li class:list={['gallery__item', p.category && `is-${p.category}`]}>
             <figure class="plate">
               <a class="plate__link" href={p.img.src} data-full={p.full}>
                 <Image
@@ -170,7 +170,7 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
                     {p.date} &middot; {p.camera}
                   </span>
                 </span>
-                <span class="meta plate__cat">{p.category}</span>
+                {p.category && <span class="meta plate__cat">{p.category}</span>}
               </figcaption>
             </figure>
           </li>
@@ -268,7 +268,8 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
         img.alt = thumb ? thumb.alt : '';
         field('where').textContent = cap.querySelector('.meta--ink').textContent;
         field('shot').textContent = cap.querySelector('.plate__shot').textContent.trim();
-        field('cat').textContent = cap.querySelector('.plate__cat').textContent;
+        var cat = cap.querySelector('.plate__cat');
+        field('cat').textContent = cat ? cat.textContent : '';
 
         dlg.showModal();
       });

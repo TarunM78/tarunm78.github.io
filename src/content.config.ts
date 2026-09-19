@@ -203,8 +203,15 @@ const awards = defineCollection({
  * Photography. A hobby, so it carries none of the drawing vocabulary: no part
  * numbers, no revisions, no callouts. What it does carry is a category, which
  * is what the sheet filters on, and alt text, which is required rather than
- * optional — a gallery of two dozen images with no alt text is the single
+ * optional — a gallery of three dozen images with no alt text is the single
  * easiest way to make a site unusable.
+ *
+ * The category is optional, because not every frame is one of three things. A
+ * portrait is not a place, and filing it under one to satisfy a required field
+ * is how a label stops meaning anything. A frame without one is shown under
+ * All and under nothing else, which falls out of the filter rules for free:
+ * they hide what is `:not(.is-nature)`, and an uncategorised plate carries no
+ * such class to match.
  *
  * A frame is labelled with where it was taken, on what, and when, rather than
  * with a title. A photograph given a title is being argued for; the three
@@ -224,7 +231,8 @@ const photography = defineCollection({
     id: z.string(),
     /** Filename within src/assets/photography. */
     file: z.string().regex(/^[a-z0-9_-]+\.jpg$/),
-    category: z.enum(['nature', 'places', 'cars']),
+    /** Omit it for a frame that is none of the three. See the note above. */
+    category: z.enum(['nature', 'places', 'cars']).optional(),
     /** Where it was taken. Set lower case; the caption is what shouts. */
     location: z.string().min(1),
     /** The body it was taken on. */
