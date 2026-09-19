@@ -15,6 +15,14 @@
  * no JavaScript and works with the keyboard for free because it is a real radio
  * group. Labels are what you see; the inputs are visually hidden but focusable.
  *
+ * The order is shuffled on every visit. This is a static site, so there is no
+ * request to randomise on — it has to happen in the browser, and it has to
+ * happen before the first paint or the page shows its source order and then
+ * visibly rearranges itself. Hence one inline, parser-blocking script directly
+ * after the list, which is the same trick the theme pin uses in Sheet.astro and
+ * for the same reason. With no JavaScript the source order stands, which is a
+ * perfectly good order; nothing here depends on the shuffle having run.
+ *
  * Images are resolved from src/assets/photography by glob at build time. A row
  * naming a file that is not there fails the build rather than rendering a hole.
  *
@@ -24,6 +32,12 @@
  * frame visible in columns two and three would be one the loader had decided
  * was below the fold. The result was a page of empty plates. The frames are the
  * content of this page, so they load.
+ *
+ * They also load at no stated priority. The first four used to be marked high,
+ * on the reasoning that they are the ones on screen — which stopped being true
+ * the moment the order became random. The preload scanner reads the markup
+ * before the shuffle script runs, so the attribute cannot be corrected after
+ * the fact either: it would be four arbitrary frames claiming to matter most.
  */
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -107,9 +121,9 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
       }
     </div>
 
-    <ul class="gallery">
+    <ul class="gallery" id="gallery">
       {
-        plates.map((p, i) => (
+        plates.map((p) => (
           <li class:list={['gallery__item', `is-${p.category}`]}>
             <figure class="plate">
               <a class="plate__link" href={p.img.src}>
@@ -120,7 +134,6 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
                   widths={[400, 800]}
                   sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw"
                   loading="eager"
-                  fetchpriority={i < 4 ? 'high' : 'low'}
                 />
               </a>
               {/*
@@ -144,5 +157,31 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
         ))
       }
     </ul>
+
+    {/*
+      Fisher-Yates over the plates, run where it sits: directly after the list,
+      inline and blocking, so the reorder happens while the parser is still
+      working and the page never paints the source order. Deferring it would
+      show the shuffle happening.
+
+      One pass, moving the elements themselves rather than their contents, so
+      each plate keeps the image the caption belongs to.
+    */}
+    <script is:inline>
+      (function () {
+        var ul = document.getElementById('gallery');
+        if (!ul) return;
+        var items = Array.prototype.slice.call(ul.children);
+        for (var i = items.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var swap = items[i];
+          items[i] = items[j];
+          items[j] = swap;
+        }
+        var frag = document.createDocumentFragment();
+        for (var k = 0; k < items.length; k++) frag.appendChild(items[k]);
+        ul.appendChild(frag);
+      })();
+    </script>
   </div>
 </Sheet>
