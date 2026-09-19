@@ -35,7 +35,7 @@ const descId = `${idBase}-c${c.index}`;
 
 <li
   class:list={['afig__item', c.placed ? `afig__item--${c.side}` : 'is-unplaced']}
-  style={c.placed ? `--sy:${c.slotY}%` : undefined}
+  style={c.placed ? `--n:${c.index};--sy:${c.slotY}%` : `--n:${c.index}`}
 >
   {
     c.placed ? (

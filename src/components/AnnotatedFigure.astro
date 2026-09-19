@@ -91,7 +91,16 @@ interface Props {
    * label in one gutter, which is what a figure set beside a column of text
    * needs: a left-hand label would land on the prose. See ResolveOptions.
    */
-  gutter?: 'both' | 'right';
+  /**
+   * Where the labels go.
+   *
+   * 'both' is the drawing-sheet default, a gutter either side of the drawing.
+   * 'right' puts them all in one. 'bands' puts them above and below it
+   * instead, which costs the drawing no width at all: the gutters are what a
+   * side label is paid for, and on a wide sheet that is a quarter of the plate
+   * spent on seven short lines of text.
+   */
+  gutter?: 'both' | 'right' | 'bands';
   /**
    * The title block is docked into the drawing's bottom-right corner rather
    * than banded under it. The sheet decides this, because it is the sheet that
@@ -139,13 +148,28 @@ const {
   class: className,
 } = Astro.props;
 
+const bands = gutter === 'bands';
 const resolved = resolveCallouts(callouts, { gutter, cornerBlock });
+
+/* Which band a label goes in: the half of the drawing its anchor sits in. A
+   label above the drawing for a feature near its top has the shortest journey
+   a reader's eye can make between a number and the thing it names. Unplaced
+   callouts have no anchor to sort by, so they go under with the rest of the
+   text. */
+const bandAbove = bands ? resolved.filter((c) => c.placed && c.y < 50) : [];
+const bandBelow = bands ? resolved.filter((c) => !c.placed || c.y >= 50) : [];
 const placed = resolved.filter((c) => c.placed);
 const hasCallouts = resolved.length > 0;
 const hasPlaced = placed.length > 0;
 
 const idBase = (figureId ?? nextFigureId()).toLowerCase();
 const listId = `${idBase}-callouts`;
+
+const aboveId = `${listId}-above`;
+const belowId = `${listId}-below`;
+const detailsId = bands
+  ? [bandAbove.length && aboveId, bandBelow.length && belowId].filter(Boolean).join(' ')
+  : listId;
 
 /**
  * The sheet at its own resolution, for the detail viewer.
@@ -167,14 +191,25 @@ const zoom =
     !src && 'afig--pending',
     src && `afig--${imageType}`,
     framed && 'afig--sheet',
-    hasPlaced && 'afig--gutters',
+    hasPlaced && !bands && 'afig--gutters',
     hasPlaced && gutter === 'right' && 'afig--gutter-right',
+    bands && 'afig--bands',
     className,
   ]}
   data-zoom-src={zoom?.src}
 >
   <div class="afig__sheetbox">
     <div class="afig__stage">
+      {
+        bandAbove.length > 0 && (
+          <ol class="afig__list afig__list--band" id={aboveId} aria-label="Callouts, upper half">
+            {bandAbove.map((c) => (
+              <Callout callout={c} idBase={idBase} />
+            ))}
+          </ol>
+        )
+      }
+
       <div class="afig__imgwrap">
         {
           src ? (
@@ -187,7 +222,7 @@ const zoom =
               loading={eager ? 'eager' : 'lazy'}
               decoding={eager ? 'sync' : 'async'}
               fetchpriority={eager ? 'high' : 'auto'}
-              aria-details={hasCallouts ? listId : undefined}
+              aria-details={hasCallouts ? detailsId : undefined}
             />
           ) : (
             <div class="afig__plate" style={`--afig-aspect:${aspect}`}>
@@ -256,7 +291,7 @@ const zoom =
         }
 
         {
-          hasCallouts && (
+          hasCallouts && !bands && (
             <ol class="afig__list" id={listId} aria-label="Callouts">
               {resolved.map((c) => (
                 <Callout callout={c} idBase={idBase} />
@@ -265,6 +300,16 @@ const zoom =
           )
         }
       </div>
+
+      {
+        bandBelow.length > 0 && (
+          <ol class="afig__list afig__list--band" id={belowId} aria-label="Callouts, lower half">
+            {bandBelow.map((c) => (
+              <Callout callout={c} idBase={idBase} />
+            ))}
+          </ol>
+        )
+      }
     </div>
 
     {

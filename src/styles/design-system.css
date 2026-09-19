@@ -613,12 +613,61 @@ button.afig__ctl {
     display: none;
   }
 
+  /* --- Labels above and below instead of either side. ---
+
+     The drawing takes the whole plate: no gutter is reserved, which is a
+     quarter of the plate's width handed back to the thing the sheet is about.
+
+     What pays for it is the leader line. A label in a band is not beside its
+     anchor and a two-segment leader to it would cross the drawing to get
+     there, so the balloon does the tying instead: a number on the drawing and
+     the same number against the text. That is how a parts list is keyed to an
+     assembly drawing, and it is the one device that does not cost width. */
+  .afig--bands .afig__balloon {
+    display: grid;
+  }
+
+  .afig--bands .afig__leaders {
+    display: none;
+  }
+
+  .afig--bands .afig__list--band {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
+    margin: 0;
+  }
+
+  .afig--bands .afig__list--band:first-child {
+    margin-bottom: var(--sp-4);
+  }
+
+  .afig--bands .afig__list--band:last-child {
+    margin-top: var(--sp-4);
+    /* The title block is docked into this corner. Reserving its width keeps
+       the lower band's labels beside it rather than under it. */
+    padding-right: calc(var(--titleblock-w) + var(--sp-5));
+  }
+
+  /* The number comes back, and it is the callout's own rather than a count of
+     the list it happens to be in: two bands would otherwise both start at one
+     while the balloons on the drawing went on to seven. */
+  .afig--bands .afig__item {
+    counter-increment: none;
+    counter-set: callout var(--n);
+    grid-template-columns: 19px 1fr;
+  }
+
+  .afig--bands .afig__item::before {
+    display: grid;
+  }
+
   /* A placed callout leaves the flow and takes the slot its leader line was
      drawn to. The list is no longer clipped out of sight to make room for a
      duplicate: there is no duplicate, so the entry a screen reader reads and
      the label on the sheet are one element in one place. */
-  .afig__item--left,
-  .afig__item--right {
+  .afig--gutters .afig__item--left,
+  .afig--gutters .afig__item--right {
     position: absolute;
     top: var(--sy);
     transform: translateY(-50%);
@@ -637,18 +686,18 @@ button.afig__ctl {
     grid-template-columns: 1fr;
   }
 
-  .afig__item--left {
+  .afig--gutters .afig__item--left {
     right: 104%;
     text-align: right;
   }
 
-  .afig__item--right {
+  .afig--gutters .afig__item--right {
     left: 104%;
     text-align: left;
   }
 
-  .afig__item--left .afig__ctl,
-  .afig__item--right .afig__ctl {
+  .afig--gutters .afig__item--left .afig__ctl,
+  .afig--gutters .afig__item--right .afig__ctl {
     display: block;
     width: 100%;
     white-space: normal;
