@@ -92,6 +92,14 @@ interface Props {
    * needs: a left-hand label would land on the prose. See ResolveOptions.
    */
   gutter?: 'both' | 'right';
+  /**
+   * Draw the caption strip under a bare figure. On by default, because a
+   * drawing loose on a page has to say what it is. Off where something a line
+   * away already says it — the home sheet's section markers name both the
+   * project and the role, so the caption there restated a heading the reader
+   * had just passed.
+   */
+  captioned?: boolean;
   /** Stable id prefix. Pass a part number where there is one. */
   figureId?: string;
   /**
@@ -117,6 +125,7 @@ const {
   titleBlock,
   framed = Astro.props.titleBlock !== undefined,
   gutter = 'both',
+  captioned = true,
   figureId,
   zoom: zoomable = false,
   class: className,
@@ -269,9 +278,12 @@ const zoom =
   {/* Only a bare figure gets a caption. A framed one is a sheet: if it carries a
       title block, the block states the medium, and if it does not it is a
       preview whose own sheet states it. Either way a caption here repeats
-      something already printed a few inches away. */}
+      something already printed a few inches away — which is the same reason
+      `captioned` exists for the bare case. Not rendered rather than hidden, so
+      a screen reader is not read a line the sheet has decided against. */}
   {
     !framed &&
+      captioned &&
       (caption || imageType !== 'photo') && (
       <figcaption class="afig__caption">
         {caption}

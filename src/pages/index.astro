@@ -135,11 +135,14 @@ if (!role) throw new Error('Home expects at least one experience entry.');
         at — they are on the detail sheet, which is where someone who wants the
         part numbers is going anyway. Dropping them also gives the drawing back
         the quarter of the column that was held open for the labels, so it runs
-        out to the margin like every other block on the sheet. */}
+        out to the margin like every other block on the sheet.
+
+        No caption strip either. The section marker a few lines up already says
+        CURRENT PROJECT and names it. */}
     <AnnotatedFigure
       src={hero.data.heroImage}
       alt={hero.data.heroImageAlt ?? ''}
-      caption={hero.data.title}
+      captioned={false}
       imageType={hero.data.heroImageType}
       figureId={hero.data.partNumber}
       aspect={1.78}
@@ -177,16 +180,16 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     </p>
 
     {/* The same treatment the drawing above it gets, because it is the same
-        kind of thing: the work, shown. The caption names the machine rather
-        than the role and the org, which the section marker above has already
-        stated in full — a sheet that says the same thing twice in two type
-        sizes is a sheet arguing with itself. The caption is carried by the
-        entry, so leading with a different role cannot leave the wrong machine
-        named here. No callouts; the role carries none. */}
+        kind of thing: the work, shown. No caption on either: the section marker
+        has already named the role and the org in full, and a strip under the
+        drawing repeating it in a second type size is a sheet arguing with
+        itself. heroCaption stays on the entry — the experience sheet is where a
+        drawing sits without a heading over it and still has to say what it is.
+        No callouts either; the role carries none. */}
     <AnnotatedFigure
       src={role.data.heroImage}
       alt={role.data.heroImageAlt ?? ''}
-      caption={role.data.heroCaption}
+      captioned={false}
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
