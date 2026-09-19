@@ -680,20 +680,27 @@ button.afig__ctl {
     max-width: var(--measure-sans);
   }
 
-  /* The render carries a strip of empty paper at its foot: the ink stops at
-     95.7% of the frame's height. Left alone the sentence below sits its forty
-     pixels from the edge of the paper rather than from the drawing, which
-     reads as a gap half again the size of every other on the sheet. This takes
-     the strip back.
+  /* The drawing runs diagonally, upper left to lower right, so the paper under
+     its tail is empty and the sentence can sit up in it rather than below the
+     whole frame.
+
+     How far up is set by where the ink stops above the text, not by where it
+     stops altogether. Measured off this render: under the left 60% of the
+     frame the ink ends at 69% of the height, while somewhere out on the right
+     a bolt hangs down to 96%. The sentence only occupies the left of the
+     figure, so it answers to the first number.
 
      Stated as a percentage because a percentage margin resolves against the
      container's width, and the image's height is a fixed ratio of that width:
-     4.3% of the height, over an aspect of 1.79, is 2.4% of the width. So it
-     holds at every width rather than at the one it was measured on.
+     a lift of N% of the height is N/1.79 of the width. So it holds at every
+     width rather than at the one it was measured on.
 
-     It is measured off this particular render. Swap the drawing and the number
-     is wrong, which is why it says what it was measured from. */
+     It is measured off this particular render. Swap the drawing and the
+     numbers are wrong, which is why it says what they were measured from. */
   .lead--stacked .afig {
+    /* The strip of empty paper at the foot of the frame, and no more: the
+       sentence is as wide as three quarters of the figure at this size and
+       would otherwise reach the low bolt. */
     margin-bottom: -2.4%;
   }
 
@@ -2485,6 +2492,16 @@ button.afig__ctl {
 /* The stills, in a row under the drawing. auto-fit rather than a fixed two,
    so one still takes the width and three share it, and below the breakpoint
    for the minimum they stack. */
+/* Wide enough that the sentence, which is a fixed measure, covers 60% of the
+   figure or less: it then sits clear of the bolt hanging down on the right and
+   can rise into the empty paper under the drawing's tail. 12% of the height
+   puts its first line about 8% below the ink above it. */
+@media (min-width: 1280px) {
+  .lead--stacked .afig {
+    margin-bottom: -12%;
+  }
+}
+
 /* The two columns of the aside layout. Out of that layout they are not boxes
    at all: `display: contents` lifts their children into the plate, so a sheet
    with no extra views is laid out exactly as it was before they existed. */
