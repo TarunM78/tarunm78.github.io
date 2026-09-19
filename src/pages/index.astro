@@ -47,33 +47,27 @@ if (!hero) throw new Error('Home expects at least one project with a drawing on 
  * drawing's column is 7 of the 12 parts left. So the column is 7/12, or 0.583,
  * of `min(100vw, 1440px) - 180px`.
  *
- * A figure with callout labels gives 26% of that column to the gutter holding
- * them, so its drawing is the column over 1.26 — 0.583/1.26, or 0.463. A figure
- * with no labels reserves nothing and takes the column outright. Hence two
- * constants: they are the same column, divided differently.
+ * Neither figure on this sheet carries labels now, so neither reserves a
+ * gutter and both take that column whole. There was a second constant here for
+ * the labelled case, at 0.463 — the column over the 1.26 a 26% gutter costs —
+ * and it is gone with the callouts. Put it back if a home figure is ever
+ * annotated again; a drawing measured as if it were full width while a quarter
+ * of it holds labels is a drawing fetched at the wrong size.
  *
  * Below 1024px the layout is one column and the figure is the content column
  * outright, with --sheet-margin stepping 40px then 20px.
  *
  * Restated rather than read, because `sizes` is an HTML attribute and cannot
  * see a custom property. That makes these the numbers here that can quietly go
- * wrong: if the column split, the gap, --sheet-margin or the gutter change,
- * these have to change with them. It is worth the duplication — a `sizes` that
- * lies is not a layout bug, it is a blurry drawing, and on line art this dense
- * that is the difference between a drawing and a smudge.
+ * wrong: if the column split, the gap or --sheet-margin change, these have to
+ * change with them. It is worth the duplication — a `sizes` that lies is not a
+ * layout bug, it is a blurry drawing, and on line art this dense that is the
+ * difference between a drawing and a smudge.
  */
-const narrow = ['(min-width: 768px) calc(100vw - 80px)', 'calc(100vw - 40px)'];
-
-/** A figure whose labels take a gutter out of the column. */
 const FIGURE_SIZES = [
-  '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.463)',
-  ...narrow,
-].join(', ');
-
-/** A figure with no labels: the drawing is the whole column. */
-const FIGURE_SIZES_BARE = [
   '(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.583)',
-  ...narrow,
+  '(min-width: 768px) calc(100vw - 80px)',
+  'calc(100vw - 40px)',
 ].join(', ');
 
 // The front of the experience index is whatever role is being held now.
@@ -141,16 +135,20 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       sheet introducing the same thing twice. The part number is on the detail
       sheet, one tap away, where it designates something. */}
   <section class="lead">
+    {/* No callouts here, though the entry carries four. A leader line naming a
+        shoulder actuator is a thing to read, and the cover is a thing to look
+        at — they are on the detail sheet, which is where someone who wants the
+        part numbers is going anyway. Dropping them also gives the drawing back
+        the quarter of the column that was held open for the labels, so it runs
+        out to the margin like every other block on the sheet. */}
     <AnnotatedFigure
       src={hero.data.heroImage}
       alt={hero.data.heroImageAlt ?? ''}
-      callouts={hero.data.callouts}
       caption={hero.data.title}
       imageType={hero.data.heroImageType}
       figureId={hero.data.partNumber}
       aspect={1.78}
       sizes={FIGURE_SIZES}
-      gutter="right"
       eager
     />
 
@@ -197,7 +195,7 @@ if (!role) throw new Error('Home expects at least one experience entry.');
       imageType={role.data.heroImageType}
       figureId={`role-${role.id}`}
       aspect={1.78}
-      sizes={FIGURE_SIZES_BARE}
+      sizes={FIGURE_SIZES}
     />
 
     <p class="lead__summary">{role.data.summary}</p>
