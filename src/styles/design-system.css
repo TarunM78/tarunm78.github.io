@@ -157,29 +157,27 @@ body,
 .sheet-ground {
   background-color: var(--paper);
 
-  /* The 5mm sheet grid. Two stacked repeating gradients, never an image.
-     Major lines are listed first so they paint over the minor ones. */
+  /* The 5mm sheet grid. Four gradients, never an image. Major lines are listed
+     first so they paint over the minor ones.
+
+     One line per tile, tiled by background-size — not one repeating gradient
+     run the length of the sheet. A repeating-linear-gradient is rasterised once
+     across the whole background area, and this area is the canvas: on a long
+     sheet that is four thousand pixels of gradient carrying two hundred
+     one-pixel stops, and the rasteriser loses them. Whole bands of the page
+     came out with their horizontal ruling missing while the rest had it.
+     Rasterising a single 20px tile and repeating it is the same drawing and
+     cannot drift. */
   background-image:
-    repeating-linear-gradient(
-      to right,
-      var(--grid-major) 0 1px,
-      transparent 1px var(--grid-step-major)
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      var(--grid-major) 0 1px,
-      transparent 1px var(--grid-step-major)
-    ),
-    repeating-linear-gradient(
-      to right,
-      var(--grid-minor) 0 1px,
-      transparent 1px var(--grid-step-minor)
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      var(--grid-minor) 0 1px,
-      transparent 1px var(--grid-step-minor)
-    );
+    linear-gradient(to right, var(--grid-major) 0 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-major) 0 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-minor) 0 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-minor) 0 1px, transparent 1px);
+  background-size:
+    var(--grid-step-major) var(--grid-step-major),
+    var(--grid-step-major) var(--grid-step-major),
+    var(--grid-step-minor) var(--grid-step-minor),
+    var(--grid-step-minor) var(--grid-step-minor);
 }
 
 /* The blog drops the grid to near-invisible. Reading comfort beats theme. */
