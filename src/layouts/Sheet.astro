@@ -61,7 +61,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/*
+      The .ico first and the SVG after it: a browser that understands the SVG
+      takes it whatever the order, and one that does not needs the .ico to be
+      there rather than to be found by a bare request for /favicon.ico. The
+      .ico carries 16 and 32 drawn separately — the small one is not the large
+      one resampled, because a 1px rule does not survive that.
+    */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
 
