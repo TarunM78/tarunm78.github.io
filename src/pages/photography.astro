@@ -125,8 +125,20 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
                   fetchpriority={i < 4 ? 'high' : 'low'}
                 />
               </a>
+              {/*
+                Where, then when and on what — the order a photographer reads
+                a frame back in. The place is the label and takes the ink; the
+                month and the body are the exposure data under it and stay
+                faint, which is the same two-tier setting the sheets use for a
+                designator and its detail.
+              */}
               <figcaption class="plate__cap">
-                <span class="meta meta--ink">{p.title}</span>
+                <span class="plate__id">
+                  <span class="meta meta--ink">{p.location}</span>
+                  <span class="meta plate__shot">
+                    {p.date} &middot; {p.camera}
+                  </span>
+                </span>
                 <span class="meta plate__cat">{p.category}</span>
               </figcaption>
             </figure>

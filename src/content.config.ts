@@ -206,6 +206,13 @@ const awards = defineCollection({
  * optional — a gallery of two dozen images with no alt text is the single
  * easiest way to make a site unusable.
  *
+ * A frame is labelled with where it was taken, on what, and when, rather than
+ * with a title. A photograph given a title is being argued for; the three
+ * facts are what the photographer actually knows about it, and they are the
+ * caption everywhere a contact sheet is printed. It also means a caption
+ * cannot quietly become wrong: nobody can mislabel a lake, but anyone can
+ * invent a better name for one.
+ *
  * One data file rather than 24 content files, the same way the revision table
  * is one file: these are rows, not documents. `file` is resolved against
  * src/assets/photography at build time by the page, which fails loudly if a
@@ -218,7 +225,12 @@ const photography = defineCollection({
     /** Filename within src/assets/photography. */
     file: z.string().regex(/^[a-z0-9_-]+\.jpg$/),
     category: z.enum(['nature', 'places', 'cars']),
-    title: z.string().min(1),
+    /** Where it was taken. Set lower case; the caption is what shouts. */
+    location: z.string().min(1),
+    /** The body it was taken on. */
+    camera: z.string().min(1),
+    /** MM.YYYY — the month is as precise as a frame needs to be. */
+    date: z.string().regex(/^\d{2}\.\d{4}$/),
     /** Required. See the note above. */
     alt: z.string().min(1),
   }),
