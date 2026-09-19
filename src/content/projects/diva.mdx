@@ -35,11 +35,71 @@ notes:
 tags: [perception, assistive, wearable]
 ---
 
-A wearable navigation aid for blind and low-vision users, built to cost a few hundred
-dollars against surgical alternatives that run into the tens of thousands. It pairs a
-stereoscopic depth camera with an RGB camera and a convolutional network trained across
-eighty object classes, so it names what is ahead and how far away it is at the same time.
-Output reaches the user through audio on a button-driven interface, with a solenoid
-tactile channel alongside it.
+### The problem
 
-TODO: content
+Around 340 million people live with visual impairment, 43 million of them completely
+blind. The white cane is still the common aid and only an estimated 2–8% of people use
+one: it reads the ground a step ahead, takes practice, and tires the arm. The
+alternatives — GPS wearables, infrared motion tracking, instrumented canes — work, and
+cost more than most of the people who need them can spend.
+
+DIVA takes a different route, called sensory substitution: read the space with a camera
+and hand it to a sense that is still available. Here that is touch, with sound as a
+second channel.
+
+### How it reads a room
+
+A stereo camera on a headband sees the scene twice, a few centimetres apart. Comparing
+the two images — how far a given patch of the picture shifts between them — gives the
+distance to everything in view, the same way two eyes do.
+
+That depth picture is divided into a 5×5 grid. Each square is reduced to one number, its
+average distance, and compared against a threshold the wearer sets. Anything closer than
+the threshold marks that square as blocked. A Raspberry Pi does this on every frame and
+sends the grid over Bluetooth to the hand unit.
+
+### How it tells you
+
+The hand unit is 25 actuators in the same 5×5 arrangement, so the grid in front of the
+face maps onto the palm — top-left of the view is top-left of the hand. Each cell is a
+flat coil printed on polyimide under a silicone pad with a small magnet in it. Run
+current through the coil and the magnet is pushed away, so the silicone lifts into a
+bump you can feel; cut the current and it settles. A nickel-iron shield around each cell
+stops one bump triggering its neighbours.
+
+Touch says where something is. Sound says what it is. A U-Net network trained on the
+COCO dataset labels the objects in view across 80 classes, the nearest point of each is
+looked up in the depth map to get its position, and the name is played through earbuds
+using head-related transfer functions — so the word arrives from the direction the
+object is actually in.
+
+### What the testing showed
+
+**Depth.** Three objects at eighteen distances from 0.5 to 5 metres, three trials each:
+the camera's distances were off by 3.4% on average, drifting slightly wider with range.
+
+**Reading the hand.** Four blind and four blindfolded-sighted participants identified
+which actuator had fired, across 25 random firings, three times over. Blind
+participants averaged about 21.8 correct out of 25; blindfolded sighted participants
+about 17.7 — and within the blind group, those with no sight at all scored higher than
+those with partial sight, which is the pattern you would expect if the difference is
+practised sensitivity to touch.
+
+**Walking a course.** Nine blind and nine blindfolded participants crossed a ten-obstacle
+indoor course with no aid, with a white cane, and with DIVA. Collisions fell from 7.7
+per run unaided, to 3 with the cane, to 1.2 with DIVA — and DIVA runs were about ten
+seconds quicker than cane runs.
+
+The segmentation model itself reached 84.7% precision and 80.2% recall, with an IoU of
+0.744 across the 80 classes.
+
+### Cost, and what it still needs
+
+The whole device comes to about $278 — $149 of that the stereo camera, $73 the
+controller, $56 the tactile array — which was the point, given where most visually
+impaired people live. Three builds got it there: the first weighed 6.84 lb, the third
+2.78 lb, most of the saving from moving the actuator drive onto its own board and
+cutting the cable to the headset.
+
+The participant groups were small, and everything was tested indoors. Outdoor use, a
+finer tactile grid, battery life, and GPS for route-level guidance are all still open.

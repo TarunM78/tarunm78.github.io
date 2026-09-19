@@ -31,12 +31,40 @@ notes:
 tags: [perception, surgical, augmented-reality]
 ---
 
-Surgical navigation systems generally put the anatomy on a screen across the room, which
-pulls the surgeon's eyes off the patient. SAAR projects the reconstruction directly onto
-the surgical site instead. Preoperative CT becomes a 3D model through a custom registration
-pipeline, a calibrated projector on a motorized frame keeps the overlay locked to the
-patient as they move, and a U-Net segments regions of interest so the projection can
-highlight them. A CNN-LSTM predicts thoracic organ movement so the overlay tracks breathing
-rather than lagging it.
+### The problem
 
-TODO: content
+A surgeon operating on something they cannot see directly works from a screen — a
+fluoroscopy feed, or a camera view on a monitor across the room. Every glance at it is a
+glance away from the patient, and the mapping between what is on the screen and what is
+under the hands has to be held in the surgeon's head.
+
+SAAR removes the screen. It projects the patient's own anatomy, reconstructed from their
+scans, onto the surface of the patient — so the thing being looked at and the thing
+being operated on are in the same place.
+
+### How it works
+
+A registration pipeline turns preoperative CT into a 3D reconstruction and lines that
+model up with the body on the table. A calibrated projector, carried on a motorised
+frame, casts it onto the surgical site.
+
+Bodies move during a procedure, so a fixed projection would drift out of register within
+minutes. A splotch-based tracking algorithm watches the site and drives the frame to
+keep the overlay sitting where it should.
+
+Two networks add to what is projected. A U-Net convolutional network segments the
+preoperative scans and marks internal abnormalities, and those regions are highlighted
+in the projection rather than left for the surgeon to find. A second network, a
+CNN-LSTM, predicts how organs in the chest will move — an LSTM is built to work on
+sequences, which is what breathing and heartbeat are — so the overlay can follow the
+anatomy in real time instead of showing where it was when the scan was taken.
+
+### Where it stands
+
+The models were trained and validated on large public CT and MRI datasets, and the
+accuracy of the projection alignment was measured separately. The case being made is as
+much economic as clinical: a projector and a frame against the cost of existing
+image-guidance systems.
+
+This description is drawn from the project abstract. The fuller write-up — per-model
+accuracy, alignment error, the registration maths — is not yet published here.

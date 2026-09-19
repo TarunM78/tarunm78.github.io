@@ -25,17 +25,74 @@ callouts:
   - text: FEA STRESS DISTRIBUTION
 notes:
   - text: Results are computational. No bench or animal testing.
-  - text: 'TODO: which FEA package and what loading conditions.'
-  - text: 'TODO: what the next revision would change.'
+  - text: FEA and CFD in ANSYS. The artery is modelled as hyperelastic tissue and the stent as superelastic nitinol, with frictional contact between them, deployed and then cycled under pulsatile flow over several cardiac cycles.
+  - text: A graph neural network stands in for the slow part of that loop — trained on ANSYS output, node positions in and von Mises stress out, so a new mesh can be checked and reinforced without a full solve each time.
+  - text: 'Next: fabrication at clinical scale, a pulsatile flow rig to test a physical stent, and folding the fitting pipeline into the planning software an interventionalist already uses.'
 tags: [mechanisms, medical, simulation]
 ---
 
-About a third of stent patients develop restenosis, and a large part of the cause is that
-conventional stents expand uniformly into vessels that are not uniform. This design uses an
-auxetic lattice, which widens laterally as it stretches, so the stent conforms to irregular
-vessel geometry and spreads radial force instead of concentrating it. A bi-stable mechanism
-holds both the contracted and expanded states, so the vessel cannot pull the stent back
-down. The expanded geometry is fitted per patient from MRI and CT angiography, reconstructed
-to CAD, with FEA used to check stress distribution under pulsatile flow.
+### What an auxetic is
 
-TODO: content
+Stretch a rubber band and it gets thinner. Nearly everything does that — pull it one
+way and it narrows the other. An auxetic does the opposite: stretch it lengthwise and
+it widens. The behaviour comes from the shape of the lattice rather than the material
+it is cut from, so you get it by choosing a cell geometry.
+
+On a stent that matters, because expanding the tube along its length also opens it
+outward. How much it opens is set cell by cell — by the width of each strut and the
+angle between struts — so a single stent can push hard where an artery is narrowed and
+barely at all where it is healthy.
+
+### Why a stent needs one
+
+A stent is a mesh tube that props a blocked artery open. Conventional stents expand by
+the same amount along their whole length, and arteries are not the same along their
+whole length. Where the vessel is healthy the stent over-compresses it; where the
+blockage is worst it may not open far enough. Either way the force lands unevenly, and
+that mechanical injury to the vessel wall is one of the triggers for restenosis — the
+artery narrowing again after the stent goes in.
+
+The lattice is also bi-stable: compliant hinges give it two stable shapes instead of
+one. It holds itself crimped for delivery through a catheter without being clamped, and
+holds itself open afterwards without being pushed.
+
+### How one gets built
+
+The geometry is fitted to the patient, from their own scans.
+
+A U-Net convolutional network reads X-ray coronary angiograms and labels each pixel
+healthy, stenotic or thrombotic, so the narrowed stretch is located rather than
+estimated. A second, three-dimensional U-Net does the same on chest CT, and the flat
+coordinates from the first model are mapped onto the CT slices so the narrowing is
+placed in 3D. Those slices are aggregated into a volume, surfaced into a triangle mesh,
+smoothed, and exported as CAD.
+
+The lattice is then wrapped onto that artery model, with each cell's strut width and
+angle set from the local curvature and diameter — which is the step that turns a scan
+into a stent shaped for one person.
+
+Finite element analysis checks the result: the artery modelled as hyperelastic tissue,
+the stent as superelastic nitinol, deployed virtually and then cycled under pulsatile
+flow. Running that by hand for every design is slow, so a graph neural network was
+trained on the simulation output — node positions in, von Mises stress out — to predict
+where a new mesh will concentrate stress and thicken those regions automatically.
+
+### What the simulations showed
+
+Six cell geometries were screened in three-point bending: re-entrant, trichiral,
+tetrachiral, hexachiral, tri-antichiral and tetra-antichiral. Re-entrant carried the
+lowest peak stress and was taken forward.
+
+Against a conventional stent, the auxetic design held lower radial stress at every
+position along the vessel, and the drop in peak stress translated into roughly five
+times the predicted fatigue life. Blood-flow simulation over several cardiac cycles
+showed a higher and steadier flow rate, where the conventional stent produced
+fluctuation and local turbulence — a consequence of expanding evenly into a vessel that
+is not even.
+
+### What this does not show
+
+All of it is computational. Nothing has been bench-tested or implanted, and the
+biological half of restenosis — inflammation, calcification — is not modelled at all.
+The fitting is only as good as the scans the networks were trained on. The next step is
+a pulsatile flow rig, then preclinical work.
