@@ -2468,21 +2468,21 @@ button.afig__ctl {
   }
 }
 
-/* The home sheet's supporting drawing: one arm of the pair, filling the column
-   the text leaves short beside a tall drawing.
+/* The home sheet's supporting drawing: one arm of the pair, at the head of the
+   text column, beside the assembled drawing rather than above it.
 
-   It is a two-column device. Below 1024px the sheet is one column, the text
-   runs the full width and there is no gap to fill, so the arm is not drawn at
-   all rather than stacked as a second figure to scroll past.
+   A two-column device. Below 1024px the sheet is one column, there is nothing
+   to sit beside, and stacking it would only be a second drawing to scroll past
+   on the way to the one with the callouts — so it is not drawn at all.
 
    Both halves are stated here rather than beside the rest of the .lead grid,
    because the grid lives in section 5 and these base rules would come after it
-   in the file — `display: none` written down there would win over a
+   in the file: `display: none` written down there would win over a
    `display: block` written up there at the same weight, and the arm would
    vanish from the sheet it was drawn for.
 
    scaleX(-1) is the mirror. The render reaches left, off the sheet; flipped it
-   reaches across the gutter toward the drawing it belongs to. */
+   reaches toward the drawing it belongs to. */
 .sectionband {
   display: none;
 }
@@ -2490,22 +2490,20 @@ button.afig__ctl {
 @media (min-width: 1024px) {
   .sectionband {
     display: block;
-    height: auto;
-    /* Tight to the marker above it and to the block below. This band is the
-       section's opening line, not a spacer — the sheet had a screen of paper
-       either side of it when it bled, and none of that gap was doing work. */
-    margin-block: var(--sp-3) var(--sp-4);
-
-    /* The sheet's own width, stopping at the same margins as every other block
-       on the page. It bled to the viewport edges before, which read as a banner
-       with the sheet printed underneath rather than as part of the sheet. */
     width: 100%;
+    height: auto;
+    /* Column one, row one — the row the drawing in column two also starts on.
+       `.lead > *` already puts it in column one; what matters here is that it
+       is the first item in that column, so the two drawings share a top edge.
+       No top margin, for the same reason. */
+    margin-block: 0 var(--sp-5);
     transform: scaleX(-1);
 
     /* Cropped to the drawing. The render is 1829x860 but the arm only occupies
-       y 162..562 of it — 18.8% empty above and 34.5% below — so at full screen
-       width its natural ratio made a 900px block that was mostly paper. The box
-       is set to the ratio of the ink instead, and the image covers it.
+       y 162..562 of it — 18.8% empty above and 34.5% below — and that dead
+       paper would otherwise push the sentence under it a long way down a column
+       whose top edge is supposed to line up with the drawing beside it. The box
+       takes the ratio of the ink instead and the image covers it.
 
        35% is where the crop window has to sit to hold the arm with a little air
        either side: the window is 49% of the source's height, the arm's centre

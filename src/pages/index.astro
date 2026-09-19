@@ -105,36 +105,32 @@ if (!role) throw new Error('Home expects at least one experience entry.');
     label={`Current project: ${hero.data.title}`}
   />
 
-  {/* One arm of the pair, extended, run the full width of the screen between
-      the section marker and the drawing it belongs to. It sits outside the
-      lead block rather than in it: that grid gives the figure every row, so a
-      band inside it would have to fight the drawing for space instead of
-      simply standing above it. It runs the width of the sheet and stops at the
-      same margins as everything else, so the section reads as blocks stacked on
-      one column rather than a banner with a page underneath it.
-
-      Mirrored. The render has the arm reaching left, off the sheet; flipped it
-      reaches into the sheet instead. A transform rather than a second export:
-      same file, and the mirror is stated where it is done.
-
-      Empty alt. It is the same arm the drawing below already describes in
-      full, in a second pose — a reader using a screen reader gains nothing
-      from hearing the subject twice, and this one is here to fill a band. */}
-  <Image
-    class="sectionband"
-    src={singleArm}
-    alt=""
-    widths={[900, 1400, 1920]}
-    sizes="(min-width: 1024px) calc(min(100vw, 1440px) - 120px), 0px"
-    loading="lazy"
-    decoding="async"
-  />
-
-  {/* No designator line on this section. The marker above already names the
-      project in full, and PN-002 / Sheet 02-1 restated in mono under it was the
-      sheet introducing the same thing twice. The part number is on the detail
-      sheet, one tap away, where it designates something. */}
   <section class="lead">
+    {/* One arm of the pair, extended, at the head of the text column. It is a
+        grid item like the sentence and the buttons under it, so it starts on
+        row one — which is the row the drawing in column two starts on, and why
+        the two line up along their top edge.
+
+        It was a band across the whole sheet before. Beside the drawing rather
+        than above it, the two read as one plate: the arm on its own at left,
+        the pair assembled at right, and the sentence under the one it is about.
+
+        Mirrored. The render has the arm reaching left, off the sheet; flipped
+        it reaches toward the drawing it belongs to.
+
+        Empty alt. It is the same arm the drawing beside it already describes in
+        full, in a second pose — a reader using a screen reader gains nothing
+        from hearing the subject twice. */}
+    <Image
+      class="sectionband"
+      src={singleArm}
+      alt=""
+      widths={[400, 600, 900, 1200]}
+      sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.417), 0px"
+      loading="eager"
+      decoding="async"
+    />
+
     {/* No callouts here, though the entry carries four. A leader line naming a
         shoulder actuator is a thing to read, and the cover is a thing to look
         at — they are on the detail sheet, which is where someone who wants the
