@@ -2210,11 +2210,102 @@ button.afig__ctl {
     z-index: 1;
   }
 
+  /* A drawing with extra views beside it: the plate gives up a column and the
+     views take it, stacked. Eight parts to eleven is slightly narrower than the
+     full sheet rather than half of it, because the drawing is still the thing
+     the sheet is about and the views are what it is about seen twice more.
+
+     The title block docks into the corner here for the same reason it does on
+     a portrait plate: the drawing no longer runs the sheet's width, so a block
+     banded under it would rule a line across half a sheet on its way to saying
+     nothing the corner cannot. The right-hand callout labels stop above it,
+     which the figure handles: see cornerBlock in src/lib/callouts.ts. */
+  .projectplate--aside {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+    column-gap: var(--sp-5);
+    align-items: start;
+  }
+
+  .projectplate--aside > .afig,
+  .projectplate--aside > .project__links {
+    grid-column: 1;
+  }
+
+  .projectplate--aside > .projectaside {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
   /* The wrapper is shrink-to-fit once it is out of flow, so the block's own
      `min(…, 100%)` would be measuring against a width it is itself deciding.
      Give it the number outright. */
   .projectplate--tall .titleblock {
     width: var(--titleblock-w);
+  }
+}
+
+/* The aside plate docks its block too, but only from 1280 up.
+
+   The block is a fixed 20rem wide and a fixed three rows tall while the plate
+   scales with the sheet, so the narrower the sheet the more of the drawing it
+   covers: 35% of the plate's height at 1440, 39% at 1280, and past halfway not
+   far below that. The right-hand labels stop above it at a fixed 52% (see
+   SLOT_HI_CORNER in src/lib/callouts.ts), and that number can only be right
+   while the block stays roughly this size. So below 1280 the block goes back
+   under the drawing, where it costs a band and no collision. */
+@media (min-width: 1280px) {
+  .projectplate--aside .afig__titleblock {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    z-index: 1;
+  }
+
+  .projectplate--aside .titleblock {
+    width: var(--titleblock-w);
+  }
+}
+
+/* --- Views beside the drawing. See .projectplate--aside above. ---
+
+   Stacked in the narrow column on a wide sheet, and simply in the flow under
+   the drawing below 1024px, where there is no column to be beside. Each one is
+   a plate like any other on this site: heavy border, caption ruled off inside
+   it, so a second angle reads as part of the same package as the drawing. */
+.projectaside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  margin-top: var(--sp-5);
+}
+
+.projectaside__item {
+  margin: 0;
+  border: var(--lw-heavy) solid var(--ink);
+  background: var(--paper);
+}
+
+/* `display: block` because an inline video sits on the text baseline and
+   leaves a strip of paper under it inside the border. */
+.projectaside__media {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.projectaside__cap {
+  padding: var(--sp-2) var(--sp-3);
+  border-top: var(--lw-med) solid var(--ink);
+  color: var(--faint);
+}
+
+@media (min-width: 1024px) {
+  /* In the column the stack starts level with the top of the drawing, so the
+     first view and the drawing share a top edge. */
+  .projectaside {
+    margin-top: 0;
   }
 }
 

@@ -83,6 +83,20 @@ const MIN_GAP = 14;
 /** Labels stay inside this vertical band so they never overhang the figure. */
 const SLOT_LO = 7;
 const SLOT_HI = 93;
+/* The ceiling for the right gutter when a title block is docked into the
+   drawing's bottom-right corner, so no label is printed over the block.
+   A leader still reaches anchors below it: the shank angles down to the
+   anchor, which is what a leader is for.
+
+   `slotY` is the label's centre, and the block is a fixed height in rems while
+   the plate scales with the sheet, so the share of the plate it covers grows as
+   the sheet narrows: measured, 35% of the plate's height at 1440 and about 39%
+   at 1280. 52 puts the lowest label's centre far enough above the block's top
+   edge at 61% that a two-line label still clears it. Below 1280 the sheet stops
+   docking the block at all (see .projectplate--aside in design-system.css),
+   which is what keeps this one number honest rather than a guess that has to
+   hold at every width. */
+const SLOT_HI_CORNER = 52;
 /** Length of the shortened leader in the stacked layout. */
 const STUB = 12;
 /** Stubs may not run past this margin, in either direction. */
@@ -114,13 +128,13 @@ const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n
  * while its first label already sits at the top of the band, shifting the whole
  * block up pushes that first label out of the figure.
  */
-function resolveSlots(ys: number[]): number[] {
+function resolveSlots(ys: number[], hi: number = hi): number[] {
   const n = ys.length;
   if (n === 0) return [];
-  if (n === 1) return [clamp(ys[0], SLOT_LO, SLOT_HI)];
+  if (n === 1) return [clamp(ys[0], SLOT_LO, hi)];
 
   const span = (n - 1) * MIN_GAP;
-  const range = SLOT_HI - SLOT_LO;
+  const range = hi - SLOT_LO;
 
   // More callouts on one side than the band can hold at full spacing:
   // distribute evenly rather than letting them collide.
@@ -134,7 +148,7 @@ function resolveSlots(ys: number[]): number[] {
     slots.push(Math.max(ys[i], slots[i - 1] + MIN_GAP));
   }
 
-  slots[n - 1] = Math.min(slots[n - 1], SLOT_HI);
+  slots[n - 1] = Math.min(slots[n - 1], hi);
   for (let i = n - 2; i >= 0; i--) {
     slots[i] = Math.min(slots[i], slots[i + 1] - MIN_GAP);
   }
@@ -151,7 +165,7 @@ function resolveSlots(ys: number[]): number[] {
   const compressed = slots[n - 1] - slots[0] <= span + 0.001;
   if (compressed) {
     const centroid = ys.reduce((a, b) => a + b, 0) / n;
-    const start = clamp(centroid - span / 2, SLOT_LO, SLOT_HI - span);
+    const start = clamp(centroid - span / 2, SLOT_LO, hi - span);
     return ys.map((_, i) => start + i * MIN_GAP);
   }
 
@@ -171,6 +185,13 @@ function resolveSlots(ys: number[]): number[] {
 export const MAX_CALLOUTS = 10;
 
 export interface ResolveOptions {
+  /**
+   * True when the figure docks its title block into the bottom-right corner of
+   * the drawing. The right-hand stack then stops higher up, so no label is
+   * printed over the block. See SLOT_HI_CORNER.
+   */
+  cornerBlock?: boolean;
+
   /**
    * Which gutters the wide layout has.
    *
@@ -193,7 +214,7 @@ export interface ResolveOptions {
 
 export function resolveCallouts(
   callouts: CalloutInput[] = [],
-  { gutter = 'both' }: ResolveOptions = {}
+  { gutter = 'both', cornerBlock = false }: ResolveOptions = {}
 ): ResolvedCallout[] {
   if (!callouts.length) return [];
   if (callouts.length > MAX_CALLOUTS) {
@@ -247,7 +268,10 @@ export function resolveCallouts(
 
   for (const side of ['left', 'right'] as const) {
     const group = points.filter((p) => p.side === side).sort((a, b) => a.y - b.y);
-    const slots = resolveSlots(group.map((p) => p.y));
+    const slots = resolveSlots(
+      group.map((p) => p.y),
+      side === 'right' && cornerBlock ? SLOT_HI_CORNER : SLOT_HI
+    );
 
     group.forEach((p, i) => {
       const slotY = round(slots[i]);

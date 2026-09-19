@@ -68,6 +68,36 @@ const projects = defineCollection({
 
         placeholder: z.boolean().default(false),
         callouts: z.array(callout).default([]),
+
+        /**
+         * Extra views set beside the drawing rather than under it: a second
+         * angle, a clip of the thing working. When a project carries any, the
+         * sheet narrows the drawing to make the column for them.
+         *
+         * A still goes through the image pipeline. A clip does not: Astro does
+         * not transcode video, so it is served out of /public as it is, and
+         * the path is checked here rather than discovered as a 404. It has to
+         * be .mp4 because that is the container every browser will decode; a
+         * .mov of the same H.264 stream is refused by Chrome on the extension
+         * alone.
+         */
+        aside: z
+          .array(
+            z
+              .object({
+                image: image().optional(),
+                video: z
+                  .string()
+                  .regex(/^\/[\w./-]+\.mp4$/, 'A clip is a .mp4 path rooted at the site.')
+                  .optional(),
+                alt: z.string().min(1),
+                caption: z.string().optional(),
+              })
+              .refine((v) => !!v.image !== !!v.video, {
+                message: 'An aside view is either an image or a video, not both and not neither.',
+              })
+          )
+          .default([]),
         notes: z.array(z.object({ text: z.string().min(1) })).default([]),
         tags: z.array(z.string()).default([]),
       })

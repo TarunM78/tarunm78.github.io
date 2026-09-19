@@ -16,6 +16,7 @@
  */
 import { render } from 'astro:content';
 import Sheet from '../../layouts/Sheet.astro';
+import { Image } from 'astro:assets';
 import AnnotatedFigure from '../../components/AnnotatedFigure.astro';
 import PartNumber from '../../components/PartNumber.astro';
 import SectionMarker from '../../components/SectionMarker.astro';
@@ -44,6 +45,12 @@ const stamp = statusStamp(data.status);
 
 /** A portrait drawing: taller than it is wide, so the sheet has room beside it. */
 const isTall = !!data.heroImage && data.heroImage.height > data.heroImage.width;
+
+/* Extra views beside the drawing. They narrow the plate and, in doing so, buy
+   the title block its corner: with the drawing no longer running the full
+   width, a block banded underneath it would be a rule across half a sheet. */
+const aside = data.aside;
+const hasAside = aside.length > 0;
 
 const prev = projects[index - 1];
 const next = projects[index + 1];
@@ -100,8 +107,15 @@ const next = projects[index + 1];
       it — and a column of empty paper is where the buttons belong. It also
       stops the drawing running the full width, which on a 975x1614 render meant
       most of a screen of robot. */}
-  <div class:list={['projectplate', isTall && 'projectplate--tall']}>
+  <div
+    class:list={[
+      'projectplate',
+      isTall && 'projectplate--tall',
+      hasAside && 'projectplate--aside',
+    ]}
+  >
     <AnnotatedFigure
+      cornerBlock={hasAside}
       src={data.heroImage}
       alt={data.heroImageAlt ?? ''}
       callouts={data.callouts}
@@ -169,6 +183,45 @@ const next = projects[index + 1];
             </li>
           ))}
         </ul>
+      )
+    }
+
+    {
+      hasAside && (
+        <div class="projectaside">
+          {aside.map((v) => (
+            <figure class="projectaside__item">
+              {v.video ? (
+                /* Muted, looping and inline: a five-second clip of a rig
+                   moving is an illustration that happens to have frames, and
+                   an illustration does not ask to be started. Controls stay
+                   on, because a reader who wants it stopped should not have
+                   to leave the sheet to do it. */
+                <video
+                  class="projectaside__media"
+                  src={v.video}
+                  aria-label={v.alt}
+                  controls
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                />
+              ) : (
+                <Image
+                  class="projectaside__media"
+                  src={v.image!}
+                  alt={v.alt}
+                  widths={[400, 800]}
+                  sizes="(min-width: 1024px) 24vw, 92vw"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              {v.caption && <figcaption class="projectaside__cap meta">{v.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
       )
     }
   </div>

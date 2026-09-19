@@ -93,6 +93,13 @@ interface Props {
    */
   gutter?: 'both' | 'right';
   /**
+   * The title block is docked into the drawing's bottom-right corner rather
+   * than banded under it. The sheet decides this, because it is the sheet that
+   * knows whether there is room; what the figure does with it is keep the
+   * right-hand labels above the block.
+   */
+  cornerBlock?: boolean;
+  /**
    * Draw the caption strip under a bare figure. On by default, because a
    * drawing loose on a page has to say what it is. Off where something a line
    * away already says it — the home sheet's section markers name both the
@@ -125,13 +132,14 @@ const {
   titleBlock,
   framed = Astro.props.titleBlock !== undefined,
   gutter = 'both',
+  cornerBlock = false,
   captioned = true,
   figureId,
   zoom: zoomable = false,
   class: className,
 } = Astro.props;
 
-const resolved = resolveCallouts(callouts, { gutter });
+const resolved = resolveCallouts(callouts, { gutter, cornerBlock });
 const placed = resolved.filter((c) => c.placed);
 const hasCallouts = resolved.length > 0;
 const hasPlaced = placed.length > 0;
