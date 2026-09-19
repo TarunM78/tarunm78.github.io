@@ -613,66 +613,75 @@ button.afig__ctl {
     display: none;
   }
 
-  /* --- Labels above and below instead of either side. ---
+  /* --- The labels as a legend in the sheet's corner. ---
 
-     The drawing takes the whole plate: no gutter is reserved, which is a
-     quarter of the plate's width handed back to the thing the sheet is about.
+     No gutter is reserved, so the drawing is not paying a quarter of the plate
+     for seven short lines of text. It runs hard to the left instead and the
+     list goes in the corner it leaves empty, which is how a sheet carrying a
+     parts list is laid out: drawing left, list top right, title block bottom
+     right.
 
-     What pays for it is the leader line. A label in a band is not beside its
-     anchor and a two-segment leader to it would cross the drawing to get
-     there, so the balloon does the tying instead: a number on the drawing and
-     the same number against the text. That is how a parts list is keyed to an
-     assembly drawing, and it is the one device that does not cost width. */
-  .afig--bands .afig__balloon {
+     What pays for it is the leader line. A label in the corner is not beside
+     its anchor and a two-segment leader would cross the drawing to reach it,
+     so the balloon does the tying instead: a number on the drawing and the
+     same number against the text. That is how a parts list is keyed to an
+     assembly, and it is the one device that costs no width.
+
+     One number sets the whole plate. The drawing is the only thing in it that
+     scales, so its width sets the plate's height, and the list takes whatever
+     is left across. */
+  .projectplate .afig--legend {
+    /* The drawing is the only thing in the plate that scales, so this one
+       number is the plate's height. 61.7% is where the plate comes out level
+       with the column beside it: the stills under the drawing and the last
+       button under the clip land on the same line. That holds exactly at the
+       sheet's full width and drifts by a few pixels below it, because the
+       buttons are set in text and do not scale with the column the way the
+       stills and the clip do. */
+    --afig-drawing-w: 61.7%;
+  }
+
+  .afig--legend .afig__balloon {
     display: grid;
   }
 
-  .afig--bands .afig__leaders {
+  .afig--legend .afig__leaders {
     display: none;
   }
 
-  .afig--bands .afig__list--band {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-5);
+  .projectplate .afig--legend .afig__stage {
+    max-width: var(--afig-drawing-w);
+    /* Hard left. The paper the drawing gives up is all on the right, which is
+       where the list and the title block go. */
+    margin-inline: 0 auto;
+  }
+
+  /* Out of flow, so the plate's height is the drawing's rather than the longer
+     of the drawing and the list. Flush to the inside of the sheet border, the
+     same corner reference the title block takes. */
+  .afig--legend .afig__list--legend {
+    position: absolute;
+    /* Clear of the zoom control, which takes this same corner and would
+       otherwise print over the first entry. Being out of flow, dropping the
+       list costs the plate no height. */
+    top: calc(var(--sp-5) + var(--sp-2));
+    right: 0;
+    width: calc(100% - var(--afig-drawing-w) - var(--sp-5));
     margin: 0;
-  }
-
-  /* The drawing set smaller than the plate it is on, with paper either side,
-     which is how it sat when the labels were in gutters: the gutters were
-     never the drawing's, they were the sheet's. Taking the labels out of them
-     freed that width, and running the drawing into it made the plate half as
-     tall again as the rest of the sheet was drawn around. So the drawing keeps
-     roughly the size it had and the sheet keeps its proportions; what the
-     bands bought is that the width is now margin rather than text. */
-  .projectplate .afig--bands .afig__stage {
-    max-width: 62%;
-    margin-inline: auto;
-  }
-
-  .afig--bands .afig__list--above {
-    margin-bottom: var(--sp-4);
-  }
-
-  /* Named rather than :last-child, which stopped matching the moment the
-     title block was rendered after the band. */
-  .afig--bands .afig__list--below {
-    margin-top: var(--sp-4);
-    /* The title block is docked into this corner. Reserving its width keeps
-       the lower band's labels beside it rather than under it. */
-    padding-right: calc(var(--titleblock-w) + var(--sp-5));
+    display: grid;
+    gap: var(--sp-2);
+    align-content: start;
   }
 
   /* The number comes back, and it is the callout's own rather than a count of
-     the list it happens to be in: two bands would otherwise both start at one
-     while the balloons on the drawing went on to seven. */
-  .afig--bands .afig__item {
+     the list it happens to be in. */
+  .afig--legend .afig__item {
     counter-increment: none;
     counter-set: callout var(--n);
     grid-template-columns: 19px 1fr;
   }
 
-  .afig--bands .afig__item::before {
+  .afig--legend .afig__item::before {
     display: grid;
   }
 

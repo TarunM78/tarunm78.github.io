@@ -95,12 +95,14 @@ interface Props {
    * Where the labels go.
    *
    * 'both' is the drawing-sheet default, a gutter either side of the drawing.
-   * 'right' puts them all in one. 'bands' puts them above and below it
-   * instead, which costs the drawing no width at all: the gutters are what a
-   * side label is paid for, and on a wide sheet that is a quarter of the plate
-   * spent on seven short lines of text.
+   * 'right' puts them all in one. 'legend' takes them off the drawing's sides
+   * altogether and sets them as one block in the sheet's top right corner,
+   * keyed to the drawing by balloon number, with the drawing itself run hard
+   * to the left. That is how a sheet with a parts list is laid out: drawing
+   * left, list top right, title block bottom right, and no width at all spent
+   * on gutters.
    */
-  gutter?: 'both' | 'right' | 'bands';
+  gutter?: 'both' | 'right' | 'legend';
   /**
    * The title block is docked into the drawing's bottom-right corner rather
    * than banded under it. The sheet decides this, because it is the sheet that
@@ -148,16 +150,9 @@ const {
   class: className,
 } = Astro.props;
 
-const bands = gutter === 'bands';
+const legend = gutter === 'legend';
 const resolved = resolveCallouts(callouts, { gutter, cornerBlock });
 
-/* Which band a label goes in: the half of the drawing its anchor sits in. A
-   label above the drawing for a feature near its top has the shortest journey
-   a reader's eye can make between a number and the thing it names. Unplaced
-   callouts have no anchor to sort by, so they go under with the rest of the
-   text. */
-const bandAbove = bands ? resolved.filter((c) => c.placed && c.y < 50) : [];
-const bandBelow = bands ? resolved.filter((c) => !c.placed || c.y >= 50) : [];
 const placed = resolved.filter((c) => c.placed);
 const hasCallouts = resolved.length > 0;
 const hasPlaced = placed.length > 0;
@@ -165,11 +160,7 @@ const hasPlaced = placed.length > 0;
 const idBase = (figureId ?? nextFigureId()).toLowerCase();
 const listId = `${idBase}-callouts`;
 
-const aboveId = `${listId}-above`;
-const belowId = `${listId}-below`;
-const detailsId = bands
-  ? [bandAbove.length && aboveId, bandBelow.length && belowId].filter(Boolean).join(' ')
-  : listId;
+
 
 /**
  * The sheet at its own resolution, for the detail viewer.
@@ -191,28 +182,14 @@ const zoom =
     !src && 'afig--pending',
     src && `afig--${imageType}`,
     framed && 'afig--sheet',
-    hasPlaced && !bands && 'afig--gutters',
+    hasPlaced && !legend && 'afig--gutters',
     hasPlaced && gutter === 'right' && 'afig--gutter-right',
-    bands && 'afig--bands',
+    legend && 'afig--legend',
     className,
   ]}
   data-zoom-src={zoom?.src}
 >
   <div class="afig__sheetbox">
-    {/* The bands sit at plate level rather than inside the stage, so they keep
-        the full width of the sheet when the drawing inside it is set smaller
-        than the plate. A label band is a strip of the sheet, not part of the
-        drawing. */}
-    {
-      bandAbove.length > 0 && (
-        <ol class="afig__list afig__list--band afig__list--above" id={aboveId} aria-label="Callouts, upper half">
-          {bandAbove.map((c) => (
-            <Callout callout={c} idBase={idBase} />
-          ))}
-        </ol>
-      )
-    }
-
     <div class="afig__stage">
       <div class="afig__imgwrap">
         {
@@ -226,7 +203,7 @@ const zoom =
               loading={eager ? 'eager' : 'lazy'}
               decoding={eager ? 'sync' : 'async'}
               fetchpriority={eager ? 'high' : 'auto'}
-              aria-details={hasCallouts ? detailsId : undefined}
+              aria-details={hasCallouts ? listId : undefined}
             />
           ) : (
             <div class="afig__plate" style={`--afig-aspect:${aspect}`}>
@@ -295,7 +272,7 @@ const zoom =
         }
 
         {
-          hasCallouts && !bands && (
+          hasCallouts && !legend && (
             <ol class="afig__list" id={listId} aria-label="Callouts">
               {resolved.map((c) => (
                 <Callout callout={c} idBase={idBase} />
@@ -306,10 +283,12 @@ const zoom =
       </div>
     </div>
 
+    {/* The list, in the corner the drawing left empty. Out of flow, so the
+        plate's height is the drawing's and not the longer of the two. */}
     {
-      bandBelow.length > 0 && (
-        <ol class="afig__list afig__list--band afig__list--below" id={belowId} aria-label="Callouts, lower half">
-          {bandBelow.map((c) => (
+      legend && hasCallouts && (
+        <ol class="afig__list afig__list--legend" id={listId} aria-label="Callouts">
+          {resolved.map((c) => (
             <Callout callout={c} idBase={idBase} />
           ))}
         </ol>
