@@ -199,17 +199,21 @@ const zoom =
   data-zoom-src={zoom?.src}
 >
   <div class="afig__sheetbox">
-    <div class="afig__stage">
-      {
-        bandAbove.length > 0 && (
-          <ol class="afig__list afig__list--band" id={aboveId} aria-label="Callouts, upper half">
-            {bandAbove.map((c) => (
-              <Callout callout={c} idBase={idBase} />
-            ))}
-          </ol>
-        )
-      }
+    {/* The bands sit at plate level rather than inside the stage, so they keep
+        the full width of the sheet when the drawing inside it is set smaller
+        than the plate. A label band is a strip of the sheet, not part of the
+        drawing. */}
+    {
+      bandAbove.length > 0 && (
+        <ol class="afig__list afig__list--band afig__list--above" id={aboveId} aria-label="Callouts, upper half">
+          {bandAbove.map((c) => (
+            <Callout callout={c} idBase={idBase} />
+          ))}
+        </ol>
+      )
+    }
 
+    <div class="afig__stage">
       <div class="afig__imgwrap">
         {
           src ? (
@@ -300,17 +304,17 @@ const zoom =
           )
         }
       </div>
-
-      {
-        bandBelow.length > 0 && (
-          <ol class="afig__list afig__list--band" id={belowId} aria-label="Callouts, lower half">
-            {bandBelow.map((c) => (
-              <Callout callout={c} idBase={idBase} />
-            ))}
-          </ol>
-        )
-      }
     </div>
+
+    {
+      bandBelow.length > 0 && (
+        <ol class="afig__list afig__list--band afig__list--below" id={belowId} aria-label="Callouts, lower half">
+          {bandBelow.map((c) => (
+            <Callout callout={c} idBase={idBase} />
+          ))}
+        </ol>
+      )
+    }
 
     {
       titleBlock && (

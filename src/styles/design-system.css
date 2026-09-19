@@ -638,11 +638,25 @@ button.afig__ctl {
     margin: 0;
   }
 
-  .afig--bands .afig__list--band:first-child {
+  /* The drawing set smaller than the plate it is on, with paper either side,
+     which is how it sat when the labels were in gutters: the gutters were
+     never the drawing's, they were the sheet's. Taking the labels out of them
+     freed that width, and running the drawing into it made the plate half as
+     tall again as the rest of the sheet was drawn around. So the drawing keeps
+     roughly the size it had and the sheet keeps its proportions; what the
+     bands bought is that the width is now margin rather than text. */
+  .projectplate .afig--bands .afig__stage {
+    max-width: 62%;
+    margin-inline: auto;
+  }
+
+  .afig--bands .afig__list--above {
     margin-bottom: var(--sp-4);
   }
 
-  .afig--bands .afig__list--band:last-child {
+  /* Named rather than :last-child, which stopped matching the moment the
+     title block was rendered after the band. */
+  .afig--bands .afig__list--below {
     margin-top: var(--sp-4);
     /* The title block is docked into this corner. Reserving its width keeps
        the lower band's labels beside it rather than under it. */
