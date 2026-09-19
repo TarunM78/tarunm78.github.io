@@ -2008,56 +2008,56 @@ button.afig__ctl {
   color: var(--reference);
 }
 
-/* A portrait drawing gets the buttons beside it rather than under it.
+/* A portrait drawing is capped rather than given the sheet's full width. The
+   DIVA render is 975x1614, and at full width it came to a screen and a half of
+   robot before a word of the description — a drawing crowding out the thing it
+   illustrates. Ranged left, because the text under it is.
 
-   The plate splits in two: the links hold a column of their own and the drawing
-   takes the rest, which is what stops a 975x1614 render running the full width
-   of the sheet and costing most of a screen. The buttons stretch to their
-   column and stack, because the space they are filling is vertical.
+   50rem of sheet, which after the border padding and the 1.52 the callout
+   gutters cost leaves about 500px of drawing: enough to read the harness on,
+   without the sheet becoming a poster. The buttons take the same measure, so
+   the drawing and the ways out of it read as one plate.
 
-   The drawing keeps both its gutters — they are inside its own column here, so
-   a left-hand callout label has nothing to collide with. */
+   The buttons sit under the drawing at every width. They had a column beside a
+   tall one for a while, which filled the empty paper but put the way out of the
+   sheet somewhere no other sheet keeps it. */
 @media (min-width: 1024px) {
   .projectplate--tall {
-    display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    column-gap: var(--sp-6);
-    align-items: start;
+    --plate-w: 50rem;
   }
 
-  /* Placed, not left to source order. The drawing stays first in the markup —
-     it is what the sheet is about, and on a narrow screen it has to come before
-     the ways out of it — so the columns are assigned rather than filled. */
-  .projectplate--tall > .afig {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
+  .projectplate--tall .afig__sheetbox,
   .projectplate--tall .project__links {
-    grid-column: 1;
-    grid-row: 1;
-    flex-direction: column;
-    align-items: stretch;
-    margin-top: 0;
+    max-width: var(--plate-w);
   }
 
-  /* The list item stretches to the column; the field inside it has to be told
-     to fill that, or an inline-flex button sits at its own text width and the
-     column looks half-used again. */
-  .projectplate--tall .project__links > li {
-    display: flex;
+  /* The title block laid into the drawing's corner rather than in a band under
+     it, which is where a title block goes on paper and costs the sheet nothing.
+
+     Flush to the inside of the sheet border: an absolutely positioned box is
+     placed against its container's padding box, so 0 here is the border itself.
+     That is the corner docking the block was drawn for — its own top and left
+     rules meet the sheet's right and bottom ones, and no line is doubled.
+
+     Only on a portrait drawing, and only on a wide sheet. The block is on the
+     bottom right, which on a landscape drawing is exactly where a low
+     right-hand callout label lands — SAAR has one at 84% down — so those keep
+     the band. And the block is a fixed 20rem, which on a phone is nearly the
+     whole drawing, so laying it over one there would cost more of the drawing
+     than the band below it ever cost the page. */
+  .projectplate--tall .afig__titleblock {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    z-index: 1;
   }
 
-  .projectplate--tall .plink {
-    flex: 1;
-    justify-content: flex-start;
-    padding: var(--sp-4);
-  }
-
-  /* The arrow goes to the far edge of a stretched field, the way the home
-     sheet's buttons do, rather than trailing the label halfway across it. */
-  .projectplate--tall .plink .sheetbutton__arrow {
-    margin-left: auto;
+  /* The wrapper is shrink-to-fit once it is out of flow, so the block's own
+     `min(…, 100%)` would be measuring against a width it is itself deciding.
+     Give it the number outright. */
+  .projectplate--tall .titleblock {
+    width: var(--titleblock-w);
   }
 }
 
@@ -2330,6 +2330,83 @@ button.afig__ctl {
 .plate__link:hover,
 .plate__link:focus-visible {
   outline-offset: -4px;
+}
+
+/* --- The enlarged frame. See the dialog in photography.astro. ---
+
+   The dialog is the window, not the plate. It is stretched over the whole
+   viewport with no ground of its own, and the plate is centred inside it, so
+   the empty space around the frame belongs to the dialog and a click landing
+   there is a click on the way out. Sized to content instead, that space would
+   be ::backdrop, which takes no events and could not be clicked at all. */
+.lightbox {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--sp-5);
+  border: 0;
+  background: none;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+/* `display: grid` above outranks the user agent's `dialog:not([open])` rule,
+   the same way .afigz has to restate its own hidden state. */
+.lightbox:not([open]) {
+  display: none;
+}
+
+/* The blur the reader asked the sheet for. Paper at 72% rather than a neutral
+   black scrim: the grid behind should read as the sheet going out of focus,
+   not as a light being turned off, and in either theme the tint is the theme's
+   own ground. The colour is what does the work if backdrop-filter is missing. */
+.lightbox::backdrop {
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+/* Shrink-wrapped to the image so the caption strip is exactly as wide as the
+   photograph above it, which is the one thing that makes this read as the same
+   plate from the sheet rather than a picture with a bar under it. */
+.lightbox__plate {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  border: var(--lw-heavy) solid var(--ink);
+  background: var(--paper);
+}
+
+/* Bounded on both axes: the window's width less the dialog's padding, and
+   enough of its height that the caption and the way out are never pushed off
+   the bottom. A portrait frame is limited by the height, a landscape one by
+   the width, and neither is cropped. */
+.lightbox__img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 220px);
+  object-fit: contain;
+}
+
+.lightbox__close {
+  padding: var(--sp-2) var(--sp-4);
+  border: var(--lw-med) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.lightbox__close:hover,
+.lightbox__close:focus-visible {
+  border-color: var(--reference);
+  color: var(--reference);
 }
 
 /* -------------------------------------------------------------------------

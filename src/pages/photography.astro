@@ -40,7 +40,7 @@
  * the fact either: it would be four arbitrary frames claiming to matter most.
  */
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 
 const CATEGORIES = [
@@ -56,16 +56,36 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
-const plates = photos.map((p) => {
-  const key = `../assets/photography/${p.data.file}`;
-  const mod = files[key];
-  if (!mod) {
-    throw new Error(
-      `photography.json references ${p.data.file}, which is not in src/assets/photography.`
-    );
-  }
-  return { ...p.data, img: mod.default };
-});
+/**
+ * Each frame twice: the plate on the contact sheet, and a larger rendition for
+ * the enlarged view.
+ *
+ * The grid's own candidates stop at 800px, which is right for a plate a third
+ * of the sheet wide and far too small blown up to most of the window. The
+ * originals are the other extreme — 5184px and several megabytes, which is
+ * what clicking a frame used to hand you. 1600 on the long edge is the size
+ * that is actually being looked at, and it is fetched only when a frame is
+ * opened.
+ *
+ * Constrained on the long edge rather than on width, because a third of these
+ * are portrait and `width: 1600` on a portrait frame is a 2100px-tall image to
+ * show inside a window that is a thousand.
+ */
+const plates = await Promise.all(
+  photos.map(async (p) => {
+    const key = `../assets/photography/${p.data.file}`;
+    const mod = files[key];
+    if (!mod) {
+      throw new Error(
+        `photography.json references ${p.data.file}, which is not in src/assets/photography.`
+      );
+    }
+    const src = mod.default;
+    const long = src.width >= src.height ? { width: 1600 } : { height: 1600 };
+    const full = await getImage({ src, format: 'webp', ...long });
+    return { ...p.data, img: src, full: full.src };
+  })
+);
 
 const countOf = (key: string) => plates.filter((p) => p.category === key).length;
 ---
@@ -126,7 +146,7 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
         plates.map((p) => (
           <li class:list={['gallery__item', `is-${p.category}`]}>
             <figure class="plate">
-              <a class="plate__link" href={p.img.src}>
+              <a class="plate__link" href={p.img.src} data-full={p.full}>
                 <Image
                   class="plate__img"
                   src={p.img}
@@ -184,4 +204,83 @@ const countOf = (key: string) => plates.filter((p) => p.category === key).length
       })();
     </script>
   </div>
+
+  {/*
+    The enlarged view. One dialog for the whole sheet, filled from whichever
+    plate was clicked.
+
+    A real <dialog>, unlike the drawing viewer in afig-viewer.ts, which had to
+    be a plain fixed overlay because the top layer will not paint a blended,
+    transformed line drawing. A photograph is not composited onto the paper, so
+    that constraint is not this page's, and using the element gets the things
+    worth having for nothing: the page behind goes inert, focus is trapped and
+    returned to the frame you opened, Escape closes, and ::backdrop is a real
+    surface that can carry the blur.
+
+    The caption comes with it, in the same three fields the plate carries, so
+    the enlarged frame is the same object rather than a bare image on a screen.
+  */}
+  <dialog class="lightbox" id="lightbox" aria-label="Photograph">
+    <figure class="lightbox__plate">
+      <img class="lightbox__img" alt="" />
+      <figcaption class="plate__cap">
+        <span class="plate__id">
+          <span class="meta meta--ink" data-lb="where"></span>
+          <span class="meta plate__shot" data-lb="shot"></span>
+        </span>
+        <span class="meta plate__cat" data-lb="cat"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox__close meta" type="button" data-lb-close>Close</button>
+  </dialog>
+
+  {/*
+    Open on click, and only on an ordinary one: a modified click is someone
+    asking for a new tab, and the href is still the photograph, so it is left
+    alone. Without JavaScript, or without <dialog>, the link does what it
+    always did and opens the image.
+  */}
+  <script is:inline>
+    (function () {
+      var dlg = document.getElementById('lightbox');
+      var grid = document.getElementById('gallery');
+      if (!dlg || !grid || typeof dlg.showModal !== 'function') return;
+
+      var img = dlg.querySelector('.lightbox__img');
+      var field = function (name) {
+        return dlg.querySelector('[data-lb="' + name + '"]');
+      };
+
+      grid.addEventListener('click', function (e) {
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        var link = e.target.closest('.plate__link');
+        if (!link) return;
+        e.preventDefault();
+
+        var plate = link.closest('.plate');
+        var thumb = plate.querySelector('.plate__img');
+        var cap = plate.querySelector('.plate__cap');
+
+        img.src = link.getAttribute('data-full') || link.href;
+        img.alt = thumb ? thumb.alt : '';
+        field('where').textContent = cap.querySelector('.meta--ink').textContent;
+        field('shot').textContent = cap.querySelector('.plate__shot').textContent.trim();
+        field('cat').textContent = cap.querySelector('.plate__cat').textContent;
+
+        dlg.showModal();
+      });
+
+      /* The margin around the plate is a way out; the plate itself is not.
+         The dialog fills the window, so its own box IS that margin. */
+      dlg.addEventListener('click', function (e) {
+        if (e.target === dlg || e.target.hasAttribute('data-lb-close')) dlg.close();
+      });
+
+      /* Drop the source on close so a 1600px frame is not held for a sheet
+         the reader may not open again. */
+      dlg.addEventListener('close', function () {
+        img.removeAttribute('src');
+      });
+    })();
+  </script>
 </Sheet>
