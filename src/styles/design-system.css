@@ -970,15 +970,6 @@ button.afig__ctl {
 
 /* The head strip states what the page-level title block used to: sheet title,
    rev, date. Stated once, at the top, in the order a drawing states them. */
-.sheet__ident {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--sp-4);
-  margin: 0;
-  max-width: none;
-}
-
 @media (min-width: 1024px) {
   /* The head band is fixed, so the sheet's identity and its index stay reachable
      from anywhere on the page. It spans the full sheet and is opaque, which is
@@ -1411,26 +1402,27 @@ button.afig__ctl {
     align-content: center;
   }
 
-  /* The index holds the left of the band. What pushes the rest right is the
-     auto margin on the identity strip below, so the index keeps its place
-     whether the band is one row or wraps to two. */
-  .sheet__ident {
+  /* The index holds the left of the band. The auto margin is what pushes the
+     switch to the right, so the index keeps its place whether the band is one
+     row or wraps to two. It was carried by the identity strip between them
+     until that strip came off; with two items left it moves to the one that
+     has to stay right.
+
+     Selected through .has-theme-control, not on .themeswitch alone: the base
+     rule that sets this margin to --sp-4 is already two classes deep, so a
+     bare .themeswitch here loses to it on specificity no matter where it sits
+     in the file. It read as working at 1280 and above, where the band's own
+     space-between happens to do the same job — and gave itself away at 1024,
+     where the band wraps and the switch dropped to the left of its own row. */
+  .has-theme-control .themeswitch {
     margin-left: auto;
   }
 }
 
-/* Between the point the band goes fixed and the point all three parts fit on
-   one row, the date is what gets dropped. The band is a fixed 60px there, so
-   what does not fit has to wrap inside it, and the date is the one field in it
-   that nothing depends on — the sheet number and title say where you are, and
-   the revision date is on the sheet itself. Dropping it keeps the identity
-   strip to one line and leaves the index the only thing that wraps, which
-   reads as a list running on rather than as a band coming apart. */
+/* The band used to drop its revision date here, to keep three parts on one row
+   inside a fixed 60px. There are two parts now and the date is gone with the
+   strip that held it, so what is left is the index tightening its own gaps. */
 @media (max-width: 1400px) {
-  .sheet__ident-date {
-    display: none;
-  }
-
   .sheetindex__list {
     gap: var(--sp-2) var(--sp-3);
   }

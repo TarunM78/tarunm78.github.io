@@ -25,16 +25,10 @@ import PreliminaryStamp from '../components/PreliminaryStamp.astro';
 import '../styles/global.css';
 
 interface Props {
-  /**
-   * Printed in the identity strip. Omit it for a page that is not part of the
-   * drawing package — it then states its title alone and claims no number,
-   * which is the honest thing for a page the index does not list.
-   */
-  sheet?: string;
+  /** Names the tab and heads the body. */
   sheetTitle: string;
   /** Which row the index marks as current. 0 for a sheet outside the index. */
   sheetNumber?: number;
-  revDate: string;
   description?: string;
   /** Blog posts drop the grid to near-invisible and go quiet. */
   quiet?: boolean;
@@ -44,10 +38,8 @@ interface Props {
 }
 
 const {
-  sheet,
   sheetTitle,
   sheetNumber = 0,
-  revDate,
   description,
   quiet = false,
   preliminary = false,
@@ -104,20 +96,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skiplink" href="#sheet-body">Skip to content</a>
 
     <div class="sheet">
-      {/* Index first, then what sheet you are on, then how it is reproduced —
-          left to right, and the same order in the markup as on the screen. The
-          index leading also means the first thing a keyboard reaches in the
-          band is the way off the page, rather than three fields of metadata
-          about the page it is already on. */}
+      {/* The index, then how the sheet is reproduced. It used to carry a third
+          field between them naming the sheet you were already on and the date
+          it was revised — a band that spent its middle restating the page you
+          are looking at. The title is in the tab and at the head of the body,
+          and a revision date means something on a drawing that gets revised,
+          not on a page that is simply edited. What is left is the two things
+          that act: the way off the page and the way it is drawn. */}
       <header class="sheet__head">
         <SheetIndex current={sheetNumber} />
-
-        <p class="sheet__ident">
-          {sheet && <span class="meta meta--ink">Sheet {sheet}</span>}
-          <span class:list={['meta', !sheet && 'meta--ink']}>{sheetTitle}</span>
-          <span class="meta sheet__ident-date">{revDate}</span>
-        </p>
-
         <ThemeSwitch />
       </header>
 
