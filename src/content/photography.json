@@ -214,5 +214,113 @@
     "camera": "canon eos rebel",
     "date": "02.2025",
     "alt": "The front end of a dark purple Toyota GR86 under low garage lighting"
+  },
+  {
+    "id": "img_4928",
+    "file": "img_4928.jpg",
+    "category": "places",
+    "location": "palace of fine arts, san francisco",
+    "camera": "sony cybershot dsc-h3",
+    "date": "07.2026",
+    "alt": "The domed rotunda and curved colonnade of the Palace of Fine Arts reflected in its lagoon at golden hour, with gulls crossing a clear sky"
+  },
+  {
+    "id": "img_5176",
+    "file": "img_5176.jpg",
+    "category": "nature",
+    "location": "myrtle falls, mt. rainier",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "A thin waterfall dropping down a rock face below an alpine meadow, with a trail and conifers on the slope above"
+  },
+  {
+    "id": "img_5111",
+    "file": "img_5111.jpg",
+    "category": "nature",
+    "location": "blackwater falls, west virginia",
+    "camera": "canon eos rebel t2i",
+    "date": "07.2026",
+    "alt": "A broad waterfall spilling over a dark rock ledge into a pool, hemmed in by steep forested banks"
+  },
+  {
+    "id": "dsc04380",
+    "file": "dsc04380.jpg",
+    "category": "places",
+    "location": "pike place market, seattle",
+    "camera": "sony cybershot dsc-h3",
+    "date": "08.2026",
+    "alt": "The interior of Pike Place Market under red neon signage and rows of pendant lights, with a crowd filling the aisle"
+  },
+  {
+    "id": "img_5225",
+    "file": "img_5225.jpg",
+    "category": "nature",
+    "location": "skyline loop, mt. rainier",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "A marmot sitting on a granite boulder in an alpine meadow, with a scree slope rising behind it"
+  },
+  {
+    "id": "img_5394",
+    "file": "img_5394.jpg",
+    "category": "nature",
+    "location": "lower lewis falls, washington",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "A wide tiered waterfall running over a mossy rock shelf into a green pool, framed by dark conifer branches"
+  },
+  {
+    "id": "img_5609",
+    "file": "img_5609.jpg",
+    "category": "places",
+    "location": "port townsend, washington",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "The white lighthouse and red-roofed keeper's house at Point Wilson, seen along a rocky spit under a pale sky"
+  },
+  {
+    "id": "img_5189",
+    "file": "img_5189.jpg",
+    "category": "nature",
+    "location": "mt. rainier, washington",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "A jagged mountain ridge seen through a stand of tall conifers, with heavy cloud breaking overhead"
+  },
+  {
+    "id": "img_5260",
+    "file": "img_5260.jpg",
+    "category": "nature",
+    "location": "mt. rainier, washington",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "A pika perched upright on a boulder, with hazy mountain ridges receding behind it"
+  },
+  {
+    "id": "img_5141",
+    "file": "img_5141.jpg",
+    "category": "nature",
+    "location": "snoqualmie falls, washington",
+    "camera": "canon eos rebel t2i",
+    "date": "08.2026",
+    "alt": "Snoqualmie Falls dropping in a single plume down a forested gorge, with the lodge on the cliff above"
+  },
+  {
+    "id": "golden_gate",
+    "file": "golden_gate.jpg",
+    "category": "places",
+    "location": "golden gate bridge, san francisco",
+    "camera": "sony cybershot dsc-h3",
+    "date": "07.2026",
+    "alt": "The Golden Gate Bridge at night, its tower and roadway picked out in orange light above dark water"
+  },
+  {
+    "id": "dsc04339",
+    "file": "dsc04339.jpg",
+    "category": "places",
+    "location": "japanese tea garden, san francisco",
+    "camera": "sony cybershot dsc-h3",
+    "date": "07.2026",
+    "alt": "A pagoda rising among clipped trees in the Japanese Tea Garden, with a stone lantern and pond below it"
   }
 ]
