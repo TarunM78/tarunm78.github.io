@@ -26,7 +26,7 @@ callouts:
 notes:
   - text: Results are computational. No bench or animal testing.
   - text: FEA and CFD in ANSYS. The artery is modelled as hyperelastic tissue and the stent as superelastic nitinol, with frictional contact between them, deployed and then cycled under pulsatile flow over several cardiac cycles.
-  - text: A graph neural network stands in for the slow part of that loop — trained on ANSYS output, node positions in and von Mises stress out, so a new mesh can be checked and reinforced without a full solve each time.
+  - text: A graph neural network stands in for the slow part of that loop. It is trained on ANSYS output, node positions in and von Mises stress out, so a new mesh can be checked and reinforced without a full solve each time.
   - text: 'Next: fabrication at clinical scale, a pulsatile flow rig to test a physical stent, and folding the fitting pipeline into the planning software an interventionalist already uses.'
 tags: [mechanisms, medical, simulation]
 ---
@@ -35,20 +35,22 @@ import Passage from '../../components/Passage.astro';
 import lattice from '../../assets/why_stent_needs_one.png';
 import inVessel from '../../assets/what_auxetic_is.png';
 import pipeline from '../../assets/how_it_gets_built2.png';
+import pipelineDark from '../../assets/how_it_gets_built2-dark.png';
 import results from '../../assets/what_sims_showed_2.png';
+import resultsDark from '../../assets/what_sims_showed_2-dark.png';
 
 <Passage src={lattice} side="right" type="drawing" alt="Two lattices pulled lengthwise. The conventional one narrows through the middle as it stretches; the auxetic one, built from bow-tie cells, widens instead.">
 
 ### What an auxetic is
 
-Stretch a rubber band and it gets thinner. Nearly everything does that — pull it one
+Stretch a rubber band and it gets thinner. Nearly everything does that: pull it one
 way and it narrows the other. An auxetic does the opposite: stretch it lengthwise and
 it widens. The behaviour comes from the shape of the lattice rather than the material
 it is cut from, so you get it by choosing a cell geometry.
 
 On a stent that matters, because expanding the tube along its length also opens it
-outward. How much it opens is set cell by cell — by the width of each strut and the
-angle between struts — so a single stent can push hard where an artery is narrowed and
+outward. How much it opens is set cell by cell, by the width of each strut and the
+angle between struts, so a single stent can push hard where an artery is narrowed and
 barely at all where it is healthy.
 
 </Passage>
@@ -61,7 +63,7 @@ A stent is a mesh tube that props a blocked artery open. Conventional stents exp
 the same amount along their whole length, and arteries are not the same along their
 whole length. Where the vessel is healthy the stent over-compresses it; where the
 blockage is worst it may not open far enough. Either way the force lands unevenly, and
-that mechanical injury to the vessel wall is one of the triggers for restenosis — the
+that mechanical injury to the vessel wall is one of the triggers for restenosis, the
 artery narrowing again after the stent goes in.
 
 The lattice is also bi-stable: compliant hinges give it two stable shapes instead of
@@ -70,7 +72,7 @@ holds itself open afterwards without being pushed.
 
 </Passage>
 
-<Passage src={pipeline} side="right" type="figure" alt="The fitting pipeline in three rows: angiograms segmented into healthy, stenotic and thrombotic regions, then a CT stack reconstructed into a 3D vessel; the lattice wrapped onto that vessel with a single cell and a cross-section drawn out; and a stress plot feeding a neural network that returns the reinforced stent.">
+<Passage src={pipeline} srcDark={pipelineDark} side="right" type="figure" alt="The fitting pipeline in three rows: angiograms segmented into healthy, stenotic and thrombotic regions, then a CT stack reconstructed into a 3D vessel; the lattice wrapped onto that vessel with a single cell and a cross-section drawn out; and a stress plot feeding a neural network that returns the reinforced stent.">
 
 ### How one gets built
 
@@ -84,18 +86,18 @@ placed in 3D. Those slices are aggregated into a volume, surfaced into a triangl
 smoothed, and exported as CAD.
 
 The lattice is then wrapped onto that artery model, with each cell's strut width and
-angle set from the local curvature and diameter — which is the step that turns a scan
+angle set from the local curvature and diameter. That is the step that turns a scan
 into a stent shaped for one person.
 
 Finite element analysis checks the result: the artery modelled as hyperelastic tissue,
 the stent as superelastic nitinol, deployed virtually and then cycled under pulsatile
 flow. Running that by hand for every design is slow, so a graph neural network was
-trained on the simulation output — node positions in, von Mises stress out — to predict
+trained on the simulation output, node positions in and von Mises stress out, to predict
 where a new mesh will concentrate stress and thicken those regions automatically.
 
 </Passage>
 
-<Passage src={results} side="left" type="figure" alt="Six auxetic cell geometries in a row, then two stents deployed in vessels with their stress fields plotted, and below them two flow visualisations comparing the streamlines through each.">
+<Passage src={results} srcDark={resultsDark} side="left" type="figure" alt="Six auxetic cell geometries in a row, then two stents deployed in vessels with their stress fields plotted, and below them two flow visualisations comparing the streamlines through each.">
 
 ### What the simulations showed
 
@@ -107,14 +109,26 @@ Against a conventional stent, the auxetic design held lower radial stress at eve
 position along the vessel, and the drop in peak stress translated into roughly five
 times the predicted fatigue life. Blood-flow simulation over several cardiac cycles
 showed a higher and steadier flow rate, where the conventional stent produced
-fluctuation and local turbulence — a consequence of expanding evenly into a vessel that
-is not even.
+fluctuation and local turbulence. That is what expanding evenly into a vessel that is
+not even will do.
 
 </Passage>
 
-### What this does not show
+### Conclusion
 
-All of it is computational. Nothing has been bench-tested or implanted, and the
-biological half of restenosis — inflammation, calcification — is not modelled at all.
-The fitting is only as good as the scans the networks were trained on. The next step is
-a pulsatile flow rig, then preclinical work.
+Every result here is computational, and that is the right stage for it. Before a
+stent is made, simulation is where a design can be taken apart and rebuilt a
+hundred times, and this one came out of that process better on all three
+measures that matter: it presses the vessel wall more gently, it survives far
+longer under a pulse, and blood moves through it more smoothly.
+
+What makes it worth building is that none of those gains come from a better
+material. They come from the shape of the lattice and from fitting that shape
+to one person's artery, which means the same pipeline works on the next patient
+and the one after. A scan goes in and a stent comes out.
+
+The next steps are clear rather than uncertain: a pulsatile flow rig to put a
+physical stent under a real pulse, a fabrication route that holds the geometry
+at clinical scale, and the fitting pipeline folded into the planning software an
+interventionalist already uses. Each is ordinary engineering work on a design
+that has already earned it.

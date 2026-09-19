@@ -54,6 +54,22 @@ const series = await getProjectSheets();
 
 /** The sheet the detail series hangs off. */
 const SERIES_PARENT = 2;
+
+/**
+ * Being marked as the current sheet and being the page you are on are not the
+ * same thing, and the index used to treat them as one.
+ *
+ * A detail sheet belongs to sheet 02 and says so — the mark stays on Projects
+ * the whole time you are reading a project. But sheet 02 is the parent there,
+ * not the page: rendering it as plain text made the one row a reader on a
+ * writeup most wants to click the only row they could not, with no way back up
+ * to the collection except the footer at the end of a long sheet.
+ *
+ * So the mark still follows `current`, and the link follows the address. A row
+ * is text only when you are standing on it.
+ */
+const norm = (path: string) => path.replace(/\/+$/, '') || '/';
+const here = norm(Astro.url.pathname);
 ---
 
 <nav class="sheetindex" aria-label="Sheet index">
@@ -78,10 +94,12 @@ const SERIES_PARENT = 2;
             {sheetNo(s.number)}
           </span>
           <span class="sheetindex__title">
-            {s.number === current ? (
+            {norm(s.href) === here ? (
               <span aria-current="page">{s.title}</span>
             ) : (
-              <a href={s.href}>{s.title}</a>
+              <a href={s.href} aria-current={s.number === current ? 'true' : undefined}>
+                {s.title}
+              </a>
             )}
           </span>
 

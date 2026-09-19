@@ -1113,10 +1113,21 @@ button.afig__ctl {
 /* Panning is scrolling. See afig-viewer.ts for why the plate is resized rather
    than transformed: a transformed ancestor stops the drawing's blend from
    painting at all, and resizing keeps leader weights honest into the bargain,
-   because non-scaling-stroke is then doing its ordinary job. */
+   because non-scaling-stroke is then doing its ordinary job.
+
+   `safe` is what makes panning possible at all, and it is not decoration. A
+   plain `center` keeps centring the sheet after it has outgrown the window,
+   and a centred overflow is only scrollable towards the end: the left and top
+   halves of a zoomed sheet sit outside the scroll range and cannot be reached
+   by any gesture. `safe` drops back to start alignment the moment the sheet
+   stops fitting, so every edge of it is reachable, and goes on centring while
+   it does fit. The plain `center` above it is the fallback for engines without
+   the keyword, which keep today's centring rather than dropping to a
+   stretched plate. */
 .afigz__viewport {
   display: grid;
   place-content: center;
+  place-content: safe center;
   overflow: auto;
   overscroll-behavior: contain;
   cursor: grab;
@@ -1734,6 +1745,36 @@ button.afig__ctl {
   filter: invert(1);
 }
 
+/* Where a figure has a blueprint cut of its own, one of the pair is hidden and
+   the other takes the grid cell. `display: none` keeps the hidden one out of
+   the layout entirely, so the two never fight over the same column.
+
+   Both are in the markup rather than one <picture> with a media query, because
+   the reproduction here can be pinned by hand and a media query only knows what
+   the operating system thinks. The blueprint cut carries no alt text and is
+   hidden from assistive tech: it is the same figure, relit. */
+.passage__img--blueprint {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .passage__img--paper {
+    display: none;
+  }
+
+  :root:not([data-theme='light']) .passage__img--blueprint {
+    display: block;
+  }
+}
+
+[data-theme='dark'] .passage__img--paper {
+  display: none;
+}
+
+[data-theme='dark'] .passage__img--blueprint {
+  display: block;
+}
+
 /* A figure carrying real colour still does not invert — that would turn a
    stress scale into its own negative and make red mean cold — but it no longer
    sits on a pale plate either. The plate was there because the first cut of
@@ -2045,6 +2086,19 @@ button.afig__ctl {
   gap: var(--sp-4);
   flex-wrap: wrap;
   margin-bottom: var(--sp-4);
+}
+
+/* The way back up, pushed to the far end of the designator line. Smaller than
+   a sheetbutton on the body of a sheet: this one sits in a row of metadata and
+   should not outweigh the part number it is standing next to. Centred rather
+   than baseline-aligned, because a bordered field hung off the baseline of the
+   text beside it sits visibly low. The auto margin is what holds it right when
+   the row wraps on a narrow sheet. */
+.project__up {
+  margin-left: auto;
+  align-self: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
 }
 
 /* The tag row under the lede. Same flex row as the PN line above it, because

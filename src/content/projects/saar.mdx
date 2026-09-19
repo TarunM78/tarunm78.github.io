@@ -17,7 +17,7 @@ heroImageAlt: Line drawing of the projector rig, a cylindrical projector head ca
 placeholder: false
 callouts:
   # The linkage. Three arms driving one stage without rotating it, all of them
-  # running on a single rail — a monorail Tripteron.
+  # running on a single rail, which is what makes it a monorail Tripteron.
   - x: 0.23
     y: 0.32
     text: MONORAIL TRIPTERON
@@ -52,13 +52,13 @@ tags: [perception, surgical, augmented-reality]
 
 ### The problem
 
-A surgeon operating on something they cannot see directly works from a screen — a
+A surgeon operating on something they cannot see directly works from a screen: a
 fluoroscopy feed, or a camera view on a monitor across the room. Every glance at it is a
 glance away from the patient, and the mapping between what is on the screen and what is
 under the hands has to be held in the surgeon's head.
 
 SAAR removes the screen. It projects the patient's own anatomy, reconstructed from their
-scans, onto the surface of the patient — so the thing being looked at and the thing
+scans, onto the surface of the patient, so the thing being looked at and the thing
 being operated on are in the same place.
 
 ### How it works
@@ -74,8 +74,8 @@ keep the overlay sitting where it should.
 Two networks add to what is projected. A U-Net convolutional network segments the
 preoperative scans and marks internal abnormalities, and those regions are highlighted
 in the projection rather than left for the surgeon to find. A second network, a
-CNN-LSTM, predicts how organs in the chest will move — an LSTM is built to work on
-sequences, which is what breathing and heartbeat are — so the overlay can follow the
+CNN-LSTM, predicts how organs in the chest will move. An LSTM is built to work on
+sequences, which is what breathing and a heartbeat are, so the overlay can follow the
 anatomy in real time instead of showing where it was when the scan was taken.
 
 ### Where it stands
@@ -85,5 +85,5 @@ accuracy of the projection alignment was measured separately. The case being mad
 much economic as clinical: a projector and a frame against the cost of existing
 image-guidance systems.
 
-This description is drawn from the project abstract. The fuller write-up — per-model
-accuracy, alignment error, the registration maths — is not yet published here.
+This description is drawn from the project abstract. The fuller write-up, with per-model
+accuracy, alignment error and the registration maths, is not yet published here.

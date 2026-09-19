@@ -115,7 +115,9 @@ export function month(v: string): string {
 
 /** A role's span. No end date means the role is current. */
 export function period(start: string, end?: string): string {
-  return `${month(start)} — ${end ? month(end) : 'Present'}`;
+  /* An en dash, not an em: this is a range of dates, which is the one thing an
+     en dash is for. No em dashes anywhere in the writing on this site. */
+  return `${month(start)} – ${end ? month(end) : 'Present'}`;
 }
 
 /** Awards and honours in authored order. They sit on the experience sheet. */

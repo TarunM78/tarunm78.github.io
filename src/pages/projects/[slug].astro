@@ -45,13 +45,11 @@ const stamp = statusStamp(data.status);
 /** A portrait drawing: taller than it is wide, so the sheet has room beside it. */
 const isTall = !!data.heroImage && data.heroImage.height > data.heroImage.width;
 
-const label = subSheetNo(index);
 const prev = projects[index - 1];
 const next = projects[index + 1];
 ---
 
 <Sheet
-  sheet={label}
   sheetTitle={data.title}
   sheetNumber={2}
   description={data.summary}
@@ -63,6 +61,17 @@ const next = projects[index + 1];
           thing again, in the same red. */}
       <span class={stamp.class}>{stamp.label}</span>
       {data.started && <span class="meta">Started {data.started}</span>}
+
+      {/* The way back to the collection, at the head of the sheet opposite the
+          designator. The series footer has carried one all along, but that is
+          the foot of a long sheet: a reader who opens a project, reads the
+          first screen and wants the rest of the set had to scroll past the
+          whole write-up to find it. The arrow leads here rather than trails,
+          because this one goes back. */}
+      <a class="sheetbutton project__up" href="/projects/">
+        <span class="sheetbutton__arrow meta" aria-hidden="true">&larr;</span>
+        <span>All projects</span>
+      </a>
     </p>
 
     <h1 id="project-heading" class="sheettitle">{data.title}</h1>
@@ -102,7 +111,7 @@ const next = projects[index + 1];
       zoom
       pendingNote={
         data.status === 'active'
-          ? `Coming soon — ${data.partNumber} is current work`
+          ? `Coming soon: ${data.partNumber} is current work`
           : `${data.partNumber} has no drawing on file yet`
       }
       titleBlock={{

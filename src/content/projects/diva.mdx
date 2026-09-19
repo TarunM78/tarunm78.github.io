@@ -23,7 +23,7 @@ callouts:
     y: 0.08
     text: RGB CAMERA, OBJECT CLASSIFICATION
   # The grey panel on the harness. It was labelled as the gyroscope, which is
-  # not what it is — the gyroscope sits on the tactile interface, where it can
+  # not what it is. The gyroscope sits on the tactile interface, where it can
   # tell which way the palm is facing.
   - x: 0.55
     y: 0.39
@@ -47,8 +47,8 @@ tags: [perception, assistive, wearable]
 Around 340 million people live with visual impairment, 43 million of them completely
 blind. The white cane is still the common aid and only an estimated 2–8% of people use
 one: it reads the ground a step ahead, takes practice, and tires the arm. The
-alternatives — GPS wearables, infrared motion tracking, instrumented canes — work, and
-cost more than most of the people who need them can spend.
+alternatives, such as GPS wearables, infrared motion tracking and instrumented canes,
+work, and cost more than most of the people who need them can spend.
 
 DIVA takes a different route, called sensory substitution: read the space with a camera
 and hand it to a sense that is still available. Here that is touch, with sound as a
@@ -57,7 +57,7 @@ second channel.
 ### How it reads a room
 
 A stereo camera on a headband sees the scene twice, a few centimetres apart. Comparing
-the two images — how far a given patch of the picture shifts between them — gives the
+the two images, by how far a given patch of the picture shifts between them, gives the
 distance to everything in view, the same way two eyes do.
 
 That depth picture is divided into a 5×5 grid. Each square is reduced to one number, its
@@ -68,7 +68,7 @@ sends the grid over Bluetooth to the hand unit.
 ### How it tells you
 
 The hand unit is 25 actuators in the same 5×5 arrangement, so the grid in front of the
-face maps onto the palm — top-left of the view is top-left of the hand. Each cell is a
+face maps onto the palm, so top-left of the view is top-left of the hand. Each cell is a
 flat coil printed on polyimide under a silicone pad with a small magnet in it. Run
 current through the coil and the magnet is pushed away, so the silicone lifts into a
 bump you can feel; cut the current and it settles. A nickel-iron shield around each cell
@@ -77,7 +77,7 @@ stops one bump triggering its neighbours.
 Touch says where something is. Sound says what it is. A U-Net network trained on the
 COCO dataset labels the objects in view across 80 classes, the nearest point of each is
 looked up in the depth map to get its position, and the name is played through earbuds
-using head-related transfer functions — so the word arrives from the direction the
+using head-related transfer functions, so the word arrives from the direction the
 object is actually in.
 
 ### What the testing showed
@@ -88,13 +88,13 @@ the camera's distances were off by 3.4% on average, drifting slightly wider with
 **Reading the hand.** Four blind and four blindfolded-sighted participants identified
 which actuator had fired, across 25 random firings, three times over. Blind
 participants averaged about 21.8 correct out of 25; blindfolded sighted participants
-about 17.7 — and within the blind group, those with no sight at all scored higher than
+about 17.7. Within the blind group, those with no sight at all scored higher than
 those with partial sight, which is the pattern you would expect if the difference is
 practised sensitivity to touch.
 
 **Walking a course.** Nine blind and nine blindfolded participants crossed a ten-obstacle
 indoor course with no aid, with a white cane, and with DIVA. Collisions fell from 7.7
-per run unaided, to 3 with the cane, to 1.2 with DIVA — and DIVA runs were about ten
+per run unaided, to 3 with the cane, to 1.2 with DIVA, and DIVA runs were about ten
 seconds quicker than cane runs.
 
 The segmentation model itself reached 84.7% precision and 80.2% recall, with an IoU of
@@ -102,8 +102,8 @@ The segmentation model itself reached 84.7% precision and 80.2% recall, with an 
 
 ### Cost, and what it still needs
 
-The whole device comes to about $278 — $149 of that the stereo camera, $73 the
-controller, $56 the tactile array — which was the point, given where most visually
+The whole device comes to about $278: $149 of that the stereo camera, $73 the
+controller, $56 the tactile array. That was the point, given where most visually
 impaired people live. Three builds got it there: the first weighed 6.84 lb, the third
 2.78 lb, most of the saving from moving the actuator drive onto its own board and
 cutting the cable to the headset.

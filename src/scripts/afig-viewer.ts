@@ -162,8 +162,39 @@ function fit(): void {
 
 let dragged = false;
 
+/**
+ * How far one wheel event should zoom.
+ *
+ * `deltaY` is not a distance in any fixed unit: a trackpad pinch sends a
+ * stream of ones and twos, a Windows mouse notch sends 100 at once, and
+ * Firefox reports lines or pages instead of pixels. Reading it raw meant one
+ * notch of a mouse wheel multiplied the sheet by e, which is a jump from fit
+ * to the ceiling and back with nothing in between — the zoom had no middle to
+ * land on. So the delta is put into pixels first, then capped, so a single
+ * event can never move more than about half a step whatever sent it.
+ */
+function wheelFactor(e: WheelEvent): number {
+  const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? viewport.clientHeight : 1;
+  return Math.exp(-clamp(e.deltaY * unit, -200, 200) * 0.002);
+}
+
 function bindPointer(): void {
   let from: { x: number; y: number; left: number; top: number } | null = null;
+
+  // An <img> is draggable by default, and a drawing is nearly all <img>. Press
+  // on it and the browser starts a native file drag: it cancels the pointer
+  // stream, so the pan dies on the first millimetre and only the bare margin
+  // around the sheet could be dragged at all. Nothing here is a thing to drag
+  // out of the page, so the gesture belongs to the pan.
+  viewport.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // Same for the selection. The callout labels and the title block are real
+  // text, so a drag across them would sweep up a highlight behind the sheet as
+  // it moves. Only while a pan is actually in progress — a stationary reader
+  // can still select a part number and copy it.
+  viewport.addEventListener('selectstart', (e) => {
+    if (from) e.preventDefault();
+  });
 
   viewport.addEventListener('pointerdown', (e) => {
     // Touch and pen already pan this element natively, and hijacking them
@@ -203,7 +234,7 @@ function bindPointer(): void {
       if (!e.ctrlKey) return;
       e.preventDefault();
       const box = viewport.getBoundingClientRect();
-      zoomAt({ x: e.clientX - box.left, y: e.clientY - box.top }, Math.exp(-e.deltaY * 0.01));
+      zoomAt({ x: e.clientX - box.left, y: e.clientY - box.top }, wheelFactor(e));
     },
     { passive: false }
   );

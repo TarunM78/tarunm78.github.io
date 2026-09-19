@@ -21,6 +21,15 @@ import { Image } from 'astro:assets';
 
 interface Props {
   src: ImageMetadata;
+  /**
+   * A blueprint cut of the same figure, where the ink that floats on the page
+   * has been relit. Only for `type: figure`: a line drawing just inverts, but a
+   * figure carrying photographs cannot, so its arrows and rules are relit in
+   * the file and everything photographic is left alone. Both are in the markup
+   * and one is hidden, because the reproduction can be pinned by hand and a
+   * `<picture>` can only answer the operating system.
+   */
+  srcDark?: ImageMetadata;
   /** Required. A figure nobody can see is a figure nobody can read. */
   alt: string;
   /** Which side the drawing sits on above 1024px. */
@@ -29,7 +38,7 @@ interface Props {
   type?: 'drawing' | 'figure';
 }
 
-const { src, alt, side = 'right', type = 'drawing' } = Astro.props;
+const { src, alt, srcDark, side = 'right', type = 'drawing' } = Astro.props;
 ---
 
 <section class:list={['passage', `passage--${side}`]}>
@@ -38,7 +47,7 @@ const { src, alt, side = 'right', type = 'drawing' } = Astro.props;
   </div>
 
   <Image
-    class:list={['passage__img', `passage__img--${type}`]}
+    class:list={['passage__img', `passage__img--${type}`, srcDark && 'passage__img--paper']}
     src={src}
     alt={alt}
     widths={[400, 700, 1000]}
@@ -46,4 +55,19 @@ const { src, alt, side = 'right', type = 'drawing' } = Astro.props;
     loading="lazy"
     decoding="async"
   />
+
+  {
+    srcDark && (
+      <Image
+        class:list={['passage__img', `passage__img--${type}`, 'passage__img--blueprint']}
+        src={srcDark}
+        alt=""
+        aria-hidden="true"
+        widths={[400, 700, 1000]}
+        sizes="(min-width: 1024px) calc((min(100vw, 1440px) - 180px) * 0.425), calc(100vw - 40px)"
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
 </section>

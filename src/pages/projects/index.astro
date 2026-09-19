@@ -83,7 +83,7 @@ const isTall = (p: (typeof projects)[number]) =>
             framed
             pendingNote={
               p.data.status === 'active'
-                ? `Coming soon — ${p.data.partNumber} is current work`
+                ? `Coming soon: ${p.data.partNumber} is current work`
                 : `${p.data.partNumber} has no drawing on file yet`
             }
           />
