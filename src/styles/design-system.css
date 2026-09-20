@@ -2098,6 +2098,14 @@ button.afig__ctl {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
   }
 
+  /* The wide column is whichever one the drawing is in. Stated only for the
+     left case because the columns are written drawing-last, which is the right
+     case: without this, `wide` on a drawing set left handed the extra width to
+     the writing instead, which is the opposite of what the word asks for. */
+  .passage--wide.passage--left {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+
   .passage--wide .passage__img {
     max-width: 100%;
   }
@@ -2665,29 +2673,57 @@ button.afig__ctl {
      sets its buttons: two fields of equal width under one another is a list,
      two unequal ones side by side is a scatter.
 
-     `margin-top: auto` takes the whole of the slack between the views and the
-     buttons, which puts the last button's bottom edge on the drawing's. That
-     is the one line these two columns should share: the drawing is the sheet
-     and the buttons are the way off it, so the sheet should end where the way
-     off it does. The row gap above is the floor, for a column with no slack to
-     give. Done by measure rather than by arithmetic, so it holds at any width
-     and for however many views a project sends to this column. */
+     The buttons take the slack between the views and themselves, which puts
+     the last one's bottom edge on the drawing's. That is the one line these
+     two columns should share: the drawing is the sheet and the buttons are the
+     way off it, so the sheet should end where the way off it does. Done by
+     measure rather than by arithmetic, so it holds at any width and for
+     however many views a project sends to this column.
+
+     They take it by growing, not by being pushed down it. An auto margin did
+     the same alignment and left the slack above them as a band of empty paper
+     between the last view and the first button, which on a sheet that sets
+     everything else to a rhythm read as a gap where something was missing.
+     Grown instead, the column is the views, then the buttons, at the sp-5 the
+     views already keep between themselves.
+
+     The ceiling is what keeps that honest. A column with one view beside a
+     main column carrying a drawing and a strip of stills under it has slack
+     measured in hundreds of pixels, and two buttons eating all of it are not
+     buttons any more. Past the ceiling the growth stops, the buttons stay with
+     the views they follow, and the leftover is simply the bottom of a short
+     column. That is the truthful reading: a sheet whose extra views do not
+     reach the foot of its drawing has a short column, and dropping its buttons
+     to the foot to hide that only moves the gap somewhere it means less.
+
+     `flex-shrink: 0` throughout: these grow into slack and never squeeze out
+     of a shortfall, because a field shorter than its own label is not a field. */
   .projectplate--aside .project__links {
     flex-direction: column;
     align-items: stretch;
-    margin-top: auto;
+    flex: 1 0 auto;
+    max-height: calc(var(--links, 1) * 6rem + (var(--links, 1) - 1) * var(--sp-4));
+    margin-top: 0;
   }
 
   /* The stretch has to reach the anchor: the list stretches its items, but a
      .sheetbutton is an inline-flex inside the <li> and sizes to its own label,
-     which is what left the two of them a different width apart. */
+     which is what left the two of them a different width apart. The <li>
+     carries the growth too, so the buttons share the slack equally rather than
+     one of them taking all of it. */
   .projectplate--aside .project__links > li {
     display: flex;
+    flex: 1 0 auto;
   }
 
   .projectplate--aside .project__links .sheetbutton {
     flex: 1;
     justify-content: space-between;
+    /* Baseline is right for a field the height of its own type. It is wrong
+       for one grown to fill a column: the line sits at the top of the box and
+       leaves the rest of the button empty under it. Centred, the label sits in
+       the field however tall the field turns out to be. */
+    align-items: center;
   }
 
 

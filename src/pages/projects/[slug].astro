@@ -181,9 +181,16 @@ const next = projects[index + 1];
       )
     }
 
+    {/* `--links` is the count, for the ceiling the buttons grow to beside a
+        drawing. CSS can stretch them to fill a column but cannot count them,
+        and the cap is per button rather than per list. */}
     {
       data.links.length > 0 && (
-        <ul class="project__links" aria-label="Published elsewhere">
+        <ul
+          class="project__links"
+          style={`--links:${data.links.length}`}
+          aria-label="Published elsewhere"
+        >
           {data.links.map((link) => (
             <li>
               {/* Every one of these leaves the site: a paper, an abstract, an
