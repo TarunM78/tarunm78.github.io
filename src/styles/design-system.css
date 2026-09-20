@@ -78,26 +78,43 @@
   color-scheme: light dark;
 }
 
-/* Blueprint. The only place blueprint blue is permitted.
+/* Blueprint. The only place blueprint blue is permitted, and it is permitted
+   as the ground, not as the ink.
    The [data-theme] hooks let a subtree be pinned to one theme without any
    JavaScript. Nothing in the site sets them; they exist so both themes can be
    reviewed on one page. A pinned light subtree wins over the OS preference.
 
-   --annotation was #ffffff here, which broke the rule the light theme keeps:
-   white against #c8d8ec ink separates by lightness alone, so the annotation
-   layer stopped reading as a layer and the whole theme went blue and white.
-   Red on a blueprint is not an invention — redlining is the one mark on a
-   blueprint that was never blue. 6.20:1 on the ground, and it stays hue-led
-   against ink (1.75:1) exactly as #b23a32 is against #1c1c1a on paper. */
+   --ink is white. It was #c8d8ec, a blue tint of the ground, which is not what
+   the reproduction does: a blueprint is white line on blue, and every line
+   drawing on the site already inverts to pure white here. Tinting the type
+   toward the ground while the drawings sat at full white left the two reading
+   as different inks on the same sheet. 15.77:1 on the ground.
+
+   --faint is the same white laid thinner rather than a second colour, which is
+   why it is an alpha and not a hex: 54% over the ground is 5.52:1, holding the
+   hierarchy the paper theme sets at 4.59:1 without introducing a hue that
+   means nothing. --faint-rule is thinner still, against the 3:1 bar a hairline
+   answers to.
+
+   --annotation was #ffffff here once, which broke the rule the light theme
+   keeps: an annotation that separates from the ink by lightness alone is not a
+   layer. With the ink now at full white it would not separate at all. Red on a
+   blueprint is not an invention: redlining is the one mark on a blueprint that
+   was never blue. 6.20:1 on the ground, and it stays hue-led against ink
+   exactly as #b23a32 is against #1c1c1a on paper.
+
+   --reference and --released keep their hues in both themes. They are the two
+   other jobs colour is allowed to do here, "you can click it" and "released",
+   and a link that stopped being blue would stop saying so. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0d2340;
-    --ink: #c8d8ec;
+    --ink: #ffffff;
     --annotation: #ff7a6e;
     --reference: #7fb2f0;
     --released: #6fd08c;
-    --faint: #8a9cb4;
-    --faint-rule: rgb(200 216 236 / 0.35);
+    --faint: rgb(255 255 255 / 0.54);
+    --faint-rule: rgb(255 255 255 / 0.3);
     --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
     --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
   }
@@ -105,12 +122,12 @@
 
 [data-theme="dark"] {
   --paper: #0d2340;
-  --ink: #c8d8ec;
+  --ink: #ffffff;
   --annotation: #ff7a6e;
   --reference: #7fb2f0;
   --released: #6fd08c;
-  --faint: #8a9cb4;
-  --faint-rule: rgb(200 216 236 / 0.35);
+  --faint: rgb(255 255 255 / 0.54);
+  --faint-rule: rgb(255 255 255 / 0.3);
   --grid-minor: color-mix(in srgb, var(--ink) 4%, transparent);
   --grid-major: color-mix(in srgb, var(--ink) 8%, transparent);
 }
