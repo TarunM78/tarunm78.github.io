@@ -169,8 +169,8 @@ let dragged = false;
  * stream of ones and twos, a Windows mouse notch sends 100 at once, and
  * Firefox reports lines or pages instead of pixels. Reading it raw meant one
  * notch of a mouse wheel multiplied the sheet by e, which is a jump from fit
- * to the ceiling and back with nothing in between — the zoom had no middle to
- * land on. So the delta is put into pixels first, then capped, so a single
+ * to the ceiling and back with nothing in between, leaving the zoom no middle
+ * to land on. So the delta is put into pixels first, then capped, and a single
  * event can never move more than about half a step whatever sent it.
  */
 function wheelFactor(e: WheelEvent): number {
@@ -190,8 +190,8 @@ function bindPointer(): void {
 
   // Same for the selection. The callout labels and the title block are real
   // text, so a drag across them would sweep up a highlight behind the sheet as
-  // it moves. Only while a pan is actually in progress — a stationary reader
-  // can still select a part number and copy it.
+  // it moves. Only while a pan is actually in progress: a stationary reader can
+  // still select a part number and copy it.
   viewport.addEventListener('selectstart', (e) => {
     if (from) e.preventDefault();
   });
