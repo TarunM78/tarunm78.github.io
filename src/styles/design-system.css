@@ -2626,9 +2626,10 @@ button.afig__ctl {
   }
 
   /* A drawing with extra views beside it: the plate gives up a column and the
-     views take it, stacked. Eight parts to eleven is slightly narrower than the
-     full sheet rather than half of it, because the drawing is still the thing
-     the sheet is about and the views are what it is about seen twice more.
+     views take it, stacked. Two parts to three: the drawing is still the thing
+     the sheet is about, and it keeps the larger share, but a column at 8:3 was
+     narrow enough that a sixteen-by-nine clip in it was a postage stamp. This
+     is the widest the column goes before the drawing stops being the subject.
 
      The title block docks into the corner here for the same reason it does on
      a portrait plate: the drawing no longer runs the sheet's width, so a block
@@ -2643,24 +2644,38 @@ button.afig__ctl {
      never there. */
   .projectplate--aside {
     display: grid;
-    grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
     column-gap: var(--sp-5);
-    align-items: start;
+    /* Stretch, so the two columns are the same height and the side column has
+       a bottom edge to push its last item onto. See the auto margin on the
+       links below: that is what lands the last button on the drawing's bottom
+       rule. With `start` the side column was only as tall as its contents and
+       the two columns simply ended wherever they ended. */
+    align-items: stretch;
   }
 
   .projectplate--aside > .projectplate__main,
   .projectplate--aside > .projectplate__side {
     display: flex;
     flex-direction: column;
+    row-gap: var(--sp-5);
   }
 
   /* Stacked and stretched in a column this narrow, the same way the cover
      sets its buttons: two fields of equal width under one another is a list,
-     two unequal ones side by side is a scatter. */
+     two unequal ones side by side is a scatter.
+
+     `margin-top: auto` takes the whole of the slack between the views and the
+     buttons, which puts the last button's bottom edge on the drawing's. That
+     is the one line these two columns should share: the drawing is the sheet
+     and the buttons are the way off it, so the sheet should end where the way
+     off it does. The row gap above is the floor, for a column with no slack to
+     give. Done by measure rather than by arithmetic, so it holds at any width
+     and for however many views a project sends to this column. */
   .projectplate--aside .project__links {
     flex-direction: column;
     align-items: stretch;
-    margin-top: var(--sp-5);
+    margin-top: auto;
   }
 
   /* The stretch has to reach the anchor: the list stretches its items, but a
