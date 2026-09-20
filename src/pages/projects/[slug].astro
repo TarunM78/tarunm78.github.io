@@ -185,7 +185,25 @@ const next = projects[index + 1];
         <ul class="project__links" aria-label="Published elsewhere">
           {data.links.map((link) => (
             <li>
-              <a class="sheetbutton plink" href={link.href}>
+              {/* Every one of these leaves the site: a paper, an abstract, an
+                  ISEF entry. They open in their own tab, because the sheet
+                  they are printed on is a thing you come back to, and a reader
+                  who opens the paper has not finished with the drawing.
+
+                  `rel="noopener"` because a tab opened with target gets a
+                  handle on the one that opened it otherwise. Modern browsers
+                  imply it, older ones do not, and it costs nothing to say.
+
+                  The new tab is announced rather than left to be discovered.
+                  The icon says what the link opens and it is aria-hidden, so
+                  without this a screen reader gets the label and no warning
+                  that the window is about to change under it. */}
+              <a
+                class="sheetbutton plink"
+                href={link.href}
+                target="_blank"
+                rel="noopener"
+              >
                 {/* What the button opens, drawn rather than described: a sheet
                     of paper with its corner turned for a PDF, a window with an
                     arrow leaving it for a page somewhere else. Decorative in
@@ -221,6 +239,7 @@ const next = projects[index + 1];
                   </svg>
                 )}
                 <span>{link.label}</span>
+                <span class="visually-hidden">(opens in a new tab)</span>
                 <span class="sheetbutton__arrow meta" aria-hidden="true">
                   &rarr;
                 </span>
