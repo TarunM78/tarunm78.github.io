@@ -1187,6 +1187,37 @@ button.afig__ctl {
   flex: none;
 }
 
+/* Below the width where the band goes fixed, it sticks instead.
+
+   Fixed is for the wide sheet, where the band is a known 60px and the body is
+   padded to clear it. On a phone the band is one or two rows deep depending on
+   what fits, so there is no height to clear, and it sat in the flow and
+   scrolled away: read three sections into a project and the index was a full
+   page back up. Sticky keeps it without needing its height known.
+
+   Full-bleed by negative margin and matching padding, because the band lives
+   inside the sheet's own side padding and a background that stopped at the
+   text column would let the ruling show through either side of it as the sheet
+   ran underneath.
+
+   The scroll padding is what stops a section marker landing behind the band
+   when a deep link jumps to it. */
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  .sheet__head {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    background: var(--paper);
+    margin-inline: calc(var(--sheet-margin) * -1);
+    padding-inline: var(--sheet-margin);
+    padding-top: var(--sp-3);
+  }
+}
+
 /* On a phone the switch keeps its words and gives up the space around them.
 
    The band's own column gap is 40px, which is most of what was pushing the
