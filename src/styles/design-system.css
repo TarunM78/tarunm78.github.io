@@ -2226,6 +2226,19 @@ button.afig__ctl {
   margin-bottom: var(--sp-5);
 }
 
+/* Set above metadata size. This is the only line of it left on the home sheet,
+   and it is read at the head of a section under a drawing that runs the width
+   of the page: at 12px it was a caption to something a thousand pixels wide.
+   The tag beside it comes up a step with it, so the row still reads as one
+   line rather than a line with a smaller label stuck on the end. */
+.lead__meta .meta {
+  font-size: var(--t-h50);
+}
+
+.lead__meta .tag-state {
+  font-size: var(--t-h25);
+}
+
 .pn {
   display: inline-flex;
   align-items: baseline;
