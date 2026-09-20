@@ -1727,20 +1727,18 @@ button.afig__ctl {
 
 /* The card lays itself out top-down with the drawing taking the slack, so the
    See more buttons line up across a row however long the titles run. */
+/* No explicit rows. `align-content: start` packs them to the top, so whatever
+   a card is taller than its contents opens at the foot, under the button,
+   where nothing is looking.
+
+   It used to be `auto auto 1fr auto`, which put the slack in the drawing's row
+   instead: the tall card spans two rows of the set and is the one with the
+   most slack to place, so it opened two hundred pixels of empty sheet between
+   its drawing and its button. Roles already carried an override for the same
+   fault a row earlier, which is the note that said what the fix was. */
 .sheetcard {
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
   align-content: start;
-}
-
-/* A role card has five parts to a project card's four, so that 1fr lands a row
-   early — on the organisation — and every pixel a card is taller than its
-   content opens as a gap between the org and the drawing. It was most of a
-   drawing's height on the tall card, which spans two rows and so gets the most
-   slack of all. Roles take no explicit rows: align-content already packs them
-   to the top and leaves the slack at the foot, where nothing is looking. */
-.sheetcard--role {
-  grid-template-rows: none;
 }
 
 /* Every drawing is fitted to the same frame rather than setting its own height.
