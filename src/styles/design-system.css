@@ -2634,10 +2634,17 @@ button.afig__ctl {
   }
 
   /* A drawing with extra views beside it: the plate gives up a column and the
-     views take it, stacked. Two parts to three: the drawing is still the thing
-     the sheet is about, and it keeps the larger share, but a column at 8:3 was
-     narrow enough that a sixteen-by-nine clip in it was a postage stamp. This
-     is the widest the column goes before the drawing stops being the subject.
+     views take it, stacked. Two parts to one: the drawing is still the thing
+     the sheet is about and it keeps the larger share, but a column at 8:3 was
+     narrow enough that a sixteen-by-nine clip in it was a postage stamp.
+
+     Widened again at full sheet width, below. The number is not a taste: it is
+     the width at which DIVA's column, two clips and two buttons, comes out the
+     same height as the drawing beside it. Wider and the column overruns the
+     drawing and the drawing is the one that ends short; narrower and the
+     buttons cannot close the gap and a band of paper opens above them. This is
+     the balance point, and it moves with the sheet, which is why there are two
+     of them.
 
      The title block docks into the corner here for the same reason it does on
      a portrait plate: the drawing no longer runs the sheet's width, so a block
@@ -2710,7 +2717,7 @@ button.afig__ctl {
     flex-direction: column;
     align-items: stretch;
     flex: 1000 0 auto;
-    max-height: calc(var(--links, 1) * 5.5rem + (var(--links, 1) - 1) * var(--sp-4));
+    max-height: calc(var(--links, 1) * 4rem + (var(--links, 1) - 1) * var(--sp-4));
     margin-top: 0;
   }
 
@@ -2759,6 +2766,22 @@ button.afig__ctl {
    SLOT_HI_CORNER in src/lib/callouts.ts), and that number can only be right
    while the block stays roughly this size. So below 1280 the block goes back
    under the drawing, where it costs a band and no collision. */
+/* At the sheet's full width the column can afford to be wider, and has to be:
+   the furniture in it that does not scale, two captions and two buttons and
+   the rules between them, is a smaller share of a taller column, so the clips
+   have to grow to take up the difference. 4.7 is where DIVA's column lands
+   level with its drawing at 1440 and above. Below this the same ratio overruns
+   it, by 22px at 1280 and 63px at 1100, so the narrower sheet keeps 4.
+
+   1440 rather than a round number because --sheet-max is 1440: this is the
+   width at which the sheet stops growing, so above it the plate is a fixed
+   size and one ratio holds for all of it. */
+@media (min-width: 1440px) {
+  .projectplate--aside {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4.7fr);
+  }
+}
+
 @media (min-width: 1280px) {
   .projectplate--aside .afig__titleblock {
     position: absolute;
