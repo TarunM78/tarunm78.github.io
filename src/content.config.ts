@@ -92,6 +92,16 @@ const projects = defineCollection({
                   .optional(),
                 alt: z.string().min(1),
                 caption: z.string().optional(),
+                /* Where the sheet puts this view. 'column' is the narrow
+                   stack beside the drawing, 'strip' is the wide row under it,
+                   and the choice belongs to the content because only the
+                   content knows the shape of the thing. A phone clip is
+                   upright and wants the column; a photograph shaped like the
+                   drawing wants the strip. It used to be decided by position,
+                   first one to the column and the rest to the strip, which
+                   worked until a sheet had two views that both belonged
+                   beside the drawing and no way to say so. */
+                place: z.enum(['column', 'strip']).default('strip'),
               })
               .refine((v) => !!v.image !== !!v.video, {
                 message: 'An aside view is either an image or a video, not both and not neither.',

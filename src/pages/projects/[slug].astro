@@ -50,16 +50,15 @@ const isTall = !!data.heroImage && data.heroImage.height > data.heroImage.width;
    title block its corner: with the drawing no longer running the full width, a
    block banded underneath it would be a rule across half a sheet.
 
-   The first goes in the column beside the drawing and the rest go in a strip
-   under it. A column is narrow and a strip is wide, so the order in the
-   frontmatter is what decides which view gets which: the upright one leads,
-   and the ones shaped like the drawing follow it. Put three stills on a
-   project and the first still sits in the column, which is the right answer
-   for the same reason. */
+   A column is narrow and a strip is wide, so each view says which it wants.
+   That used to be read off position instead, first to the column and the rest
+   to the strip, which held while a sheet had one upright view and broke the
+   moment one had two: there was no way to say that both belonged beside the
+   drawing. `place` says it outright. */
 const aside = data.aside;
 const hasAside = aside.length > 0;
-const asideLead = aside[0];
-const asideRest = aside.slice(1);
+const asideColumn = aside.filter((v) => v.place === 'column');
+const asideStrip = aside.filter((v) => v.place === 'strip');
 
 const prev = projects[index - 1];
 const next = projects[index + 1];
@@ -148,9 +147,9 @@ const next = projects[index + 1];
     />
 
     {
-      asideRest.length > 0 && (
+      asideStrip.length > 0 && (
         <div class="projectstrip">
-          {asideRest.map((v) => (
+          {asideStrip.map((v) => (
             <AsideView
               image={v.image}
               video={v.video}
@@ -167,15 +166,17 @@ const next = projects[index + 1];
     {/* The clip, and under it the way out. */}
     <div class="projectplate__side">
     {
-      asideLead && (
+      asideColumn.length > 0 && (
         <div class="projectaside">
-          <AsideView
-            image={asideLead.image}
-            video={asideLead.video}
-            alt={asideLead.alt}
-            caption={asideLead.caption}
-            sizes="(min-width: 1024px) 24vw, 92vw"
-          />
+          {asideColumn.map((v) => (
+            <AsideView
+              image={v.image}
+              video={v.video}
+              alt={v.alt}
+              caption={v.caption}
+              sizes="(min-width: 1024px) 24vw, 92vw"
+            />
+          ))}
         </div>
       )
     }

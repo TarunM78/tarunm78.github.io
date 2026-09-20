@@ -947,6 +947,26 @@ button.afig__ctl {
     border-inline-start: var(--lw-heavy) solid var(--afig-rule, transparent);
     padding-inline-start: var(--sp-2);
   }
+
+  /* Left and right name the side of the drawing the anchor sits on, not the
+     side of the sheet the label sits on. In the gutters those are the same
+     thing and the leader arrives at whichever edge faces the drawing. In the
+     legend they are not: the entries are one column to the right of the
+     drawing, so every leader arrives on the same edge. Letting the anchor
+     choose it put the rule and its padding on the far side of half the
+     entries, which set their text a rule and a gap further in than the rest.
+
+     Every entry reserves that edge, including the unplaced ones that have no
+     side and no leader to arrive: a column of labels is read down its left
+     edge, and an entry that happens to carry no coordinates is still one of
+     the labels. Nothing lights it, because the rule only takes a colour from
+     the callout it belongs to and an unplaced entry has none. */
+  .afig--legend .afig__item .afig__ctl {
+    border-inline-end: 0;
+    padding-inline-end: 0;
+    border-inline-start: var(--lw-heavy) solid var(--afig-rule, transparent);
+    padding-inline-start: var(--sp-2);
+  }
 }
 
 /* Someone who has asked for more contrast has not asked for two thirds of the
@@ -2742,10 +2762,14 @@ button.afig__ctl {
   height: auto;
 }
 
-/* A clip shot on a phone is nine by sixteen, which is why it is the view that
-   goes in the column: upright next to the drawing, where the stills would have
-   been six hundred pixels of one photograph stacked on two more. It has the
-   column to itself, so it is not capped. */
+/* Nothing in the column is capped. It is already the narrow side of an 8:3
+   plate, so whatever goes in it is small before any rule here touches it, and
+   a cap would only be deciding which of two small things is smaller.
+
+   Which views land here is the content's call, declared as `place: column` in
+   a project's frontmatter rather than inferred from position. A sheet can send
+   one view, as SAAR does with its clip of the rig, or a set that belongs
+   together, as DIVA does with the two camera feeds. */
 
 .projectaside__cap {
   padding: var(--sp-2) var(--sp-3);

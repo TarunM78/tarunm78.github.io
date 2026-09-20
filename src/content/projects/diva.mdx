@@ -35,6 +35,19 @@ callouts:
   - x: 0.15
     y: 0.85
     text: SOLENOID TACTILE INTERFACE
+aside:
+  # The two feeds the wearer's camera produces, stacked beside the drawing in
+  # the order the system reads them: the scene as it looks, then the same scene
+  # as distance. Together they are the first half of the chain the write-up
+  # describes, running rather than drawn.
+  - video: /diva-rgb-camera.mp4
+    place: column
+    alt: Clip of the plain colour camera feed from the headband, panning across a room with a draped couch and carpet
+    caption: RGB Camera View
+  - video: /diva-stereo-camera.mp4
+    place: column
+    alt: Clip of the same room resolved into depth, the scene colour-coded from red for near to blue for far, divided into a grid of cells with the measured X, Y and Z distance printed in each
+    caption: Stereoscopic Camera View
 notes:
   - text: 'Team project. TODO: state your specific contribution in one line.'
   - text: Target unit cost of roughly $250 to $300.
