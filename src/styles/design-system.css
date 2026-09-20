@@ -2690,20 +2690,35 @@ button.afig__ctl {
      The ceiling is what keeps that honest. A column with one view beside a
      main column carrying a drawing and a strip of stills under it has slack
      measured in hundreds of pixels, and two buttons eating all of it are not
-     buttons any more. Past the ceiling the growth stops, the buttons stay with
-     the views they follow, and the leftover is simply the bottom of a short
-     column. That is the truthful reading: a sheet whose extra views do not
-     reach the foot of its drawing has a short column, and dropping its buttons
-     to the foot to hide that only moves the gap somewhere it means less.
+     buttons any more. So the growth stops at 5.5rem a button, and whatever is
+     left over goes to the views above instead, which is the `flex-grow: 1` on
+     .projectaside below. The buttons still end on the column's bottom rule
+     either way. Only where the leftover lands changes: into the buttons while
+     they have room for it, into the paper under the last view once they do
+     not.
+
+     The two grow rates are 1000 against 1 rather than 2 against 1, because
+     this is a precedence and not a ratio. The buttons should take every pixel
+     they can hold before a single one becomes gap, and only what they cannot
+     hold should fall through. DIVA's column has about ninety pixels to give
+     and its buttons take all of it. SAAR's has hundreds and its buttons take
+     their fill, which is what leaves the paper between its clip and them.
 
      `flex-shrink: 0` throughout: these grow into slack and never squeeze out
      of a shortfall, because a field shorter than its own label is not a field. */
   .projectplate--aside .project__links {
     flex-direction: column;
     align-items: stretch;
-    flex: 1 0 auto;
-    max-height: calc(var(--links, 1) * 6rem + (var(--links, 1) - 1) * var(--sp-4));
+    flex: 1000 0 auto;
+    max-height: calc(var(--links, 1) * 5.5rem + (var(--links, 1) - 1) * var(--sp-4));
     margin-top: 0;
+  }
+
+  /* Takes what the buttons could not, so the column always closes on its
+     bottom rule. Its own children stay packed at the top, so the space shows
+     as paper under the last view rather than opening up between the views. */
+  .projectplate--aside .projectaside {
+    flex: 1 0 auto;
   }
 
   /* The stretch has to reach the anchor: the list stretches its items, but a
