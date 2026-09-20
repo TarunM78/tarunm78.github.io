@@ -1825,11 +1825,36 @@ button.afig__ctl {
 .sheetcard--pending {
   display: grid;
   place-items: center;
-  min-height: 12rem;
   padding: var(--sp-6);
-  border: var(--lw-med) dashed var(--faint-rule);
+  /* Heavier than a hairline and dashed: it has to read as a field on the sheet
+     from across the set, the same weight the card borders beside it carry. */
+  border: var(--lw-heavy) dashed var(--faint-rule);
   color: var(--faint);
   text-align: center;
+}
+
+/* Not metadata, so not set at metadata size. It is the one line on the sheet
+   that says what happens next, and at 12px against a 579px field it read as a
+   caption someone had left in the middle of an empty box. */
+.sheetcard--pending .meta {
+  font-size: var(--t-h70);
+}
+
+@media (min-width: 1024px) {
+  /* Tall enough to take up all the slack in the column it closes.
+
+     The two rows it shares with the spanning card have to add up to that
+     card's height, and the project above this note plus this note did not
+     reach it, so the leftover split between them and opened as whitespace
+     above the note. Sized to close the sum, nothing is left to split.
+
+     Which does mean this number is tied to the height of a card spanning two
+     rows. It is a visual fit, not a constraint the layout enforces: if the set
+     changes shape, the worst that happens is a little air comes back above the
+     note. */
+  .sheetcard--pending {
+    min-height: 20.5rem;
+  }
 }
 
 /* The way off this sheet and onto the drawing's own. Bigger than the buttons
