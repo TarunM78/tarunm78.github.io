@@ -1,8 +1,8 @@
 ---
 order: 1
 role: Founder
-org: Stealth startup
-location: State College, PA
+org: Stealth Startup
+location: San Francisco, CA
 start: 2026-05
 summary: Building a planetary actuator for humanoid joints, designed from the start to be metal 3D printed rather than machined.
 heroImage: ../../assets/planetary-actuator.png
