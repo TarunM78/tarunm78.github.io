@@ -1060,7 +1060,12 @@ button.afig__ctl {
 .sheet__head {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  /* Centre, not baseline. Everything in this band is a bordered field, and a
+     row of fields lines up by its boxes: on a baseline the index button and
+     the reproduction switch hang off the text inside them, which sat their
+     borders seven pixels apart wherever the two share a row. The switch makes
+     the same argument about its own two options a few rules down. */
+  align-items: center;
   justify-content: space-between;
   gap: var(--sp-3) var(--sp-5);
   padding-bottom: var(--sp-3);
@@ -1069,6 +1074,16 @@ button.afig__ctl {
 
 .sheet__body {
   padding-top: var(--sp-6);
+}
+
+/* The space under the last thing on a sheet is the sheet's own bottom margin.
+   A section's trailing margin lands on top of that and doubles it: the home
+   sheet ends on a lead, which carries 100px to separate it from the section
+   below, and with no section below that became 200px of blank paper under the
+   final button. Every other sheet already ends on something with no margin of
+   its own, so this only ever removes the doubling. */
+.sheet__body > :last-child {
+  margin-bottom: 0;
 }
 
 /* -------------------------------------------------------------------------
@@ -1097,11 +1112,13 @@ button.afig__ctl {
      from everything else in the band. */
   align-items: center;
   gap: var(--sp-2);
-  /* Last in the band. This is only the gap from whatever precedes it; what
-     actually holds it to the right is the band's space-between on one row, and
-     an auto margin in the range where the band wraps. There used to be a third
-     field between the two, and this margin was the space either side of it. */
-  margin-left: var(--sp-4);
+  /* No left margin. What holds it to the right is the band's space-between on
+     one row and an auto margin in the range where the band wraps, so this was
+     never what positioned it: it was the space either side of a third field
+     that has since come off the band. What it did instead was indent the
+     switch by 20px on a phone, where the band wraps and the switch is the only
+     thing on its row, so it sat staggered in from the index above it. */
+  margin-left: 0;
 }
 
 /* A bordered field, like every other control on the sheet. Mono caps is right
