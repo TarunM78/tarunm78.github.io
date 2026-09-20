@@ -40,9 +40,21 @@ const activePNs = new Set(
   projects.filter((p) => p.data.status === 'active').map((p) => p.data.partNumber)
 );
 
-/** A drawing taller than it is wide gets two frames' worth of the grid. */
+/**
+ * A drawing gets two frames' worth of the grid when it is at least as tall as
+ * the frame two of them make: 3/4 against the same column width, or 1.33 times
+ * its width.
+ *
+ * It used to be any drawing taller than it was wide, which handed a second
+ * frame to drawings that could not fill one. The arm is 1188x1324, eleven
+ * per cent taller than wide: in a 3/4 frame it left a band of empty sheet
+ * inside the border, and the card it sat in, being a card's worth of contents
+ * in two cards' worth of rows, left about 190px more between its button and
+ * whatever came next down the column. A drawing that does not need the second
+ * frame is better off filling the first.
+ */
 const isTall = (p: (typeof projects)[number]) =>
-  !!p.data.heroImage && p.data.heroImage.height > p.data.heroImage.width;
+  !!p.data.heroImage && p.data.heroImage.height >= p.data.heroImage.width * (4 / 3);
 ---
 
 <Sheet
@@ -98,5 +110,12 @@ const isTall = (p: (typeof projects)[number]) =>
         );
       })
     }
+
+    {/* The set is a series, and the series is not finished. Stating that is
+        also what squares off the foot of two columns of cards that end at
+        different heights. */}
+    <li class="sheetcard sheetcard--pending">
+      <span class="meta">More projects coming soon</span>
+    </li>
   </ol>
 </Sheet>

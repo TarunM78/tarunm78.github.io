@@ -1723,6 +1723,13 @@ button.afig__ctl {
   .sheetcard--tall {
     grid-row: span 2;
   }
+
+  /* The closing note takes the left column and the row under the set, so the
+     two columns end level and the note is the last thing on the sheet rather
+     than a fifth card wedged beside one. */
+  .sheetcard--pending {
+    grid-column: 1;
+  }
 }
 
 /* The card lays itself out top-down with the drawing taking the slack, so the
@@ -1745,8 +1752,7 @@ button.afig__ctl {
    `contain` because a drawing must not be cropped to fill a box — the whole
    sheet is the thing being previewed. */
 .sheetcard__fig .afig__imgwrap {
-  display: grid;
-  place-items: center;
+  position: relative;
   aspect-ratio: var(--card-frame);
 }
 
@@ -1754,7 +1760,21 @@ button.afig__ctl {
   aspect-ratio: 3 / 4;
 }
 
+/* Taken out of flow so it cannot size the frame it is in.
+
+   In flow, the drawing's own height was the frame's min-content, and a
+   min-content floor beats `aspect-ratio`: a drawing taller than its frame
+   pushed the frame open rather than fitting inside it, so the arm came out
+   645px tall in a 386px frame and took the whole grid row with it. Bounding it
+   with max-width and max-height did not help, because those resolve against
+   the height the image was itself deciding.
+
+   Absolute takes it off the floor entirely. The frame keeps the ratio it was
+   given, and `contain` fits the drawing inside it without cropping, which is
+   the rule for a preview of a whole sheet. */
 .sheetcard__fig .afig__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -1796,6 +1816,24 @@ button.afig__ctl {
 
 .sheetcard__more {
   margin-top: var(--sp-4);
+}
+
+/* --- The card that closes the set. ---
+
+   Not a project, so it takes none of a card's parts: no designator, no
+   drawing, no way through. What it is for is the foot of the set, which two
+   columns of cards at their own heights leave ragged. It is the note a drawing
+   set ends on when the series is not finished, and it is set like one: dashed,
+   because a dashed line on a drawing is the convention for something that is
+   not there yet. */
+.sheetcard--pending {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+  padding: var(--sp-6);
+  border: var(--lw-med) dashed var(--faint-rule);
+  color: var(--faint);
+  text-align: center;
 }
 
 /* The way off this sheet and onto the drawing's own. Bigger than the buttons
