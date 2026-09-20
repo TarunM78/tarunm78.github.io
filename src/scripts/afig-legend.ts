@@ -98,13 +98,20 @@ function wire(fig: HTMLElement): void {
     /* The legend's number is a ::before, so it has no box to measure. It is the
        first grid column of the entry, top-aligned, so its centre is half its
        own size in from the entry's corner, and its size is readable even though
-       its position is not. */
+       its position is not.
+
+       Its top margin has to be read too, and not assumed to be zero: it is the
+       lift that centres the circle on the label's first line, and at the narrow
+       widths it also carries the touch target's padding. A leader that ignored
+       it would arrive a pixel or two under the circle it points at, which is
+       the one error this line cannot afford to make. */
     const bullet = getComputedStyle(item, '::before');
     const bw = parseFloat(bullet.width) || 19;
     const bh = parseFloat(bullet.height) || bw;
+    const bt = parseFloat(bullet.marginTop) || 0;
     const i = item.getBoundingClientRect();
     const lx = (i.left - sr.left) * kx + bw / 2;
-    const ly = (i.top - sr.top) * ky + bh / 2;
+    const ly = (i.top - sr.top) * ky + bt + bh / 2;
 
     const end = lx - bw / 2 - CLEAR;
     const knee = end - SHOULDER;
