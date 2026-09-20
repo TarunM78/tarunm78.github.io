@@ -1723,13 +1723,6 @@ button.afig__ctl {
   .sheetcard--tall {
     grid-row: span 2;
   }
-
-  /* The closing note takes the left column and the row under the set, so the
-     two columns end level and the note is the last thing on the sheet rather
-     than a fifth card wedged beside one. */
-  .sheetcard--pending {
-    grid-column: 1;
-  }
 }
 
 /* The card lays itself out top-down with the drawing taking the slack, so the
@@ -1821,8 +1814,11 @@ button.afig__ctl {
 /* --- The card that closes the set. ---
 
    Not a project, so it takes none of a card's parts: no designator, no
-   drawing, no way through. What it is for is the foot of the set, which two
-   columns of cards at their own heights leave ragged. It is the note a drawing
+   drawing, no way through. What it is for is the cell the set leaves empty:
+   a card spanning two rows puts the column beside it a row short, and the
+   note fills that rather than adding a row of its own under everything. It
+   takes no explicit column, because `grid-auto-flow: dense` already sends it
+   to the hole — which is the whole reason the set is dense. It is the note a drawing
    set ends on when the series is not finished, and it is set like one: dashed,
    because a dashed line on a drawing is the convention for something that is
    not there yet. */
