@@ -2638,13 +2638,26 @@ button.afig__ctl {
      the sheet is about and it keeps the larger share, but a column at 8:3 was
      narrow enough that a sixteen-by-nine clip in it was a postage stamp.
 
-     Widened again at full sheet width, below. The number is not a taste: it is
-     the width at which DIVA's column, two clips and two buttons, comes out the
-     same height as the drawing beside it. Wider and the column overruns the
-     drawing and the drawing is the one that ends short; narrower and the
-     buttons cannot close the gap and a band of paper opens above them. This is
-     the balance point, and it moves with the sheet, which is why there are two
-     of them.
+     The ratios below are balance points, not taste. Each is the width at which
+     a sheet's column comes out the same height as the main column beside it:
+     wider and the column overruns and the drawing is the one that ends short,
+     narrower and the buttons cannot close the gap and a band of paper opens
+     above them.
+
+     Which balance point applies turns on whether the drawing is portrait,
+     because that decides how much height the main column has to be matched.
+     DIVA's portrait drawing makes a tall main column and its two landscape
+     clips are short, so its column can be wide. SAAR's landscape drawing makes
+     a short one, even carrying a strip of stills under it, and its one clip is
+     a portrait phone video that is nearly twice as tall as it is wide. The
+     same column that suits DIVA overran SAAR by 280px.
+
+     They move with the sheet as well, because the furniture that does not
+     scale, the captions and the buttons and the rules between them, is a
+     larger share of a short column than a tall one. SAAR moves at 1280 rather
+     than 1440 because that is where its title block stops docking into the
+     drawing's corner and goes back to a band underneath, which hands its main
+     column another hundred pixels at a stroke.
 
      The title block docks into the corner here for the same reason it does on
      a portrait plate: the drawing no longer runs the sheet's width, so a block
@@ -2667,6 +2680,12 @@ button.afig__ctl {
        rule. With `start` the side column was only as tall as its contents and
        the two columns simply ended wherever they ended. */
     align-items: stretch;
+  }
+
+  /* A landscape drawing: short main column, and on SAAR a portrait clip in the
+     side one. Both push the same way, so the column is narrower here. */
+  .projectplate--aside:not(.projectplate--tall) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4.1fr);
   }
 
   .projectplate--aside > .projectplate__main,
@@ -2766,18 +2785,27 @@ button.afig__ctl {
    SLOT_HI_CORNER in src/lib/callouts.ts), and that number can only be right
    while the block stays roughly this size. So below 1280 the block goes back
    under the drawing, where it costs a band and no collision. */
-/* At the sheet's full width the column can afford to be wider, and has to be:
-   the furniture in it that does not scale, two captions and two buttons and
-   the rules between them, is a smaller share of a taller column, so the clips
-   have to grow to take up the difference. 4.7 is where DIVA's column lands
-   level with its drawing at 1440 and above. Below this the same ratio overruns
-   it, by 22px at 1280 and 63px at 1100, so the narrower sheet keeps 4.
+/* From 1280 a landscape-drawing sheet docks its title block into the drawing's
+   corner rather than banding it underneath, so its main column loses that band
+   and the side column has to lose width to stay level with it. Measured on
+   SAAR: exactly level at 1280, 1440, 1600 and 1920. */
+@media (min-width: 1280px) {
+  .projectplate--aside:not(.projectplate--tall) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 3.1fr);
+  }
+}
 
-   1440 rather than a round number because --sheet-max is 1440: this is the
-   width at which the sheet stops growing, so above it the plate is a fixed
-   size and one ratio holds for all of it. */
+/* At the sheet's full width a portrait-drawing sheet can afford a wider column,
+   and needs one: its clips have to grow to take up a share the fixed furniture
+   no longer fills. 4.7 is where DIVA lands level with its drawing from 1440 up.
+   Below that the same ratio overruns it, by 22px at 1280 and 63px at 1100, so
+   the narrower sheet keeps 4.
+
+   1440 rather than a round number because --sheet-max is 1440: this is where
+   the sheet stops growing, so above it the plate is a fixed size and one ratio
+   holds for all of it. */
 @media (min-width: 1440px) {
-  .projectplate--aside {
+  .projectplate--aside.projectplate--tall {
     grid-template-columns: minmax(0, 8fr) minmax(0, 4.7fr);
   }
 }
