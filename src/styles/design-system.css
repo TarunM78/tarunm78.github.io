@@ -1187,19 +1187,39 @@ button.afig__ctl {
   flex: none;
 }
 
-/* Below 26rem the switch keeps its marks and drops its words, so that it fits
-   on the row beside the index instead of wrapping under it.
+/* On a phone the switch keeps its words and gives up the space around them.
 
-   26rem is measured, not chosen: the index button is 92px, the band's column
-   gap is 40, and the switch with its words is 235, which needs 367px of
-   content and so 407px of sheet once the margins are off. Every common phone
-   is below that and every tablet is above it, so the words survive wherever
-   there is room for them.
+   The band's own column gap is 40px, which is most of what was pushing the
+   switch off the row: at 40 it needs 367px of content beside a 92px index
+   button, and a 390px phone has 350. Tightened here the pair fits, and the
+   words are worth more than the air around them at this size. */
+@media (max-width: 26rem) {
+  .sheet__head {
+    column-gap: var(--sp-3);
+  }
+
+  .themeswitch {
+    gap: var(--sp-1);
+  }
+
+  .themeswitch__opt {
+    padding: 10px 6px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Under 21.5rem there is no arrangement of the two that fits. Measured: the
+   index button is 93px, the gap 12 and the switch with its words 195, so the
+   pair wants 300px of content and a sheet 40px wider than that. Every phone
+   from 360 up clears it; a 320 does not. The
+   marks carry it there, and they are the same two marks that sit beside the
+   words everywhere else.
 
    Clipped rather than removed. The word is the button's accessible name, the
    mark beside it being aria-hidden, so `display: none` would leave a screen
    reader two buttons with nothing to call them. */
-@media (max-width: 26rem) {
+@media (max-width: 21.5rem) {
   .themeswitch__opt > span {
     position: absolute;
     width: 1px;
@@ -1787,11 +1807,15 @@ button.afig__ctl {
    it only has at full sheet width.
    ------------------------------------------------------------------------- */
 
+/* The set opens the same distance below its title as its own rows sit apart,
+   so the heading reads as the top of the rhythm rather than as something
+   stranded above it. It was a step wider, which put more paper between
+   "Projects" and the first card than between any two cards in the set. */
 .sheetset {
   --card-frame: 3 / 2; /* one frame of drawing */
   display: grid;
   gap: var(--sp-6);
-  margin: var(--sp-7) 0 0;
+  margin: var(--sp-6) 0 0;
   padding: 0;
   list-style: none;
 }
