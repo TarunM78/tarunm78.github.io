@@ -311,6 +311,29 @@ img {
   margin: 0;
   --afig-gutter: 38%; /* of image width, each side */
   --afig-dot: 7px;
+
+  /* The numbered circle, in both places it appears: the balloon on the drawing
+     and the bullet in the list. One token, because they are the same mark and a
+     reader is meant to match them by eye. */
+  --callout-bullet: 19px;
+
+  /* The first line box of a callout's label, which is what the bullet beside it
+     has to line up with. It is the control's own size and leading, restated
+     here because a grid column cannot read them off a sibling. */
+  --callout-line: calc(var(--t-h25) * 1.3);
+
+  /* Start-alignment puts the bullet's TOP on the label's first line's top, and
+     the circle is taller than the line, so its centre lands below the line's.
+     Lift it by half the difference and the number sits on the same centre line
+     as the word it numbers. Negative by construction: the circle is 19px and
+     the line is 15.6px, so this is -1.7px, which at 12px type is the whole of
+     the misalignment.
+
+     Centring on the line box rather than on the cap height is deliberate. It
+     needs no font metrics, so it cannot drift when the face is swapped or a
+     fallback loads, and it lands within a fifth of a pixel of the cap centre
+     for the face this actually uses. */
+  --callout-lift: calc((var(--callout-line) - var(--callout-bullet)) / 2);
 }
 
 .afig__stage {
@@ -477,8 +500,8 @@ img {
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
-  width: 19px;
-  height: 19px;
+  width: var(--callout-bullet);
+  height: var(--callout-bullet);
   border-radius: 50%;
   background: var(--annotation);
   color: var(--paper);
@@ -507,7 +530,7 @@ img {
 .afig__item {
   counter-increment: callout;
   display: grid;
-  grid-template-columns: 19px 1fr;
+  grid-template-columns: var(--callout-bullet) 1fr;
   gap: var(--sp-2);
   align-items: start;
 }
@@ -516,8 +539,10 @@ img {
   content: counter(callout);
   display: grid;
   place-items: center;
-  width: 19px;
-  height: 19px;
+  width: var(--callout-bullet);
+  height: var(--callout-bullet);
+  /* Onto the label's centre line. See --callout-lift. */
+  margin-block-start: var(--callout-lift);
   border-radius: 50%;
   background: var(--annotation);
   color: var(--paper);
@@ -795,7 +820,7 @@ button.afig__ctl {
   .afig--legend .afig__item {
     counter-increment: none;
     counter-set: callout var(--n);
-    grid-template-columns: 19px 1fr;
+    grid-template-columns: var(--callout-bullet) 1fr;
   }
 
   .afig--legend .afig__item::before {
@@ -1160,6 +1185,33 @@ button.afig__ctl {
   width: 1.15em;
   height: 1.15em;
   flex: none;
+}
+
+/* Below 26rem the switch keeps its marks and drops its words, so that it fits
+   on the row beside the index instead of wrapping under it.
+
+   26rem is measured, not chosen: the index button is 92px, the band's column
+   gap is 40, and the switch with its words is 235, which needs 367px of
+   content and so 407px of sheet once the margins are off. Every common phone
+   is below that and every tablet is above it, so the words survive wherever
+   there is room for them.
+
+   Clipped rather than removed. The word is the button's accessible name, the
+   mark beside it being aria-hidden, so `display: none` would leave a screen
+   reader two buttons with nothing to call them. */
+@media (max-width: 26rem) {
+  .themeswitch__opt > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .themeswitch__opt {
+    padding: 10px;
+  }
 }
 
 .themeswitch__opt:hover {
@@ -3210,10 +3262,10 @@ button.afig__ctl {
     padding-block: var(--sp-2);
   }
 
-  /* The balloon lines up with the first line of its label, and that label now
-     sits in a box 8px taller at the top, so the number comes down to meet it. */
+  /* The label now sits in a box 8px taller at the top, so the bullet comes down
+     to meet it, and still carries the lift that centres it on the line. */
   .afig__item::before {
-    margin-top: var(--sp-2);
+    margin-block-start: calc(var(--sp-2) + var(--callout-lift));
   }
 }
 
