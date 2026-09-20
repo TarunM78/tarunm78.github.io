@@ -13,10 +13,14 @@
  * three accounts of it start to drift apart. It is gone, and so is
  * revisions.json with it.
  *
- * Photography is its own sheet in the index now, so this page no longer hands
- * you a button to it. A sheet listed in the band does not need a second door
- * cut into a different sheet, and the paragraph below still says the hobby
- * exists — which was the part of this section that was ever about the person.
+ * There was a section B, "Outside the lab", holding a paragraph about hobbies.
+ * Photography is its own sheet in the index, so the one hobby with anything to
+ * show already had somewhere better to be said, and what was left was a heading
+ * over an empty field. A section marker is a claim that a sheet has another
+ * part to read; it should not be spent introducing nothing.
+ *
+ * That leaves one marker, A, which is correct: the bio is the sheet and the
+ * links are the section off it.
  *
  * The links table is the only place on the site that points off it. Rows whose
  * url is still TODO render as open fields rather than as links that go
@@ -75,21 +79,5 @@ const links = (await getCollection('links')).sort((a, b) => a.data.order - b.dat
         ))
       }
     </DataTable>
-  </section>
-
-  <SectionMarker letter="B" id="outside" label="Outside the lab" />
-
-  <section aria-labelledby="outside-heading">
-    <h2 id="outside-heading" class="sheettitle sheettitle--sm">Outside the lab</h2>
-
-    <div class="bio">
-      <p><TodoMarker text="hobbies" /></p>
-      <p>
-        A short paragraph on what you do when you are not building. Photography is the
-        one with a sheet of its own, listed in the index above, so this is the place to
-        say why you shoot and what you point the camera at.
-      </p>
-    </div>
-
   </section>
 </Sheet>
