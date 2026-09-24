@@ -124,19 +124,29 @@ not even will do.
 
 ### Conclusion
 
-Every result here is computational, and that is the right stage for it. Before a
-stent is made, simulation is where a design can be taken apart and rebuilt a
-hundred times, and this one came out of that process better on all three
-measures that matter: it presses the vessel wall more gently, it survives far
-longer under a pulse, and blood moves through it more smoothly.
+Measured against a conventional stent in the same simulations:
 
-What makes it worth building is that none of those gains come from a better
-material. They come from the shape of the lattice and from fitting that shape
-to one person's artery, which means the same pipeline works on the next patient
-and the one after. A scan goes in and a stent comes out.
+**Stress.** Peak radial principal stress on the vessel wall came to about 150 MPa
+for the auxetic stent and over 220 MPa for the conventional one. Peak stress
+overall fell by 32%.
 
-The next steps are clear rather than uncertain: a pulsatile flow rig to put a
-physical stent under a real pulse, a fabrication route that holds the geometry
-at clinical scale, and the fitting pipeline folded into the planning software an
-interventionalist already uses. Each is ordinary engineering work on a design
-that has already earned it.
+**Fatigue.** Predicted life was about 50 million cycles against 10 million, five
+times longer.
+
+**Flow.** In ANSYS Fluent under pulsatile pressure, the auxetic stent gave a higher
+and steadier flow rate. The conventional stent's uneven expansion caused more
+fluctuation and local turbulence.
+
+**Geometry.** Of the six cell geometries tested in three-point bending, re-entrant
+had the lowest peak von Mises stress, so it was the one used.
+
+**Segmentation.** The coronary artery model reached 93% validation accuracy, with an
+IoU of 0.78, F1 of 0.83, precision of 0.81 and recall of 0.86.
+
+All of this is in silico. Inflammation and calcification were not modelled, and
+the optimiser can only be as good as the scans it was trained on. The next steps
+are bench testing on a pulsatile flow rig, then fabrication at clinical scale.
+
+The project was sponsored by the Harvard Undergraduate OpenBio Laboratory and
+entered at ISEF as ENBM047. The full method and figures are in the publication
+linked above.
