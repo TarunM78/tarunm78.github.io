@@ -2611,6 +2611,14 @@ button.afig__ctl {
     max-width: var(--plate-w);
   }
 
+  /* Except with nothing beside it. The cap was there to leave room, and on a
+     sheet with no views to put in that room it left a column of bare paper
+     down the right instead. The humanoid arm's plate runs the sheet's width. */
+  .projectplate--tall:not(.projectplate--aside) .afig__sheetbox,
+  .projectplate--tall:not(.projectplate--aside) .project__links {
+    max-width: none;
+  }
+
   /* The title block laid into the drawing's corner rather than in a band under
      it, which is where a title block goes on paper and costs the sheet nothing.
 
