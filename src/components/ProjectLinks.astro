@@ -1,0 +1,92 @@
+---
+/**
+ * The places a project is published, as a stack of fields.
+ *
+ * Its own component because the sheet sets it in one of two columns. Beside a
+ * drawing with views in its column it goes under those views; beside one whose
+ * column holds a single tall view and nothing under the drawing, it goes under
+ * the drawing instead. See `linksUnder` in src/pages/projects/[slug].astro.
+ *
+ * `--links` is the count, for the ceiling the buttons grow to beside a
+ * drawing. CSS can stretch them to fill a column but cannot count them, and
+ * the cap is per button rather than per list.
+ */
+interface Props {
+  links: { href: string; label: string }[];
+}
+const { links } = Astro.props;
+---
+
+{
+  links.length > 0 && (
+    <ul
+      class="project__links"
+      style={`--links:${links.length}`}
+      aria-label="Published elsewhere"
+    >
+      {links.map((link) => (
+        <li>
+          {/* Every one of these leaves the site: a paper, an abstract, an
+              ISEF entry. They open in their own tab, because the sheet
+              they are printed on is a thing you come back to, and a reader
+              who opens the paper has not finished with the drawing.
+
+              `rel="noopener"` because a tab opened with target gets a
+              handle on the one that opened it otherwise. Modern browsers
+              imply it, older ones do not, and it costs nothing to say.
+
+              The new tab is announced rather than left to be discovered.
+              The icon says what the link opens and it is aria-hidden, so
+              without this a screen reader gets the label and no warning
+              that the window is about to change under it. */}
+          <a
+            class="sheetbutton plink"
+            href={link.href}
+            target="_blank"
+            rel="noopener"
+          >
+            {/* What the button opens, drawn rather than described: a sheet
+                of paper with its corner turned for a PDF, a window with an
+                arrow leaving it for a page somewhere else. Decorative in
+                the accessibility tree — the label already says which. */}
+            {link.href.endsWith('.pdf') ? (
+              <svg
+                class="plink__mark"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M9.5 1.5H4a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V4.5z" />
+                <path d="M9.5 1.5v3h3" />
+              </svg>
+            ) : (
+              <svg
+                class="plink__mark"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M8 2.5H2.5v11h11V8" />
+                <path d="M10 2.5h3.5V6" />
+                <path d="M13.5 2.5 7.5 8.5" />
+              </svg>
+            )}
+            <span>{link.label}</span>
+            <span class="visually-hidden">(opens in a new tab)</span>
+            <span class="sheetbutton__arrow meta" aria-hidden="true">
+              &rarr;
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

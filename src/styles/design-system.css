@@ -2757,6 +2757,21 @@ button.afig__ctl {
     flex: 1 0 auto;
   }
 
+  /* Buttons under the drawing rather than under the views: see linksUnder in
+     src/pages/projects/[slug].astro. Side by side, because they are spanning
+     a drawing's width rather than stacking in a column, and the cap is one
+     button tall because there is only one row of them. They still take the
+     slack, so the main column closes on the same line as the view beside it. */
+  .projectplate--linksunder .project__links {
+    flex-direction: row;
+    max-height: 4rem;
+  }
+
+  .projectplate--linksunder .project__links > li {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
   .projectplate--aside .project__links .sheetbutton {
     flex: 1;
     justify-content: space-between;
@@ -2792,6 +2807,31 @@ button.afig__ctl {
 @media (min-width: 1280px) {
   .projectplate--aside:not(.projectplate--tall) {
     grid-template-columns: minmax(0, 8fr) minmax(0, 3.1fr);
+  }
+}
+
+/* A landscape drawing with its buttons under it and one tall view beside it:
+   the stent's trifold, two panels stacked at 2:3. The column is the view alone
+   and the main column is the drawing plus a row of buttons, so the balance
+   point is where the trifold comes out as tall as both. Measured on the stent
+   sheet: level to within 3px from 1280 up, where the title block docks, and
+   within about 15px below it, where the block bands under the drawing and
+   makes the main column taller the narrower the sheet gets. */
+@media (min-width: 1024px) {
+  .projectplate--linksunder:not(.projectplate--tall) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4.35fr);
+  }
+}
+
+@media (min-width: 1150px) {
+  .projectplate--linksunder:not(.projectplate--tall) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 3.95fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .projectplate--linksunder:not(.projectplate--tall) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 2.75fr);
   }
 }
 
