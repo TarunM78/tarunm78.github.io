@@ -23,10 +23,6 @@ to see. With PN-002 drawn, the two are the same sheet.
 Hero is **PN-002, the low-cost bimanual humanoid arm** (`src/assets/humanoidarm.png`), at
 sheet 02-1.
 
-The planetary humanoid actuator is no longer a project. It is the founder role at the stealth
-startup (`src/content/experience/stealth-actuator.md`), which leads the experience list, so its
-drawing now appears on the home sheet at SECTION B-B rather than A-A.
-
 Part numbers were renumbered when PN-001 was added, so every existing project moved up one:
 DIVA PN-002, SAAR PN-003, stents PN-004, humanoid arm PN-005. PN-001 is now retired rather than
 reissued — a part number is not reused once the part leaves the set — so the series runs
@@ -53,8 +49,6 @@ The earlier coordinates were authored before there was a drawing and did not sur
 `src/content/experience/`. Order is explicit (`order:` in frontmatter) rather than derived from
 the dates, because roles overlap and the dates do not say which should lead.
 
-1. **Founder** — Stealth startup, State College, PA. May 2026 – present. The planetary humanoid
-   actuator, drawn but not named to an employer.
 2. **Student researcher** — Penn State Locomotion in Biology and Robotics Lab, State College, PA. Aug 2026 – present.
 3. **Student researcher** — Wharton People Lab, Philadelphia, PA. Oct 2025 – present.
 3. **Growth intern** — Symbal, San Francisco, CA. Oct 2025 – present.
@@ -65,8 +59,7 @@ the dates, because roles overlap and the dates do not say which should lead.
 8. **Engineering intern** — Tormach, remote. Dec 2023 – Aug 2024.
 
 One further role is **deliberately withheld** at the author's request. Do not add it from the
-resume. The startup ships as **Stealth startup** — the work and the drawing are stated, the
-company is not. Do not name it.
+resume.
 
 ## Awards
 
@@ -79,36 +72,6 @@ table becomes a short spine (school, lab, chair) with the awards carrying the re
 
 TODO: the Columbia entry is titled "finalist" but the source note said "semi-finalist". Confirm
 which, and fix whichever is wrong.
-
----
-
-## Planetary humanoid actuator — the founder role
-
-Not a project sheet. It lives at `src/content/experience/stealth-actuator.md` as the founder
-role at the stealth startup, and carries no part number: a job is not a part. The drawing and
-its callouts are kept here because the work itself has not changed.
-
-**Role:** Founder, stealth startup, State College, PA
-**Started:** May 2026, current
-
-**Summary:**
-A planetary actuator for humanoid joints, designed from the start to be metal 3D printed rather than machined.
-
-**Drawing:** `src/assets/planetary-actuator.png` — exploded isometric line drawing, black on white. Rendered as `heroImageType: drawing`, which blends the white ground out onto the sheet.
-
-**Callouts:**
-```
-- x: 0.13  y: 0.32   text: PRINTED HOUSING, RIBBED WEB
-- x: 0.34  y: 0.42   text: STATOR STACK
-- x: 0.57  y: 0.54   text: PLANET CARRIER
-- x: 0.81  y: 0.62   text: OUTPUT FLANGE, SPOKED
-```
-These four were read off the exploded view rather than taken from a part list. TODO: confirm them against the CAD.
-
-**Notes block:**
-1. TODO: reduction ratio, continuous and peak torque, mass.
-2. TODO: print process and alloy.
-3. TODO: what the printed geometry buys over a machined equivalent.
 
 ---
 
